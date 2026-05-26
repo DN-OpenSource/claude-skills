@@ -134,6 +134,11 @@ Each round, the artifact:
 
 ## Spawning
 
+> **REQUIRED: Every roster `id` must be a programmer slug from the roster table above — never `agent-0`, `agent-1`, or any numbered name. Using numbered ids is wrong regardless of context.**
+>
+> ✗ `{ id: "agent-0", role: "peer", status: "active" }`
+> ✓ `{ id: "grace-hopper", role: "peer", status: "active", personality: "..." }`
+
 The artifact "spawns" peers by writing them into the initial roster. There's no Task tool. Default fan-out is 3–5 peers, same as `teammates-cc`. Pick programmer slugs whose strengths match the task:
 
 - API design review → Liskov (interfaces), Pike (simplicity), Stroustrup (zero-overhead)
@@ -201,3 +206,4 @@ The artifact's UI is part of the substrate, not optional decoration — it's how
 - **Don't reach for web workers** unless you genuinely need long-running peers. Round-based is the documented protocol; workers are out of scope.
 - **Don't let personality override protocol.** Torvalds may want to rewrite everything; he still returns exactly one Action per round like everyone else.
 - **Don't pick programmers at random.** Choose the roster deliberately — the personalities should create useful friction, not noise.
+- **Never use `agent-N` ids.** `agent-0`, `agent-1`, etc. are wrong. Every roster entry must use a programmer slug from the roster table. This is not optional.

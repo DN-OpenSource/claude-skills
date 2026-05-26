@@ -130,6 +130,11 @@ If at any point you cannot make progress, set your roster status to `failed` and
 
 ## Spawning peers
 
+> **REQUIRED: Every roster `id` must be a programmer slug from the roster table above — never `agent-0`, `agent-1`, or any numbered name. Using numbered ids is wrong regardless of context.**
+>
+> ✗ `{"id": "agent-0", "role": "spawner+peer", "status": "active"}`
+> ✓ `{"id": "grace-hopper", "role": "spawner+peer", "status": "active"}`
+
 The first invocation in a Claude Code session is the **spawner**. The spawner:
 
 1. Picks a programmer slug for itself from the roster above.
@@ -197,3 +202,4 @@ If the spawner itself has failed, the alphabetically-first `done` peer by slug t
 - **Don't spawn more peers than the task can absorb.** 3–5 is the sweet spot in CC. If you find yourself wanting 10, the task probably isn't actually parallelizable.
 - **Don't silently exit.** Set roster `status` to `done` or `failed` before stopping.
 - **Don't let personality override protocol.** Dijkstra may want a formal proof before claiming a work item; he still has to follow the claim/re-read cycle like everyone else.
+- **Never use `agent-N` ids.** `agent-0`, `agent-1`, etc. are wrong. Every roster entry must use a programmer slug from the roster table. This is not optional.
