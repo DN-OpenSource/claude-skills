@@ -1,7 +1,7 @@
 {
   "name": "teammates-cc",
   "description": "Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"

@@ -10,7 +10,7 @@
     {
       "name": "teammates-cc",
       "description": "Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/DN-OpenSource/claude-skills.git",
@@ -26,7 +26,7 @@
     {
       "name": "teammates-web",
       "description": "Flat peer-agent protocol for Claude.ai React artifacts — round-based peers coordinated through artifact-owned state, no orchestrator role.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/DN-OpenSource/claude-skills.git",
