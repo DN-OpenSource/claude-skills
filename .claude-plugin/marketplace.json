@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-skills",
+  "description": "Flat peer-agent coordination skills for Claude Code and Claude.ai",
+  "owner": {
+    "name": "dhirajnikam",
+    "email": "dhirajnikam78@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "claude-skills",
+      "description": "Flat peer-agent coordination skills — teammates-cc (subagent teams with no orchestrator in Claude Code) and teammates-web (round-based peers in Claude.ai React artifacts)",
+      "version": "1.0.0",
+      "source": "./",
+      "author": {
+        "name": "dhirajnikam",
+        "email": "dhirajnikam78@gmail.com"
+      },
+      "category": "collaboration",
+      "homepage": "https://github.com/DN-OpenSource/claude-skills"
+    }
+  ]
+}

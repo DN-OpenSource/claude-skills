@@ -1,0 +1,20 @@
+{
+  "name": "claude-skills",
+  "description": "Flat peer-agent coordination skills for Claude Code and Claude.ai — teammates-cc (subagent teams with no orchestrator) and teammates-web (round-based peers in React artifacts)",
+  "version": "1.0.0",
+  "author": {
+    "name": "dhirajnikam",
+    "email": "dhirajnikam78@gmail.com"
+  },
+  "homepage": "https://github.com/DN-OpenSource/claude-skills",
+  "repository": "https://github.com/DN-OpenSource/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "skills",
+    "multi-agent",
+    "teammates",
+    "peer-agents",
+    "collaboration",
+    "parallel"
+  ]
+}
