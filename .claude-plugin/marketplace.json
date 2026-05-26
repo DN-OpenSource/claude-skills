@@ -8,16 +8,36 @@
   },
   "plugins": [
     {
-      "name": "claude-skills",
-      "description": "Flat peer-agent coordination skills — teammates-cc (subagent teams with no orchestrator in Claude Code) and teammates-web (round-based peers in Claude.ai React artifacts)",
+      "name": "teammates-cc",
+      "description": "Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs.",
       "version": "1.0.0",
-      "source": "./",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/DN-OpenSource/claude-skills.git",
+        "path": "skills/teammates-cc"
+      },
       "author": {
         "name": "dhirajnikam",
         "email": "dhirajnikam78@gmail.com"
       },
       "category": "collaboration",
-      "homepage": "https://github.com/DN-OpenSource/claude-skills"
+      "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/teammates-cc"
+    },
+    {
+      "name": "teammates-web",
+      "description": "Flat peer-agent protocol for Claude.ai React artifacts — round-based peers coordinated through artifact-owned state, no orchestrator role.",
+      "version": "1.0.0",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/DN-OpenSource/claude-skills.git",
+        "path": "skills/teammates-web"
+      },
+      "author": {
+        "name": "dhirajnikam",
+        "email": "dhirajnikam78@gmail.com"
+      },
+      "category": "collaboration",
+      "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/teammates-web"
     }
   ]
 }

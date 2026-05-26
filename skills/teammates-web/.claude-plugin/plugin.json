@@ -1,0 +1,21 @@
+{
+  "name": "teammates-web",
+  "description": "Flat peer-agent protocol for Claude.ai React artifacts — round-based peers coordinated through artifact-owned state, no orchestrator role.",
+  "version": "1.0.0",
+  "author": {
+    "name": "dhirajnikam",
+    "email": "dhirajnikam78@gmail.com"
+  },
+  "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/teammates-web",
+  "repository": "https://github.com/DN-OpenSource/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "skills",
+    "multi-agent",
+    "teammates",
+    "peer-agents",
+    "parallel",
+    "claude-ai",
+    "react"
+  ]
+}
