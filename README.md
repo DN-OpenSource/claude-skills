@@ -10,7 +10,8 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 
 | Skill | Works in | Description |
 |-------|----------|-------------|
-| [peer-agents](skills/peer-agents/SKILL.md) | Claude Code · Claude.ai | Run any task as a flat team of peer agents — no orchestrator, no hierarchy. Agents claim their own work, message each other directly, and merge their outputs. |
+| [teammates-cc](skills/teammates-cc/SKILL.md) | Claude Code | Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs. |
+| teammates-web *(planned)* | Claude.ai | Same protocol, adapted for a Claude.ai React artifact + API substrate. |
 
 ## Installation
 
@@ -43,7 +44,7 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 claude-skills/
 ├── README.md
 └── skills/
-    └── peer-agents/
+    └── teammates-cc/
         └── SKILL.md
 ```
 
