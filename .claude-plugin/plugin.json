@@ -1,6 +1,6 @@
 {
   "name": "claude-skills",
-  "description": "Flat peer-agent coordination skills for Claude Code and Claude.ai — teammates-cc (subagent teams with no orchestrator) and teammates-web (round-based peers in React artifacts)",
+  "description": "A collection of custom skills for Claude Code and Claude.ai — teammates-cc (subagent teams with no orchestrator), teammates-web (round-based peers in React artifacts), codebase-guardian (disciplined, toolchain-validated editing of existing codebases), and memory (durable hierarchical context across sessions)",
   "version": "1.1.0",
   "author": {
     "name": "dhirajnikam",
@@ -15,6 +15,11 @@
     "teammates",
     "peer-agents",
     "collaboration",
-    "parallel"
+    "parallel",
+    "codebase",
+    "refactoring",
+    "workflow",
+    "memory",
+    "context"
   ]
 }

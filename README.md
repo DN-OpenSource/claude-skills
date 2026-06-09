@@ -12,6 +12,8 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 |-------|----------|-------------|
 | [teammates-cc](skills/teammates-cc/SKILL.md) | Claude Code | Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs. |
 | [teammates-web](skills/teammates-web/SKILL.md) | Claude.ai | Same protocol, round-based for a Claude.ai React artifact + API substrate. The artifact holds shared state; each round dispatches one API call per peer. |
+| [codebase-guardian](skills/codebase-guardian/SKILL.md) | Claude Code | A disciplined four-phase loop for editing existing codebases safely — validate against the real toolchain, match or deliberately change the existing pattern, trace the ripple, and record learnings to MEMORY.md. Covers TypeScript/Node, Python/Django, Flutter/Dart, and Rust/Tauri. |
+| [memory](skills/memory/SKILL.md) | Claude Code | Durable, hierarchical memory files so context survives across sessions — bootstrap, read, and update `MEMORY.md` at the repo root and per module, plus user-level `USER.md`. The persistence layer `codebase-guardian` builds on. |
 
 ## Installation
 
@@ -47,7 +49,14 @@ claude-skills/
     ├── teammates-cc/
     │   ├── README.md
     │   └── SKILL.md
-    └── teammates-web/
+    ├── teammates-web/
+    │   ├── README.md
+    │   └── SKILL.md
+    ├── codebase-guardian/
+    │   ├── README.md
+    │   ├── SKILL.md
+    │   └── references/   ← per-stack commands & ripple traps
+    └── memory/
         ├── README.md
         └── SKILL.md
 ```
