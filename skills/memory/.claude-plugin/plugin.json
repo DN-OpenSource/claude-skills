@@ -1,7 +1,7 @@
 {
   "name": "memory",
   "description": "Maintain durable, hierarchical memory files for the user and for codebases so context persists across sessions — bootstrap, read, and update MEMORY.md at the repo root and per module, plus user-level USER.md. The persistence layer codebase-guardian builds on.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"

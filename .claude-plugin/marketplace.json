@@ -10,7 +10,7 @@
     {
       "name": "teammates",
       "description": "Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/DN-OpenSource/claude-skills.git",
@@ -26,7 +26,7 @@
     {
       "name": "codebase-guardian",
       "description": "A disciplined four-phase loop for editing existing codebases safely — validate against the real toolchain, match or deliberately change the existing pattern, trace the ripple, and record learnings to MEMORY.md. Covers TypeScript/Node, Python/Django, Flutter/Dart, and Rust/Tauri.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/DN-OpenSource/claude-skills.git",
@@ -42,7 +42,7 @@
     {
       "name": "memory",
       "description": "Maintain durable, hierarchical memory files for the user and for codebases so context persists across sessions — bootstrap, read, and update MEMORY.md at the repo root and per module, plus user-level USER.md. The persistence layer codebase-guardian builds on.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/DN-OpenSource/claude-skills.git",
@@ -58,7 +58,7 @@
     {
       "name": "agents-dox",
       "description": "The DOX framework — a high-performance AGENTS.md hierarchy where each AGENTS.md is a binding work contract for its subtree. Read the applicable root-to-nearest chain of AGENTS.md before editing, and run a DOX pass to update the owning AGENTS.md and affected parents/children after every meaningful change. Bootstraps the tree if a repo has none.",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/DN-OpenSource/claude-skills.git",
