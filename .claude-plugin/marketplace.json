@@ -1,43 +1,27 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-skills",
-  "description": "A collection of custom skills for Claude Code and Claude.ai — flat peer-agent coordination (teammates-cc, teammates-web), disciplined codebase editing (codebase-guardian), and durable hierarchical memory (memory)",
+  "description": "A collection of custom skills for Claude Code — flat peer-agent coordination (teammates), disciplined codebase editing (codebase-guardian), durable hierarchical memory (memory), and the DOX AGENTS.md contract hierarchy (agents-dox). The skills work standalone and compose with each other.",
   "owner": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"
   },
   "plugins": [
     {
-      "name": "teammates-cc",
+      "name": "teammates",
       "description": "Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs.",
       "version": "1.1.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/DN-OpenSource/claude-skills.git",
-        "path": "skills/teammates-cc"
+        "path": "skills/teammates"
       },
       "author": {
         "name": "dhirajnikam",
         "email": "dhirajnikam78@gmail.com"
       },
       "category": "collaboration",
-      "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/teammates-cc"
-    },
-    {
-      "name": "teammates-web",
-      "description": "Flat peer-agent protocol for Claude.ai React artifacts — round-based peers coordinated through artifact-owned state, no orchestrator role.",
-      "version": "1.1.0",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/DN-OpenSource/claude-skills.git",
-        "path": "skills/teammates-web"
-      },
-      "author": {
-        "name": "dhirajnikam",
-        "email": "dhirajnikam78@gmail.com"
-      },
-      "category": "collaboration",
-      "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/teammates-web"
+      "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/teammates"
     },
     {
       "name": "codebase-guardian",
@@ -70,6 +54,22 @@
       },
       "category": "workflow",
       "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/memory"
+    },
+    {
+      "name": "agents-dox",
+      "description": "The DOX framework — a high-performance AGENTS.md hierarchy where each AGENTS.md is a binding work contract for its subtree. Read the applicable root-to-nearest chain of AGENTS.md before editing, and run a DOX pass to update the owning AGENTS.md and affected parents/children after every meaningful change. Bootstraps the tree if a repo has none.",
+      "version": "1.1.0",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/DN-OpenSource/claude-skills.git",
+        "path": "skills/agents-dox"
+      },
+      "author": {
+        "name": "dhirajnikam",
+        "email": "dhirajnikam78@gmail.com"
+      },
+      "category": "workflow",
+      "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/agents-dox"
     }
   ]
 }

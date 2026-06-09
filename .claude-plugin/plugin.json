@@ -1,6 +1,6 @@
 {
   "name": "claude-skills",
-  "description": "A collection of custom skills for Claude Code and Claude.ai — teammates-cc (subagent teams with no orchestrator), teammates-web (round-based peers in React artifacts), codebase-guardian (disciplined, toolchain-validated editing of existing codebases), and memory (durable hierarchical context across sessions)",
+  "description": "A collection of custom skills for Claude Code — teammates (subagent teams with no orchestrator), codebase-guardian (disciplined, toolchain-validated editing of existing codebases), memory (durable hierarchical context across sessions), and agents-dox (the DOX AGENTS.md contract hierarchy). Each works standalone and composes with the others.",
   "version": "1.1.0",
   "author": {
     "name": "dhirajnikam",

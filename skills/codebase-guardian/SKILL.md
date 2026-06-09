@@ -17,14 +17,16 @@ Use it for any meaningful edit to an existing project. Skip it for throwaway scr
 
 This skill changes the *real* codebase: it edits actual files, runs the project's real migrations/codegen/formatters, and leaves the repository in a working, applied state — not a description of changes to make later. "Done" means the change is on disk and the toolchain is green.
 
-## Dependency: the memory skill (required)
+## Companion: the memory skill (recommended, not required)
 
-This skill runs **on top of** the `memory` skill (or `memory-management`) — it is not optional. Memory is how this skill "improves over time": MEMORY.md is the durable store for conventions, decisions, and ripple traps, so the next session doesn't relearn them.
+This skill is **self-contained** — it runs end to end on its own. It composes with the `memory` skill (or `memory-management`) when that's installed, because `MEMORY.md` is how this skill "improves over time": it's the durable store for conventions, decisions, and ripple traps, so the next session doesn't relearn them.
 
-- **At the start of every run**, invoke the memory skill to read `MEMORY.md` (repo root + the relevant module). If none exists, use the memory skill to **bootstrap** it before editing — a repo with no memory is the first thing this skill fixes.
-- **At the end of every run**, use the memory skill to **update** `MEMORY.md` with what was learned.
+The MEMORY.md lifecycle is part of this skill's loop either way:
 
-If no memory skill is installed, still maintain `MEMORY.md` files by hand following the same read → bootstrap → update lifecycle, but installing the memory skill is strongly recommended.
+- **At the start of every run**, read `MEMORY.md` (repo root + the relevant module). If none exists, **bootstrap** it before editing — a repo with no memory is the first thing this skill fixes.
+- **At the end of every run**, **update** `MEMORY.md` with what was learned.
+
+If the `memory` skill is installed, invoke it to perform those steps — it handles bootstrap/read/update and the file hierarchy for you. If it isn't, do the same read → bootstrap → update lifecycle by hand following this skill's instructions. Either way the workflow is complete; the memory skill just automates the bookkeeping and is strongly recommended.
 
 ## The loop
 

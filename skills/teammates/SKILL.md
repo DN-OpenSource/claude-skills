@@ -1,9 +1,9 @@
 ---
-name: teammates-cc
+name: teammates
 description: Use when a task benefits from being split across multiple Claude Code subagents working as flat peers — no orchestrator, no hierarchy. Each agent embodies a famous programmer's personality and working style. Agents share a JSON manifest, claim work, message each other in character, and merge outputs.
 ---
 
-# teammates-cc
+# teammates
 
 A protocol for running a task as a flat team of Claude Code subagents, each embodying the personality and working style of a famous programmer. There is no orchestrator role. Every agent — including the one that spawned the team — follows the same loop and reads from the same shared state.
 
@@ -153,7 +153,7 @@ The first invocation in a Claude Code session is the **spawner**. The spawner:
    > Project root (absolute path): `${project_root}`
    >
    > Required reading, in order:
-   > 1. `${project_root}/skills/teammates-cc/SKILL.md` — the protocol you must follow
+   > 1. `${project_root}/skills/teammates/SKILL.md` — the protocol you must follow
    > 2. `${project_root}/.teammates/state.json` — current shared state
    >
    > Then run the peer loop in the skill exactly. Use small Python snippets via Bash for every read-modify-write on `state.json` — the skill shows the template. Do not hand-edit JSON. Only modify your own roster entry and the work_item you currently hold; only append to `messages[]`.

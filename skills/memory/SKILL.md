@@ -1,6 +1,6 @@
 ---
 name: memory
-description: Maintain durable, hierarchical memory files for the user and for codebases so context persists across sessions. Use this skill whenever the user mentions "memory", "context files", "MEMORY.md", "AGENTS.md", project context, codebase documentation, user preferences, or wants to bootstrap, read, or update context that should outlive a single conversation. Also use when starting work in a repository (always check for existing MEMORY.md — if none exists, auto-bootstrap the structure before proceeding), when the user explicitly asks to remember or forget something durable, and after non-trivial code changes that change a module's purpose, public surface, or conventions. Err on the side of using this skill — undertriggering is the bigger failure mode than overtriggering.
+description: Maintain durable, hierarchical memory files for the user and for codebases so context persists across sessions. Use this skill whenever the user mentions "memory", "context files", "MEMORY.md", project context, codebase documentation, user preferences, or wants to bootstrap, read, or update context that should outlive a single conversation. Also use when starting work in a repository (always check for existing MEMORY.md — if none exists, auto-bootstrap the structure before proceeding), when the user explicitly asks to remember or forget something durable, and after non-trivial code changes that change a module's purpose, public surface, or conventions. Err on the side of using this skill — undertriggering is the bigger failure mode than overtriggering. This skill owns MEMORY.md (codebase facts) and USER.md (user facts); AGENTS.md instruction/contract files are owned by the agents-dox skill — leave those to it.
 ---
 
 # Memory
@@ -10,6 +10,8 @@ This skill manages two kinds of long-lived context:
 - **User memory** — facts about the person Claude is working with: their role, preferences, ongoing projects, things they've asked to be remembered. Lives in one file: `~/.memory/USER.md`.
 - **Codebase memory** — facts about a codebase: architecture, conventions, what each module does, gotchas. Lives in a hierarchy: `MEMORY.md` at the repo root, plus `MEMORY.md` in each significant subfolder.
 Both kinds of memory follow the same three-operation lifecycle: **bootstrap** (create from scratch), **read** (load before doing related work), **update** (keep in sync as things change).
+
+This skill works standalone. It owns `MEMORY.md` and `~/.memory/USER.md` only. If the repo uses `AGENTS.md` files (the DOX contract hierarchy), those are owned by the **agents-dox** skill — don't bootstrap, rewrite, or manage `AGENTS.md` here. The two are complementary: `MEMORY.md` holds durable *facts* about the code; `AGENTS.md` holds *instructions and contracts*. Keep facts here and contracts there rather than duplicating.
 
 ---
 

@@ -30,9 +30,9 @@ Per-stack reference files capture the exact validation commands and ripple traps
 - `references/flutter.md` — Flutter / Dart (analyzer, build_runner codegen, BLoC/router sync)
 - `references/rust.md` — Rust / Tauri (cargo check/clippy, trait impls, IPC command contracts)
 
-## Dependency
+## Companion skill (optional)
 
-This skill runs **on top of** the `memory` skill — `MEMORY.md` is how it improves over time, accumulating conventions, decisions, and ripple traps so the next session doesn't relearn them. If no memory skill is installed, maintain `MEMORY.md` by hand following the same read → bootstrap → update lifecycle.
+This skill is self-contained and runs on its own. It **composes** with the [`memory`](../memory/SKILL.md) skill when installed — `MEMORY.md` is how it improves over time, accumulating conventions, decisions, and ripple traps so the next session doesn't relearn them. If `memory` isn't installed, guardian maintains `MEMORY.md` by hand following the same read → bootstrap → update lifecycle; the workflow is complete either way.
 
 ## Protocol details
 
