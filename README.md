@@ -2,18 +2,20 @@
 
 A collection of custom skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview). Each skill works on its own, and they compose with one another (see [How the skills work together](#how-the-skills-work-together)).
 
+**Version:** 1.2.0 (all plugins)
+
 ## What are skills?
 
 Skills are Markdown files that teach Claude how to handle specific tasks — a multi-agent protocol, a document format, a repeatable workflow. Claude reads the relevant skill at the start of a task and follows its instructions. Think of them as reusable playbooks you install once and get forever.
 
 ## Skills in this repo
 
-| Skill | Works in | Description |
-|-------|----------|-------------|
-| [teammates](skills/teammates/SKILL.md) | Claude Code | Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs. |
-| [codebase-guardian](skills/codebase-guardian/SKILL.md) | Claude Code | A disciplined four-phase loop for editing existing codebases safely — validate against the real toolchain, match or deliberately change the existing pattern, trace the ripple, and record learnings to MEMORY.md. Covers TypeScript/Node, Python/Django, Flutter/Dart, and Rust/Tauri. |
-| [memory](skills/memory/SKILL.md) | Claude Code | Durable, hierarchical memory files so context survives across sessions — bootstrap, read, and update `MEMORY.md` at the repo root and per module, plus user-level `USER.md`. The persistence layer `codebase-guardian` builds on. |
-| [agents-dox](skills/agents-dox/SKILL.md) | Claude Code | The DOX framework — a hierarchy of `AGENTS.md` files, each a binding work contract for its subtree. Read the root-to-nearest chain before editing; run a DOX pass to update the owning `AGENTS.md` and affected parents/children after. Bootstraps the tree if a repo has none. |
+| Skill | Version | Works in | Description |
+|-------|---------|----------|-------------|
+| [teammates](skills/teammates/SKILL.md) | 1.2.0 | Claude Code | Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs. |
+| [codebase-guardian](skills/codebase-guardian/SKILL.md) | 1.2.0 | Claude Code | A disciplined four-phase loop for editing existing codebases safely — validate against the real toolchain, match or deliberately change the existing pattern, trace the ripple, and record learnings to MEMORY.md. Covers TypeScript/Node, Python/Django, Flutter/Dart, and Rust/Tauri. |
+| [memory](skills/memory/SKILL.md) | 1.2.0 | Claude Code | Durable, hierarchical memory files so context survives across sessions — bootstrap, read, and update `MEMORY.md` at the repo root and per module, plus user-level `USER.md`. The persistence layer `codebase-guardian` builds on. |
+| [agents-dox](skills/agents-dox/SKILL.md) | 1.2.0 | Claude Code | The DOX framework — a hierarchy of `AGENTS.md` files, each a binding work contract for its subtree. Read the root-to-nearest chain before editing; run a DOX pass to update the owning `AGENTS.md` and affected parents/children after. Bootstraps the tree if a repo has none. |
 
 ## How the skills work together
 
