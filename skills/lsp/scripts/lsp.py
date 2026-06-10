@@ -280,3 +280,100 @@ def query_with_retry(client, method, params, retry_secs):
         if time.monotonic() >= deadline:
             return result
         time.sleep(1.0)
+
+
+# ------------------------------------------------------- results & formatting
+
+
+def text_document_position(spec):
+    """FILE:LINE:COL -> (path, params dict with 0-based position)."""
+    path, line, col = parse_location(spec)
+    return path, {
+        "textDocument": {"uri": path_to_uri(path)},
+        "position": {"line": line - 1, "character": col - 1},
+    }
+
+
+def locations_from_result(result):
+    """Normalize Location | Location[] | LocationLink[] | None to
+    a list of (path, line, col), 1-based."""
+    if result is None:
+        return []
+    if isinstance(result, dict):
+        result = [result]
+    locs = []
+    for item in result:
+        if "targetUri" in item:  # LocationLink
+            uri, rng = item["targetUri"], item["targetSelectionRange"]
+        else:
+            uri, rng = item["uri"], item["range"]
+        locs.append((uri_to_path(uri),
+                     rng["start"]["line"] + 1,
+                     rng["start"]["character"] + 1))
+    return locs
+
+
+def snippet(path, line):
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            for i, text in enumerate(f, 1):
+                if i == line:
+                    return text.strip()
+    except OSError:
+        pass
+    return ""
+
+
+def format_locations(locs):
+    if not locs:
+        return "(no results)"
+    return "\n".join(f"{p}:{l}:{c} — {snippet(p, l)}" for p, l, c in locs)
+
+
+def format_hover(result):
+    if not result:
+        return "(no hover info)"
+    contents = result.get("contents")
+    parts = contents if isinstance(contents, list) else [contents]
+    out = []
+    for part in parts:
+        if isinstance(part, dict):
+            out.append(part.get("value", ""))
+        elif part:
+            out.append(str(part))
+    return "\n".join(x for x in out if x) or "(no hover info)"
+
+
+def format_symbols(result, path):
+    """Handles both DocumentSymbol[] (hierarchical) and SymbolInformation[]."""
+    lines = []
+
+    def walk(sym, depth):
+        kind = SYMBOL_KINDS.get(sym.get("kind"), str(sym.get("kind")))
+        if "selectionRange" in sym:  # DocumentSymbol
+            pos = sym["selectionRange"]["start"]
+            lines.append(f"{'  ' * depth}{kind} {sym['name']} — "
+                         f"{path}:{pos['line'] + 1}:{pos['character'] + 1}")
+            for child in sym.get("children") or []:
+                walk(child, depth + 1)
+        else:  # SymbolInformation
+            loc = sym["location"]
+            pos = loc["range"]["start"]
+            lines.append(f"{kind} {sym['name']} — "
+                         f"{uri_to_path(loc['uri'])}:{pos['line'] + 1}:{pos['character'] + 1}")
+
+    for sym in result or []:
+        walk(sym, 0)
+    return "\n".join(lines) or "(no symbols)"
+
+
+def format_diagnostics(by_uri):
+    lines = []
+    for uri, diags in by_uri.items():
+        path = uri_to_path(uri)
+        for d in diags:
+            pos = d["range"]["start"]
+            sev = SEVERITIES.get(d.get("severity"), "info")
+            lines.append(f"{path}:{pos['line'] + 1}:{pos['character'] + 1} "
+                         f"{sev}: {d.get('message', '').strip()}")
+    return "\n".join(lines) or "(no diagnostics)"

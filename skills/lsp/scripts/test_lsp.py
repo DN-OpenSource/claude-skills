@@ -175,5 +175,77 @@ class TestQueryRetry(unittest.TestCase):
         self.assertIsNone(result)
 
 
+class TestFormatting(unittest.TestCase):
+    def test_locations_from_result_location_and_link(self):
+        loc = {"uri": "file:///tmp/a.py",
+               "range": {"start": {"line": 4, "character": 2},
+                         "end": {"line": 4, "character": 5}}}
+        link = {"targetUri": "file:///tmp/b.py",
+                "targetRange": {"start": {"line": 0, "character": 0},
+                                "end": {"line": 9, "character": 0}},
+                "targetSelectionRange": {"start": {"line": 1, "character": 3},
+                                         "end": {"line": 1, "character": 6}}}
+        locs = lsp.locations_from_result([loc, link])
+        self.assertEqual(locs[0][1:], (5, 3))   # 1-based
+        self.assertEqual(locs[1][1:], (2, 4))   # uses targetSelectionRange
+
+    def test_locations_from_result_single_and_none(self):
+        self.assertEqual(lsp.locations_from_result(None), [])
+        loc = {"uri": "file:///tmp/a.py",
+               "range": {"start": {"line": 0, "character": 0},
+                         "end": {"line": 0, "character": 1}}}
+        self.assertEqual(len(lsp.locations_from_result(loc)), 1)
+
+    def test_format_locations_includes_snippet(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            out = lsp.format_locations([(str(p), 2, 7)])
+            self.assertIn(f"{p}:2:7", out)
+            self.assertIn("bar = foo", out)
+
+    def test_format_hover_dict_contents(self):
+        out = lsp.format_hover({"contents": {"kind": "markdown", "value": "foo: int"}})
+        self.assertEqual(out, "foo: int")
+        self.assertEqual(lsp.format_hover(None), "(no hover info)")
+
+    def test_format_hover_list_contents(self):
+        out = lsp.format_hover({"contents": ["sig", {"value": "doc"}]})
+        self.assertEqual(out, "sig\ndoc")
+
+    def test_format_symbols_hierarchical(self):
+        result = [{"name": "Cls", "kind": 5,
+                   "range": {"start": {"line": 0, "character": 0},
+                             "end": {"line": 5, "character": 0}},
+                   "selectionRange": {"start": {"line": 0, "character": 6},
+                                      "end": {"line": 0, "character": 9}},
+                   "children": [{"name": "meth", "kind": 6,
+                                 "range": {"start": {"line": 1, "character": 2},
+                                           "end": {"line": 2, "character": 0}},
+                                 "selectionRange": {"start": {"line": 1, "character": 6},
+                                                    "end": {"line": 1, "character": 10}},
+                                 "children": []}]}]
+        out = lsp.format_symbols(result, "x.py")
+        self.assertIn("class Cls — x.py:1:7", out)
+        self.assertIn("  method meth — x.py:2:7", out)
+
+    def test_format_symbols_flat_symbol_information(self):
+        result = [{"name": "foo", "kind": 13,
+                   "location": {"uri": "file:///tmp/a.py",
+                                "range": {"start": {"line": 0, "character": 0},
+                                          "end": {"line": 0, "character": 3}}}}]
+        out = lsp.format_symbols(result, None)
+        self.assertIn("variable foo", out)
+        self.assertIn(":1:1", out)
+
+    def test_format_diagnostics(self):
+        by_uri = {"file:///tmp/a.py": [
+            {"range": {"start": {"line": 2, "character": 4},
+                       "end": {"line": 2, "character": 9}},
+             "severity": 1, "message": "name 'x' is not defined"}]}
+        out = lsp.format_diagnostics(by_uri)
+        self.assertIn(":3:5 error: name 'x' is not defined", out)
+        self.assertEqual(lsp.format_diagnostics({"u": []}), "(no diagnostics)")
+
+
 if __name__ == "__main__":
     unittest.main()
