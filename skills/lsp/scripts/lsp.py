@@ -377,3 +377,82 @@ def format_diagnostics(by_uri):
             lines.append(f"{path}:{pos['line'] + 1}:{pos['character'] + 1} "
                          f"{sev}: {d.get('message', '').strip()}")
     return "\n".join(lines) or "(no diagnostics)"
+
+
+# ------------------------------------------------------------------- rename
+
+
+def utf16_to_index(line_text, units):
+    """Convert a UTF-16 code-unit column (LSP) to a Python string index."""
+    count = 0
+    for i, ch in enumerate(line_text):
+        if count >= units:
+            return i
+        count += 2 if ord(ch) > 0xFFFF else 1
+    return len(line_text)
+
+
+def apply_edits_to_text(text, edits):
+    """Apply [(range, newText)] to a document string, last-to-first so earlier
+    offsets stay valid. LSP ranges are 0-based, UTF-16 columns."""
+    lines = text.splitlines(keepends=True)
+    starts = [0]
+    for ln in lines:
+        starts.append(starts[-1] + len(ln))
+
+    def to_offset(pos):
+        line = pos["line"]
+        if line >= len(lines):
+            return len(text)
+        return starts[line] + utf16_to_index(lines[line], pos["character"])
+
+    spans = sorted(((to_offset(rng["start"]), to_offset(rng["end"]), new)
+                    for rng, new in edits), reverse=True)
+    for start, end, new in spans:
+        text = text[:start] + new + text[end:]
+    return text
+
+
+def collect_edits(workspace_edit):
+    """Normalize a WorkspaceEdit to {path: [(range, newText), ...]}.
+    Raises on file create/rename/delete operations — those must not be
+    half-applied silently."""
+    out = {}
+    for uri, edits in (workspace_edit.get("changes") or {}).items():
+        out.setdefault(uri_to_path(uri), []).extend(
+            (e["range"], e["newText"]) for e in edits)
+    for change in (workspace_edit.get("documentChanges") or []):
+        if "textDocument" in change:
+            path = uri_to_path(change["textDocument"]["uri"])
+            out.setdefault(path, []).extend(
+                (e["range"], e["newText"]) for e in change["edits"])
+        elif change.get("kind") in ("create", "rename", "delete"):
+            raise RuntimeError(
+                "rename produced file create/rename/delete operations; "
+                "this client only applies text edits — do the file ops manually")
+    return out
+
+
+def format_edit_summary(edits_by_path):
+    lines, total = [], 0
+    for path in sorted(edits_by_path):
+        pairs = edits_by_path[path]
+        total += len(pairs)
+        lines.append(f"{path} ({len(pairs)} edit{'s' if len(pairs) != 1 else ''})")
+        for rng, new in sorted(pairs, key=lambda e: (e[0]["start"]["line"],
+                                                     e[0]["start"]["character"])):
+            s = rng["start"]
+            lines.append(f"  {s['line'] + 1}:{s['character'] + 1} -> {new!r}")
+    lines.append(f"{total} edits in {len(edits_by_path)} files "
+                 f"(dry run — pass --apply to write)")
+    return "\n".join(lines)
+
+
+def apply_workspace_edits(edits_by_path):
+    for path, pairs in edits_by_path.items():
+        p = Path(path)
+        p.write_text(apply_edits_to_text(p.read_text(encoding="utf-8"), pairs),
+                     encoding="utf-8")
+    total = sum(len(v) for v in edits_by_path.values())
+    return (f"applied {total} edits in {len(edits_by_path)} "
+            f"file{'s' if len(edits_by_path) != 1 else ''}")

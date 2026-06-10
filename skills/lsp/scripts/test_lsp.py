@@ -247,5 +247,73 @@ class TestFormatting(unittest.TestCase):
         self.assertEqual(lsp.format_diagnostics({"u": []}), "(no diagnostics)")
 
 
+class TestRename(unittest.TestCase):
+    def _edit(self, sl, sc, el, ec, new):
+        return ({"start": {"line": sl, "character": sc},
+                 "end": {"line": el, "character": ec}}, new)
+
+    def test_apply_edits_reverse_order(self):
+        text = "foo = 1\nbar = foo\n"
+        edits = [self._edit(0, 0, 0, 3, "qux"), self._edit(1, 6, 1, 9, "qux")]
+        self.assertEqual(lsp.apply_edits_to_text(text, edits), "qux = 1\nbar = qux\n")
+
+    def test_apply_edits_given_in_any_order(self):
+        text = "foo = 1\nbar = foo\n"
+        edits = [self._edit(1, 6, 1, 9, "qux"), self._edit(0, 0, 0, 3, "qux")]
+        self.assertEqual(lsp.apply_edits_to_text(text, edits), "qux = 1\nbar = qux\n")
+
+    def test_utf16_to_index_astral(self):
+        # '🎉' is two UTF-16 code units but one Python char.
+        self.assertEqual(lsp.utf16_to_index("a🎉b foo", 5), 4)
+        self.assertEqual(lsp.utf16_to_index("abc", 99), 3)
+
+    def test_apply_edit_after_emoji(self):
+        text = "x = '🎉'; foo = 1\n"
+        # UTF-16 col of 'foo': x,space,=,space,',🎉(2),',;,space = 10 units
+        edits = [self._edit(0, 10, 0, 13, "qux")]
+        self.assertEqual(lsp.apply_edits_to_text(text, edits), "x = '🎉'; qux = 1\n")
+
+    def test_collect_edits_changes_form(self):
+        we = {"changes": {"file:///tmp/a.py": [
+            {"range": {"start": {"line": 0, "character": 0},
+                       "end": {"line": 0, "character": 3}}, "newText": "qux"}]}}
+        edits = lsp.collect_edits(we)
+        self.assertEqual(len(edits), 1)
+        (path, pairs), = edits.items()
+        self.assertEqual(pairs[0][1], "qux")
+
+    def test_collect_edits_document_changes_form(self):
+        we = {"documentChanges": [{"textDocument": {"uri": "file:///tmp/a.py", "version": 1},
+                                   "edits": [{"range": {"start": {"line": 1, "character": 6},
+                                                        "end": {"line": 1, "character": 9}},
+                                              "newText": "qux"}]}]}
+        edits = lsp.collect_edits(we)
+        self.assertEqual(sum(len(v) for v in edits.values()), 1)
+
+    def test_collect_edits_rejects_file_operations(self):
+        we = {"documentChanges": [{"kind": "rename", "oldUri": "a", "newUri": "b"}]}
+        with self.assertRaises(RuntimeError):
+            lsp.collect_edits(we)
+
+    def test_format_edit_summary_dry_run(self):
+        edits = {"a.py": [({"start": {"line": 0, "character": 0},
+                            "end": {"line": 0, "character": 3}}, "qux")]}
+        out = lsp.format_edit_summary(edits)
+        self.assertIn("a.py (1 edit", out)
+        self.assertIn("1:1 -> 'qux'", out)
+        self.assertIn("dry run", out)
+
+    def test_apply_workspace_edits_writes_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            edits = {str(p): [({"start": {"line": 0, "character": 0},
+                                "end": {"line": 0, "character": 3}}, "qux"),
+                              ({"start": {"line": 1, "character": 6},
+                                "end": {"line": 1, "character": 9}}, "qux")]}
+            out = lsp.apply_workspace_edits(edits)
+            self.assertEqual(p.read_text(encoding="utf-8"), "qux = 1\nbar = qux\n")
+            self.assertIn("applied 2 edits in 1 file", out)
+
+
 if __name__ == "__main__":
     unittest.main()
