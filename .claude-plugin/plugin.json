@@ -1,7 +1,7 @@
 {
   "name": "claude-skills",
-  "description": "A collection of custom skills for Claude Code — teammates (subagent teams with no orchestrator), codebase-guardian (disciplined, toolchain-validated editing of existing codebases), memory (durable hierarchical context across sessions), and agents-dox (the DOX AGENTS.md contract hierarchy). Each works standalone and composes with the others.",
-  "version": "1.2.0",
+  "description": "A collection of custom skills for Claude Code — teammates (subagent teams with no orchestrator), codebase-guardian (disciplined, toolchain-validated editing of existing codebases), memory (durable hierarchical context across sessions), agents-dox (the DOX AGENTS.md contract hierarchy), and lsp (semantic code navigation via language servers). Each works standalone and composes with the others.",
+  "version": "1.3.0",
   "author": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"

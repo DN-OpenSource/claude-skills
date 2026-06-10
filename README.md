@@ -2,7 +2,7 @@
 
 A collection of custom skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview). Each skill works on its own, and they compose with one another (see [How the skills work together](#how-the-skills-work-together)).
 
-**Version:** 1.2.0 (all plugins)
+**Version:** 1.3.0 (all plugins)
 
 ## What are skills?
 
@@ -12,10 +12,11 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 
 | Skill | Version | Works in | Description |
 |-------|---------|----------|-------------|
-| [teammates](skills/teammates/SKILL.md) | 1.2.0 | Claude Code | Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs. |
-| [codebase-guardian](skills/codebase-guardian/SKILL.md) | 1.2.0 | Claude Code | A disciplined four-phase loop for editing existing codebases safely — validate against the real toolchain, match or deliberately change the existing pattern, trace the ripple, and record learnings to MEMORY.md. Covers TypeScript/Node, Python/Django, Flutter/Dart, and Rust/Tauri. |
-| [memory](skills/memory/SKILL.md) | 1.2.0 | Claude Code | Durable, hierarchical memory files so context survives across sessions — bootstrap, read, and update `MEMORY.md` at the repo root and per module, plus user-level `USER.md`. The persistence layer `codebase-guardian` builds on. |
-| [agents-dox](skills/agents-dox/SKILL.md) | 1.2.0 | Claude Code | The DOX framework — a hierarchy of `AGENTS.md` files, each a binding work contract for its subtree. Read the root-to-nearest chain before editing; run a DOX pass to update the owning `AGENTS.md` and affected parents/children after. Bootstraps the tree if a repo has none. |
+| [teammates](skills/teammates/SKILL.md) | 1.3.0 | Claude Code | Run any task as a flat team of Claude Code subagents — no orchestrator, no hierarchy. Agents share a JSON manifest, claim work, message each other, and merge outputs. |
+| [codebase-guardian](skills/codebase-guardian/SKILL.md) | 1.3.0 | Claude Code | A disciplined four-phase loop for editing existing codebases safely — validate against the real toolchain, match or deliberately change the existing pattern, trace the ripple, and record learnings to MEMORY.md. Covers TypeScript/Node, Python/Django, Flutter/Dart, and Rust/Tauri. |
+| [memory](skills/memory/SKILL.md) | 1.3.0 | Claude Code | Durable, hierarchical memory files so context survives across sessions — bootstrap, read, and update `MEMORY.md` at the repo root and per module, plus user-level `USER.md`. The persistence layer `codebase-guardian` builds on. |
+| [agents-dox](skills/agents-dox/SKILL.md) | 1.3.0 | Claude Code | The DOX framework — a hierarchy of `AGENTS.md` files, each a binding work contract for its subtree. Read the root-to-nearest chain before editing; run a DOX pass to update the owning `AGENTS.md` and affected parents/children after. Bootstraps the tree if a repo has none. |
+| [lsp](skills/lsp/SKILL.md) | 1.3.0 | Claude Code | Semantic code navigation via real language servers — definition, references, hover, symbols, diagnostics, and safe project-wide rename for TypeScript/Node, Python, Dart/Flutter, and Rust. Ships a stdlib-only Python LSP client; falls back to grep when no server is installed. |
 
 ## How the skills work together
 
@@ -25,6 +26,8 @@ Each skill is **self-contained** — install any one on its own and it works wit
 - **teammates + memory** — peers can read the shared `MEMORY.md` for project context before claiming work, and the merge step can fold new learnings back in.
 - **teammates + codebase-guardian** — when a peer team is editing real code, each peer follows the guardian loop (validate with the toolchain, match the pattern, trace the ripple) for its own work item, so parallelism doesn't cost safety.
 - **agents-dox + everything** — in a repo that uses the DOX `AGENTS.md` hierarchy, the contract chain governs the others: guardian reads the chain during Orient and folds the DOX pass into its closeout, and each teammates peer reads the same chain before claiming work. `agents-dox` (instructions/contracts in `AGENTS.md`) and `memory` (durable facts in `MEMORY.md`) are complementary, not competing.
+- **lsp + codebase-guardian** — guardian's Orient phase can use lsp for impact analysis (`references` before deciding scope), and lsp's rename flow uses guardian's verification loop after applying edits. Both cover the same four stacks.
+- **lsp + memory** — per-project server quirks (monorepo roots, retry windows, venv config) accumulate in `MEMORY.md`, so the next session doesn't rediscover them.
 
 None of these are required: a skill never errors or stalls because a companion skill is absent.
 
@@ -69,9 +72,14 @@ claude-skills/
     ├── memory/
     │   ├── README.md
     │   └── SKILL.md
-    └── agents-dox/
+    ├── agents-dox/
+    │   ├── README.md
+    │   └── SKILL.md
+    └── lsp/
         ├── README.md
-        └── SKILL.md
+        ├── SKILL.md
+        ├── scripts/      ← stdlib-only LSP client + tests
+        └── references/   ← per-stack server commands & quirks
 ```
 
 Each skill lives in its own subdirectory. If the skill needs supporting files (scripts, reference docs, templates), they go in subdirectories alongside `SKILL.md`:
