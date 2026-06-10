@@ -68,5 +68,33 @@ class TestHelpers(unittest.TestCase):
             self.assertFalse(part.startswith('"'))
 
 
+import io
+
+
+class TestFraming(unittest.TestCase):
+    def test_write_then_read_roundtrip(self):
+        buf = io.BytesIO()
+        lsp.write_message(buf, {"jsonrpc": "2.0", "id": 1, "method": "x"})
+        buf.seek(0)
+        msg = lsp.read_message(buf)
+        self.assertEqual(msg, {"jsonrpc": "2.0", "id": 1, "method": "x"})
+
+    def test_read_handles_extra_headers(self):
+        body = json.dumps({"ok": True}).encode()
+        raw = (b"Content-Type: application/vscode-jsonrpc; charset=utf-8\r\n"
+               b"Content-Length: " + str(len(body)).encode() + b"\r\n\r\n" + body)
+        msg = lsp.read_message(io.BytesIO(raw))
+        self.assertEqual(msg, {"ok": True})
+
+    def test_read_eof_returns_none(self):
+        self.assertIsNone(lsp.read_message(io.BytesIO(b"")))
+
+    def test_write_counts_utf8_bytes_not_chars(self):
+        buf = io.BytesIO()
+        lsp.write_message(buf, {"name": "héllo"})
+        buf.seek(0)
+        self.assertEqual(lsp.read_message(buf), {"name": "héllo"})
+
+
 if __name__ == "__main__":
     unittest.main()

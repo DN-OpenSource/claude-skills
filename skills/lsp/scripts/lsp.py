@@ -107,3 +107,33 @@ def split_command(value):
     if os.name == "nt":
         return [t.strip('"') for t in shlex.split(value, posix=False)]
     return shlex.split(value)
+
+
+# ----------------------------------------------------------- JSON-RPC framing
+
+
+def write_message(stream, payload):
+    body = json.dumps(payload).encode("utf-8")
+    stream.write(b"Content-Length: " + str(len(body)).encode("ascii") + b"\r\n\r\n")
+    stream.write(body)
+    stream.flush()
+
+
+def read_message(stream):
+    """Read one framed message. Returns the parsed dict, or None on EOF."""
+    length = None
+    while True:
+        line = stream.readline()
+        if not line:
+            return None
+        line = line.strip()
+        if not line:
+            break  # end of headers
+        if line.lower().startswith(b"content-length:"):
+            length = int(line.split(b":", 1)[1])
+    if length is None:
+        return None
+    body = stream.read(length)
+    if body is None or len(body) < length:
+        return None
+    return json.loads(body.decode("utf-8"))
