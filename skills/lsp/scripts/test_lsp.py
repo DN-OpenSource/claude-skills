@@ -96,5 +96,84 @@ class TestFraming(unittest.TestCase):
         self.assertEqual(lsp.read_message(buf), {"name": "héllo"})
 
 
+FAKE_SERVER = [sys.executable, str(Path(__file__).resolve().parent / "fake_lsp_server.py")]
+
+
+def make_project(tmp):
+    """A two-line file: 'foo = 1\\nbar = foo\\n'."""
+    p = Path(tmp) / "sample.py"
+    p.write_text("foo = 1\nbar = foo\n", encoding="utf-8")
+    return p
+
+
+class TestClient(unittest.TestCase):
+    def _client(self, root):
+        c = lsp.LspClient(FAKE_SERVER, root, timeout=10.0)
+        c.start()
+        self.addCleanup(c.stop)
+        return c
+
+    def test_initialize_and_definition(self):
+        # stop() inside the with-block: on Windows the temp dir can't be
+        # removed while the server child still has it as its cwd.
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            c = self._client(tmp)
+            try:
+                c.open_file(p)
+                result = c.request("textDocument/definition", {
+                    "textDocument": {"uri": lsp.path_to_uri(p)},
+                    "position": {"line": 1, "character": 6}})
+                self.assertEqual(result[0]["range"]["start"],
+                                 {"line": 0, "character": 0})
+            finally:
+                c.stop()
+
+    def test_diagnostics_push_collected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            c = self._client(tmp)
+            try:
+                c.open_file(p)
+                uri = lsp.path_to_uri(p)
+                by_uri = c.wait_diagnostics([uri], wait_secs=10.0)
+                self.assertEqual(by_uri[uri][0]["message"], "fake warning")
+            finally:
+                c.stop()
+
+    def test_request_timeout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            c = self._client(tmp)
+            try:
+                c.timeout = 0.5
+                with self.assertRaises(TimeoutError):
+                    # the fake server deliberately never answers $/test/noreply
+                    c.request("$/test/noreply", {})
+            finally:
+                c.stop()
+
+
+class TestQueryRetry(unittest.TestCase):
+    def test_retries_empty_then_returns(self):
+        calls = []
+
+        class Stub:
+            def request(self, method, params):
+                calls.append(method)
+                return [] if len(calls) < 2 else ["hit"]
+
+        result = lsp.query_with_retry(Stub(), "m", {}, retry_secs=5.0)
+        self.assertEqual(result, ["hit"])
+        self.assertEqual(len(calls), 2)
+
+    def test_gives_up_after_window(self):
+        class Stub:
+            def request(self, method, params):
+                return None
+
+        result = lsp.query_with_retry(Stub(), "m", {}, retry_secs=0.0)
+        self.assertIsNone(result)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -137,3 +137,146 @@ def read_message(stream):
     if body is None or len(body) < length:
         return None
     return json.loads(body.decode("utf-8"))
+
+
+# ------------------------------------------------------------------ client
+
+
+class LspClient:
+    """Drives one language-server process for the lifetime of one invocation."""
+
+    def __init__(self, cmd, root, timeout=30.0):
+        self.cmd = cmd
+        self.root = Path(root).resolve()
+        self.timeout = timeout
+        self.proc = None
+        self.diagnostics = {}  # uri -> list of Diagnostic
+        self._next_id = 0
+        self._responses = {}
+        self._cond = threading.Condition()
+        self._reader = None
+
+    def start(self):
+        self.proc = subprocess.Popen(
+            self.cmd, cwd=str(self.root),
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL)
+        self._reader = threading.Thread(target=self._read_loop, daemon=True)
+        self._reader.start()
+        root_uri = path_to_uri(self.root)
+        self.request("initialize", {
+            "processId": os.getpid(),
+            "rootUri": root_uri,
+            "workspaceFolders": [{"uri": root_uri, "name": self.root.name}],
+            "capabilities": {
+                "textDocument": {
+                    "synchronization": {},
+                    "definition": {},
+                    "references": {},
+                    "hover": {"contentFormat": ["plaintext", "markdown"]},
+                    "documentSymbol": {"hierarchicalDocumentSymbolSupport": True},
+                    "rename": {},
+                    "publishDiagnostics": {},
+                },
+                "workspace": {"symbol": {}, "workspaceEdit": {"documentChanges": True}},
+            },
+        })
+        self.notify("initialized", {})
+
+    def _read_loop(self):
+        while True:
+            try:
+                msg = read_message(self.proc.stdout)
+            except Exception:
+                break
+            if msg is None:
+                break
+            if "id" in msg and ("result" in msg or "error" in msg):
+                with self._cond:
+                    self._responses[msg["id"]] = msg
+                    self._cond.notify_all()
+            elif msg.get("method") == "textDocument/publishDiagnostics":
+                params = msg.get("params") or {}
+                with self._cond:
+                    self.diagnostics[params.get("uri")] = params.get("diagnostics", [])
+                    self._cond.notify_all()
+            elif "id" in msg and "method" in msg:
+                # Server-to-client request (config, registration…): answer null
+                # so the server doesn't stall waiting on us.
+                try:
+                    write_message(self.proc.stdin,
+                                  {"jsonrpc": "2.0", "id": msg["id"], "result": None})
+                except Exception:
+                    break
+
+    def request(self, method, params):
+        self._next_id += 1
+        rid = self._next_id
+        write_message(self.proc.stdin,
+                      {"jsonrpc": "2.0", "id": rid, "method": method, "params": params})
+        deadline = time.monotonic() + self.timeout
+        with self._cond:
+            while rid not in self._responses:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise TimeoutError(f"no response to {method} within {self.timeout}s")
+                self._cond.wait(remaining)
+            msg = self._responses.pop(rid)
+        if "error" in msg:
+            raise RuntimeError(f"{method} failed: {msg['error'].get('message')}")
+        return msg.get("result")
+
+    def notify(self, method, params):
+        write_message(self.proc.stdin,
+                      {"jsonrpc": "2.0", "method": method, "params": params})
+
+    def open_file(self, path):
+        p = Path(path).resolve()
+        self.notify("textDocument/didOpen", {"textDocument": {
+            "uri": path_to_uri(p),
+            "languageId": LANGUAGE_IDS.get(p.suffix, "plaintext"),
+            "version": 1,
+            "text": p.read_text(encoding="utf-8", errors="replace"),
+        }})
+
+    def wait_diagnostics(self, uris, wait_secs):
+        """Wait until the server has pushed diagnostics for every uri (or timeout)."""
+        deadline = time.monotonic() + wait_secs
+        with self._cond:
+            while not all(u in self.diagnostics for u in uris):
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    break
+                self._cond.wait(remaining)
+            return {u: self.diagnostics.get(u, []) for u in uris}
+
+    def stop(self):
+        if self.proc is None:
+            return
+        try:
+            if self.proc.poll() is None:
+                try:
+                    saved, self.timeout = self.timeout, 3.0
+                    self.request("shutdown", None)
+                    self.timeout = saved
+                except Exception:
+                    pass
+                self.notify("exit", {})
+                self.proc.wait(timeout=5)
+        except Exception:
+            pass
+        finally:
+            if self.proc.poll() is None:
+                self.proc.kill()
+
+
+def query_with_retry(client, method, params, retry_secs):
+    """Re-issue a query that returns None/[] (server may still be indexing)."""
+    deadline = time.monotonic() + retry_secs
+    while True:
+        result = client.request(method, params)
+        if result not in (None, []):
+            return result
+        if time.monotonic() >= deadline:
+            return result
+        time.sleep(1.0)
