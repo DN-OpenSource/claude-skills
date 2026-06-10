@@ -315,5 +315,86 @@ class TestRename(unittest.TestCase):
             self.assertIn("applied 2 edits in 1 file", out)
 
 
+import subprocess
+
+SCRIPTS_DIR = Path(__file__).resolve().parent
+FAKE_SERVER_ARG = f'"{sys.executable}" "{SCRIPTS_DIR / "fake_lsp_server.py"}"'
+
+
+def run_cli(tmp, *argv, stdin=None):
+    cmd = [sys.executable, str(SCRIPTS_DIR / "lsp.py"),
+           "--server", FAKE_SERVER_ARG, "--root", tmp, "--retry", "0"] + list(argv)
+    return subprocess.run(cmd, capture_output=True, text=True,
+                          input=stdin, timeout=60, encoding="utf-8")
+
+
+class TestCli(unittest.TestCase):
+    def test_definition_end_to_end(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            r = run_cli(tmp, "definition", f"{p}:2:7")
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn(":1:1 — foo = 1", r.stdout)
+
+    def test_references_end_to_end(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            r = run_cli(tmp, "references", f"{p}:1:1")
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn(":1:1", r.stdout)
+            self.assertIn(":2:7", r.stdout)
+
+    def test_rename_dry_run_does_not_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            r = run_cli(tmp, "rename", f"{p}:1:1", "qux")
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn("dry run", r.stdout)
+            self.assertEqual(p.read_text(encoding="utf-8"), "foo = 1\nbar = foo\n")
+
+    def test_rename_apply_writes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            r = run_cli(tmp, "--apply", "rename", f"{p}:1:1", "qux")
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertEqual(p.read_text(encoding="utf-8"), "qux = 1\nbar = qux\n")
+
+    def test_diagnostics_end_to_end(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            r = run_cli(tmp, "diagnostics", str(p))
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn("warning: fake warning", r.stdout)
+
+    def test_batch_runs_multiple_queries(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            stdin = f"definition {p}:2:7\nhover {p}:1:1\n"
+            r = run_cli(tmp, "batch", stdin=stdin)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            self.assertIn("## definition", r.stdout)
+            self.assertIn("## hover", r.stdout)
+            self.assertIn("(variable) foo: int", r.stdout)
+
+    def test_missing_server_binary_exits_with_hint(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "Cargo.toml").write_text("", encoding="utf-8")
+            env = dict(os.environ, PATH="")
+            cmd = [sys.executable, str(SCRIPTS_DIR / "lsp.py"), "--root", tmp,
+                   "definition", "x.rs:1:1"]
+            r = subprocess.run(cmd, capture_output=True, text=True, env=env,
+                               timeout=60, encoding="utf-8")
+            self.assertNotEqual(r.returncode, 0)
+            self.assertIn("rustup component add rust-analyzer", r.stderr)
+
+    def test_json_flag_emits_raw_response(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = make_project(tmp)
+            r = run_cli(tmp, "--json", "definition", f"{p}:2:7")
+            self.assertEqual(r.returncode, 0, r.stderr)
+            parsed = json.loads(r.stdout)
+            self.assertEqual(parsed[0]["range"]["start"]["line"], 0)
+
+
 if __name__ == "__main__":
     unittest.main()

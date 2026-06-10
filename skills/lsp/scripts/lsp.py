@@ -456,3 +456,142 @@ def apply_workspace_edits(edits_by_path):
     total = sum(len(v) for v in edits_by_path.values())
     return (f"applied {total} edits in {len(edits_by_path)} "
             f"file{'s' if len(edits_by_path) != 1 else ''}")
+
+
+# --------------------------------------------------------------------- CLI
+
+COMMANDS = ("definition", "references", "hover", "symbols",
+            "workspace-symbols", "diagnostics", "rename", "batch")
+
+
+def run_command(client, name, args, ns):
+    """Execute one query against a started client; return printable output."""
+    if name in ("definition", "references", "hover"):
+        if len(args) != 1:
+            raise ValueError(f"{name} takes exactly one FILE:LINE:COL argument")
+        path, params = text_document_position(args[0])
+        client.open_file(path)
+        method = {"definition": "textDocument/definition",
+                  "references": "textDocument/references",
+                  "hover": "textDocument/hover"}[name]
+        if name == "references":
+            params["context"] = {"includeDeclaration": True}
+        result = query_with_retry(client, method, params, ns.retry)
+        if ns.json:
+            return json.dumps(result, indent=2)
+        if name == "hover":
+            return format_hover(result)
+        return format_locations(locations_from_result(result))
+
+    if name == "symbols":
+        if len(args) != 1:
+            raise ValueError("symbols takes exactly one FILE argument")
+        path = args[0]
+        client.open_file(path)
+        result = query_with_retry(client, "textDocument/documentSymbol",
+                                  {"textDocument": {"uri": path_to_uri(path)}},
+                                  ns.retry)
+        return json.dumps(result, indent=2) if ns.json else format_symbols(result, path)
+
+    if name == "workspace-symbols":
+        if len(args) != 1:
+            raise ValueError("workspace-symbols takes exactly one QUERY argument")
+        result = query_with_retry(client, "workspace/symbol",
+                                  {"query": args[0]}, ns.retry)
+        return json.dumps(result, indent=2) if ns.json else format_symbols(result, None)
+
+    if name == "diagnostics":
+        if not args:
+            raise ValueError("diagnostics takes one or more FILE arguments")
+        uris = []
+        for path in args:
+            client.open_file(path)
+            uris.append(path_to_uri(path))
+        by_uri = client.wait_diagnostics(uris, ns.timeout)
+        return json.dumps(by_uri, indent=2) if ns.json else format_diagnostics(by_uri)
+
+    if name == "rename":
+        if len(args) != 2:
+            raise ValueError("rename takes FILE:LINE:COL NEW_NAME")
+        path, params = text_document_position(args[0])
+        client.open_file(path)
+        params["newName"] = args[1]
+        result = query_with_retry(client, "textDocument/rename", params, ns.retry)
+        if not result:
+            return "(server returned no edits)"
+        if ns.json:
+            return json.dumps(result, indent=2)
+        edits = collect_edits(result)
+        if ns.apply:
+            return apply_workspace_edits(edits)
+        return format_edit_summary(edits)
+
+    raise ValueError(f"unknown command {name!r}")
+
+
+def main(argv=None):
+    # Pipes on Windows default to the legacy codepage; query output (snippets,
+    # hover docs) is arbitrary unicode.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
+    parser = argparse.ArgumentParser(
+        prog="lsp.py",
+        description="One-shot LSP client for semantic code navigation.")
+    parser.add_argument("--server",
+                        help="server command, e.g. 'pyright-langserver --stdio' "
+                             "(default: auto-detect from --root project markers)")
+    parser.add_argument("--root", default=".", help="project root (default: cwd)")
+    parser.add_argument("--json", action="store_true", help="raw LSP JSON output")
+    parser.add_argument("--timeout", type=float, default=30.0,
+                        help="per-request timeout in seconds (default 30)")
+    parser.add_argument("--retry", type=float, default=5.0,
+                        help="seconds to retry empty results while the server "
+                             "indexes (default 5; raise for rust-analyzer)")
+    parser.add_argument("--apply", action="store_true",
+                        help="rename only: write the edits to disk "
+                             "(default is a dry run)")
+    parser.add_argument("command", choices=COMMANDS)
+    parser.add_argument("args", nargs="*")
+    ns = parser.parse_args(argv)
+
+    root = Path(ns.root).resolve()
+    if ns.server:
+        cmd = split_command(ns.server)
+        hint = None
+    else:
+        detected = detect_server(root)
+        if detected is None:
+            sys.exit(f"no project markers found in {root} "
+                     f"(looked for tsconfig.json/package.json, pyproject.toml, "
+                     f"pubspec.yaml, Cargo.toml) — pass --server explicitly")
+        _stack, cmd, hint = detected
+    if shutil.which(cmd[0]) is None:
+        msg = f"language server {cmd[0]!r} not found on PATH"
+        if hint:
+            msg += f" — install with: {hint}"
+        sys.exit(msg)
+
+    client = LspClient(cmd, root, timeout=ns.timeout)
+    try:
+        client.start()
+        if ns.command == "batch":
+            for line in sys.stdin.read().splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                parts = split_command(line)
+                print(f"## {line}")
+                print(run_command(client, parts[0], parts[1:], ns))
+                print()
+        else:
+            print(run_command(client, ns.command, ns.args, ns))
+    except (TimeoutError, RuntimeError, ValueError, OSError) as exc:
+        sys.exit(f"lsp.py: {exc}")
+    finally:
+        client.stop()
+
+
+if __name__ == "__main__":
+    main()
