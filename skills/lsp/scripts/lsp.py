@@ -268,6 +268,13 @@ class LspClient:
         finally:
             if self.proc.poll() is None:
                 self.proc.kill()
+                self.proc.wait()
+            for stream in (self.proc.stdin, self.proc.stdout, self.proc.stderr):
+                if stream is not None:
+                    try:
+                        stream.close()
+                    except Exception:
+                        pass
 
 
 def query_with_retry(client, method, params, retry_secs):

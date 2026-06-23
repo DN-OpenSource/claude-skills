@@ -1,1 +1,3 @@
 .teammates/
+__pycache__/
+*.pyc
