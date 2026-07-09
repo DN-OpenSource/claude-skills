@@ -17,6 +17,7 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 | [memory](skills/memory/SKILL.md) | 1.3.0 | Claude Code | Durable, hierarchical memory files so context survives across sessions — bootstrap, read, and update `MEMORY.md` at the repo root and per module, plus user-level `USER.md`. The persistence layer `codebase-guardian` builds on. |
 | [agents-dox](skills/agents-dox/SKILL.md) | 1.3.0 | Claude Code | The DOX framework — a hierarchy of `AGENTS.md` files, each a binding work contract for its subtree. Read the root-to-nearest chain before editing; run a DOX pass to update the owning `AGENTS.md` and affected parents/children after. Bootstraps the tree if a repo has none. |
 | [lsp](skills/lsp/SKILL.md) | 1.3.0 | Claude Code | Semantic code navigation via real language servers — definition, references, hover, symbols, diagnostics, and safe project-wide rename for TypeScript/Node, Python, Dart/Flutter, and Rust. Ships a stdlib-only Python LSP client; falls back to grep when no server is installed. |
+| [schema-aware-db](skills/schema-aware-db/SKILL.md) | 1.3.0 | Claude Code | Stop guessing database schemas. A four-phase discipline for backend data code (SQL and NoSQL) — introspect the real schema, map every usage across the codebase, write the change to industry standard, then trace the ripple so no query, migration, serializer, or test goes stale. |
 
 ## How the skills work together
 
@@ -28,6 +29,9 @@ Each skill is **self-contained** — install any one on its own and it works wit
 - **agents-dox + everything** — in a repo that uses the DOX `AGENTS.md` hierarchy, the contract chain governs the others: guardian reads the chain during Orient and folds the DOX pass into its closeout, and each teammates peer reads the same chain before claiming work. `agents-dox` (instructions/contracts in `AGENTS.md`) and `memory` (durable facts in `MEMORY.md`) are complementary, not competing.
 - **lsp + codebase-guardian** — guardian's Orient phase can use lsp for impact analysis (`references` before deciding scope), and lsp's rename flow uses guardian's verification loop after applying edits. Both cover the same four stacks.
 - **lsp + memory** — per-project server quirks (monorepo roots, retry windows, venv config) accumulate in `MEMORY.md`, so the next session doesn't rediscover them.
+- **schema-aware-db + lsp** — schema-aware-db's Phase 2 (map every usage across the codebase) uses lsp `references` on the ORM model/class to find call sites precisely, instead of grepping for a table name and drowning in false positives.
+- **schema-aware-db + codebase-guardian** — both run an introspect → map → change → trace-the-ripple loop; guardian governs the general edit, schema-aware-db specializes it for the data layer (real schema, migrations, serializers, tests).
+- **schema-aware-db + memory** — confirmed schema facts and access patterns (DynamoDB keys/GSIs, reconciled migration state) accumulate in `MEMORY.md`, so the next session starts from ground truth.
 
 None of these are required: a skill never errors or stalls because a companion skill is absent.
 
@@ -75,11 +79,15 @@ claude-skills/
     ├── agents-dox/
     │   ├── README.md
     │   └── SKILL.md
-    └── lsp/
+    ├── lsp/
+    │   ├── README.md
+    │   ├── SKILL.md
+    │   ├── scripts/      ← stdlib-only LSP client + tests
+    │   └── references/   ← per-stack server commands & quirks
+    └── schema-aware-db/
         ├── README.md
         ├── SKILL.md
-        ├── scripts/      ← stdlib-only LSP client + tests
-        └── references/   ← per-stack server commands & quirks
+        └── references/   ← per-engine introspection, standards, ripple recipe
 ```
 
 Each skill lives in its own subdirectory. If the skill needs supporting files (scripts, reference docs, templates), they go in subdirectories alongside `SKILL.md`:
