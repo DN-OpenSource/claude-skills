@@ -18,6 +18,7 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 | [agents-dox](skills/agents-dox/SKILL.md) | 1.3.0 | Claude Code | The DOX framework — a hierarchy of `AGENTS.md` files, each a binding work contract for its subtree. Read the root-to-nearest chain before editing; run a DOX pass to update the owning `AGENTS.md` and affected parents/children after. Bootstraps the tree if a repo has none. |
 | [lsp](skills/lsp/SKILL.md) | 1.3.0 | Claude Code | Semantic code navigation via real language servers — definition, references, hover, symbols, diagnostics, and safe project-wide rename for TypeScript/Node, Python, Dart/Flutter, and Rust. Ships a stdlib-only Python LSP client; falls back to grep when no server is installed. |
 | [schema-aware-db](skills/schema-aware-db/SKILL.md) | 1.3.0 | Claude Code | Stop guessing database schemas. A four-phase discipline for backend data code (SQL and NoSQL) — introspect the real schema, map every usage across the codebase, write the change to industry standard, then trace the ripple so no query, migration, serializer, or test goes stale. |
+| [ponytail](skills/ponytail/SKILL.md) | 1.3.0 | Claude Code | Wrap up a work session so nothing is left dangling — sweep every loose strand (uncommitted or unpushed work, unlabeled stashes, session debris, promises recorded nowhere), tie each one off, and leave a single "session tail" report the next session can pick up without archaeology. |
 
 ## How the skills work together
 
@@ -32,6 +33,9 @@ Each skill is **self-contained** — install any one on its own and it works wit
 - **schema-aware-db + lsp** — schema-aware-db's Phase 2 (map every usage across the codebase) uses lsp `references` on the ORM model/class to find call sites precisely, instead of grepping for a table name and drowning in false positives.
 - **schema-aware-db + codebase-guardian** — both run an introspect → map → change → trace-the-ripple loop; guardian governs the general edit, schema-aware-db specializes it for the data layer (real schema, migrations, serializers, tests).
 - **schema-aware-db + memory** — confirmed schema facts and access patterns (DynamoDB keys/GSIs, reconciled migration state) accumulate in `MEMORY.md`, so the next session starts from ground truth.
+- **ponytail + memory** — durable facts from the session tail (follow-ups, watch-outs, half-applied state) fold into `MEMORY.md`, so the handoff survives beyond the chat.
+- **ponytail + teammates** — after a peer team's outputs merge, ponytail is the natural final step: one sweep over the combined result, one tail for the whole run.
+- **ponytail + codebase-guardian / agents-dox** — guardian's closeout and the DOX pass are per-*change*; ponytail is per-*session*. Run them for each edit, then ponytail once at the end to catch what fell between changes.
 
 None of these are required: a skill never errors or stalls because a companion skill is absent.
 
@@ -84,10 +88,13 @@ claude-skills/
     │   ├── SKILL.md
     │   ├── scripts/      ← stdlib-only LSP client + tests
     │   └── references/   ← per-stack server commands & quirks
-    └── schema-aware-db/
+    ├── schema-aware-db/
+    │   ├── README.md
+    │   ├── SKILL.md
+    │   └── references/   ← per-engine introspection, standards, ripple recipe
+    └── ponytail/
         ├── README.md
-        ├── SKILL.md
-        └── references/   ← per-engine introspection, standards, ripple recipe
+        └── SKILL.md
 ```
 
 Each skill lives in its own subdirectory. If the skill needs supporting files (scripts, reference docs, templates), they go in subdirectories alongside `SKILL.md`:

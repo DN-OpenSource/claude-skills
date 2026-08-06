@@ -1,6 +1,6 @@
 {
   "name": "claude-skills",
-  "description": "A collection of custom skills for Claude Code — teammates (subagent teams with no orchestrator), codebase-guardian (disciplined, toolchain-validated editing of existing codebases), memory (durable hierarchical context across sessions), agents-dox (the DOX AGENTS.md contract hierarchy), lsp (semantic code navigation via language servers), and schema-aware-db (introspect-first database work for SQL and NoSQL). Each works standalone and composes with the others.",
+  "description": "A collection of custom skills for Claude Code — teammates (subagent teams with no orchestrator), codebase-guardian (disciplined, toolchain-validated editing of existing codebases), memory (durable hierarchical context across sessions), agents-dox (the DOX AGENTS.md contract hierarchy), lsp (semantic code navigation via language servers), schema-aware-db (introspect-first database work for SQL and NoSQL), and ponytail (end-of-session loose-end wrap-up with a handoff tail). Each works standalone and composes with the others.",
   "version": "1.3.0",
   "author": {
     "name": "dhirajnikam",
@@ -24,6 +24,9 @@
     "database",
     "sql",
     "nosql",
-    "schema"
+    "schema",
+    "wrap-up",
+    "handoff",
+    "session"
   ]
 }
