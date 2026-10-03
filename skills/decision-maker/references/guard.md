@@ -1,6 +1,6 @@
 # Guard hooks: rules, scope, and request vs. diff
 
-The plugin ships `hooks/hooks.json`, which runs `scripts/guard.py`. **Default with a key: prefetch only.** The per-edit checks (rules, scope, ask, stop) run only after `decide.py guard on`. With no key, nothing runs. It fails open on any error, timeout, or missing key.
+The plugin ships `hooks/hooks.json`, which runs `scripts/guard.py`. **Defaults follow the mode you choose after install:** auto turns on prefetch; manual, or no choice yet, runs nothing automatically. The per-edit checks (rules, scope, ask, stop) run only after `decide.py guard on`. With no key, nothing runs. It fails open on any error, timeout, or missing key.
 
 ```bash
 python3 decide.py guard on                 # all checks; or pick: guard on rules scope ask stop
@@ -35,7 +35,7 @@ Every intervention prints a `⚖ Jev guard (…)` line to the user (a hook `syst
 
 Clean passes stay silent. `decide.py guard log [-n 20]` lists recent interventions; `guard status` shows the active session rules.
 
-## Prefetch: Jev answers before Claude's first turn (on by default once a key is set)
+## Prefetch: Jev answers before Claude's first turn (on in auto mode)
 
 On each prompt, the call that already handles your in-prompt rules also asks "is this a find/filter-files-by-meaning request?". If the answer is yes (≥ 0.8):
 
@@ -46,5 +46,13 @@ On each prompt, the call that already handles your in-prompt rules also asks "is
 
 Claude can then answer in **one turn with no tool calls**. On semantic file search this measured 26–30% faster and about 40% cheaper than plain Claude Code, with precision and recall at 1.00; see the README. On a single small file, Claude may still open it to double-check.
 
-**Privacy:** prefetch sends file contents to the configured provider. It is the shipped default once you add a provider key, and the first-session notice says so. Turn it off with `decide.py guard off`, or choose features with `decide.py guard on rules stop …`. `guard on` with no arguments and `DECISION_MAKER_GUARD=all` cover only the per-edit checks; prefetch is added only when named or left at the default. It always skips `.env*`, keys and certificates (`*.pem`, `*.key`, `id_rsa`…), files with secret/credential/password/token in their name, vendored and build directories, binaries and files over 200 KB. Prompts that aren't find tasks cost only the shared prompt call. If anything fails, the hook stays silent and Claude works as usual.
+**Privacy:** prefetch sends file contents to the configured provider. It's on only if you choose auto mode (`/decision-maker:jev auto`) or name it (`guard on prefetch`), and the session notice says so. Turn it off with `decide.py guard off`, or choose features with `decide.py guard on rules stop …`. `guard on` with no arguments and `DECISION_MAKER_GUARD=all` cover only the per-edit checks; prefetch is added only when named, or kept as auto mode's default. It always skips `.env*`, keys and certificates (`*.pem`, `*.key`, `id_rsa`…), files with secret/credential/password/token in their name, vendored and build directories, binaries and files over 200 KB. Prompts that aren't find tasks cost only the shared prompt call. If anything fails, the hook stays silent and Claude works as usual.
+
+## Every Jev call is shown
+
+`decide.http` logs every call to `usage.log`, with source, questions, items, time, tokens and cost:
+
+- **Hook calls always end with a `⚖` line,** including passes (`⚖ Jev checked Edit src/x.py against 3 rules + scope → OK, allowed (1 call, 0.6s, …)`), failures (`⚖ Jev unavailable …`) and prompt checks.
+- **When Claude runs `decide.py` or the browser runner,** the `PostToolUse` hook on Bash reports those calls after the command finishes. It matches them by the command's time window and the `cli` or `browser` source.
+- **`decide.py usage`** gives the totals by source.
 

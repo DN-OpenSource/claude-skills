@@ -2,7 +2,7 @@
 
 A collection of custom skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview). Each skill works on its own, and they compose with one another (see [How the skills work together](#how-the-skills-work-together)).
 
-**Version:** 1.4.0 (all plugins)
+**Version:** 1.4.0 (all plugins; decision-maker 1.4.1)
 
 ## What are skills?
 
@@ -19,7 +19,7 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 | [lsp](skills/lsp/SKILL.md) | 1.4.0 | Claude Code | Semantic code navigation via real language servers — definition, references, hover, symbols, diagnostics, and safe project-wide rename for TypeScript/Node, Python, Dart/Flutter, and Rust. Ships a stdlib-only Python LSP client; falls back to grep when no server is installed. |
 | [schema-aware-db](skills/schema-aware-db/SKILL.md) | 1.4.0 | Claude Code | Stop guessing database schemas. A four-phase discipline for backend data code (SQL and NoSQL) — introspect the real schema, map every usage across the codebase, write the change to industry standard, then trace the ripple so no query, migration, serializer, or test goes stale. |
 | [ponytail](skills/ponytail/SKILL.md) | 1.4.0 | Claude Code | Wrap up a work session so nothing is left dangling — sweep every loose strand (uncommitted or unpushed work, unlabeled stashes, session debris, promises recorded nowhere), tie each one off, and leave a single "session tail" report the next session can pick up without archaeology. |
-| [decision-maker](skills/decision-maker/SKILL.md) | 1.4.0 | Claude Code | Fast, cheap, calibrated decisions via TypeSafe's Jev System One model — typed yes/no, choice, and score answers with confidence, batched in one call, so narrow judgment calls (route, classify, triage, rank, verify) don't burn LLM reasoning. Add any provider and edit its base URL, model, and API key; ships decision recipes for every other skill. Opt-in guard hooks check every edit and command against your `CLAUDE.md`/`AGENTS.md` rules and your request, answer Claude's questions when confident (asking you only when not), and compare the diff with the request before Claude finishes. Falls back to Claude's own judgment when unconfigured. |
+| [decision-maker](skills/decision-maker/SKILL.md) | 1.4.1 | Claude Code | Fast, calibrated decisions with TypeSafe's Jev: typed yes/no, choice and score answers with confidence. After installing, you choose **auto** (Jev by default: prefetch pre-scans "which files…" prompts and Claude uses Jev for batch sorting and browser test steps) or **manual** (only when you ask). An opt-in guard checks edits and commands against your rules (including rules from your prompts) and your request, and answers Claude's questions when confident. **Every Jev call is shown to you.** Any provider, with editable base URL and key. See the [full README](skills/decision-maker/README.md). |
 
 ## How the skills work together
 
@@ -52,7 +52,7 @@ claude plugin install decision-maker@claude-skills     # or any plugin name from
 
 Restart Claude Code or run `/reload-plugins` to load it. Both manifests pass `claude plugin validate`. See the [official Claude Code docs](https://docs.anthropic.com/en/docs/claude-code) if the install mechanism has changed.
 
-After installing decision-maker you get one notice telling you whether it's active and exactly what it sends where. Run `/decision-maker:jev` at any time for the same summary; see [its README](skills/decision-maker/README.md#what-happens-after-you-install). **Note:** the marketplace installs from GitHub, so a plugin only installs after it has been pushed.
+After installing decision-maker you choose once whether Jev runs **automatically** (`/decision-maker:jev auto`) or **only when you ask** (`/decision-maker:jev manual`). Nothing runs automatically until you choose, and the notice tells you exactly what each mode sends where. Run `/decision-maker:jev` at any time for the same summary; see [its README](skills/decision-maker/README.md#what-happens-after-you-install). **Note:** the marketplace installs from GitHub, so a plugin only installs after it has been pushed.
 
 For **decision-maker**, install either this plugin or TypeSafe's own `typesafe@typesafe-ai`, not both. This one includes TypeSafe's design guidance (`references/building.md`) and adds the runtime client, providers, guard hooks and evals; theirs covers design guidance only.
 
@@ -111,7 +111,7 @@ claude-skills/
     └── decision-maker/
         ├── README.md
         ├── SKILL.md
-        ├── hooks/        ← prefetch (default) + opt-in guard hooks (rules, scope, decide-don't-ask, request vs. diff)
+        ├── hooks/        ← auto/manual mode, prefetch (auto mode) + opt-in guard hooks (rules, scope, decide-don't-ask, request vs. diff)
         ├── scripts/      ← stdlib-only System One client, guard hook + tests
         └── references/   ← API facts, provider presets, per-skill decision recipes
 ```

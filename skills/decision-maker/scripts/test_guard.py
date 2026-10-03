@@ -123,6 +123,7 @@ class TestGuard(unittest.TestCase):
         self.assertEqual(len(FakeSystemOne.calls), n)    # no inference
 
     def test_session_start_tells_user_what_jev_does_once(self):
+        os.environ["DECISION_MAKER_MODE"] = "auto"
         start = lambda: hook({"hook_event_name": "SessionStart", "session_id": "s1"})
         out = start()
         msg = out["systemMessage"]
@@ -145,7 +146,7 @@ class TestGuard(unittest.TestCase):
         self.assertIsNone(hook({"hook_event_name": "SessionStart", "session_id": "s1"}))
 
     def test_session_hint_can_be_disabled(self):
-        os.environ["DECISION_MAKER_HINT"] = "0"
+        os.environ.update(DECISION_MAKER_MODE="auto", DECISION_MAKER_HINT="0")
         out = hook({"hook_event_name": "SessionStart", "session_id": "s1"})
         self.assertNotIn("hookSpecificOutput", out)
 
@@ -208,9 +209,32 @@ class TestGuard(unittest.TestCase):
             out = self.submit("Which files implement refund logic?", {"find": YES})
         self.assertIsNone((out or {}).get("hookSpecificOutput"))
 
-    def test_clean_action_is_silent(self):
+    def test_claude_using_jev_is_reported_after_the_command(self):
+        import decide
+        os.environ["DECISION_MAKER_SOURCE"] = "cli"                   # as in Claude's own Bash process
+        with contextlib.redirect_stdout(io.StringIO()):
+            decide.main(["ask", "--state", "s", "--noul", "q", "Is it?"])
+        out = hook({"hook_event_name": "PostToolUse", "tool_name": "Bash", "session_id": "s1", "duration_ms": 900,
+                    "tool_input": {"command": "python3 /x/decide.py ask --state s --noul q 'Is it?'"}})
+        self.assertIn("⚖ Jev used by Claude (decide.py): 1 call", out["systemMessage"])
+        other = hook({"hook_event_name": "PostToolUse", "tool_name": "Bash", "session_id": "s1",
+                      "tool_input": {"command": "ls"}})
+        self.assertIsNone(other)                                        # unrelated commands: nothing
+
+    def test_usage_command_lists_every_call(self):
+        import decide
+        FakeSystemOne.override = {"rule0": NO, "rule1": NO, "scope": NO, "risky": NO}
+        self.pre("Bash", {"command": "npm i x"})                         # one hook call
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            decide.main(["usage"])
+        self.assertIn("automatic (hooks): 2 calls", buf.getvalue())     # setUp's prompt check + this edit check
+
+    def test_clean_action_is_allowed_and_reported(self):
         FakeSystemOne.override = {"rule0": NO, "rule1": NO, "scope": NO}
-        self.assertIsNone(self.pre("Write", {"file_path": "/x/b.py", "content": "x"}))
+        out = self.pre("Write", {"file_path": "/x/b.py", "content": "x"})
+        self.assertNotIn("hookSpecificOutput", out)                     # no decision: allowed
+        self.assertIn("⚖ Jev checked Write /x/b.py against 2 rules + scope → OK, allowed", out["systemMessage"])
 
     def test_risky_command_asks_never_denies(self):
         FakeSystemOne.override = {"rule0": NO, "rule1": NO, "scope": NO, "risky": YES}
@@ -272,10 +296,12 @@ class TestGuard(unittest.TestCase):
         self.assertIn("answered for you", out["systemMessage"])
 
     def test_unsure_answer_lets_user_decide(self):
-        self.assertIsNone(self.ask(0.55, 0.05))
+        out = self.ask(0.55, 0.05)
+        self.assertNotIn("hookSpecificOutput", out)                     # question goes through to the user
+        self.assertIn("asking you", out["systemMessage"])
 
     def test_users_own_call_is_never_auto_answered(self):
-        self.assertIsNone(self.ask(0.99, 0.6))
+        self.assertNotIn("hookSpecificOutput", self.ask(0.99, 0.6))
 
     # -- request vs. diff at Stop -----------------------------------------
 
@@ -300,19 +326,58 @@ class TestGuard(unittest.TestCase):
 
     # -- safety ----------------------------------------------------------
 
-    def test_shipped_default_is_prefetch_only(self):
-        del os.environ["DECISION_MAKER_GUARD"]                 # user never chose anything
-        self.assertTrue(guard.enabled("prefetch"))
-        self.assertFalse(guard.enabled("rules"))
+    def mode(self, m):
         import decide
         with contextlib.redirect_stdout(io.StringIO()):
-            decide.main(["guard", "off"])                        # explicit choice wins
+            decide.main(["mode", m])
+
+    def test_mode_not_chosen_runs_nothing_and_asks_every_session(self):
+        del os.environ["DECISION_MAKER_GUARD"]                 # user never picked features
+        self.assertFalse(guard.enabled("prefetch") or guard.enabled("rules"))
+        for _ in range(2):                                      # reminder repeats until chosen
+            out = hook({"hook_event_name": "SessionStart", "session_id": "s1"})
+            self.assertIn("NOT CHOSEN", out["systemMessage"])
+            self.assertNotIn("hookSpecificOutput", out)         # no command hint either
+
+    def test_auto_mode_turns_on_prefetch_and_hint(self):
+        del os.environ["DECISION_MAKER_GUARD"]
+        self.mode("auto")
+        self.assertTrue(guard.enabled("prefetch"))
+        self.assertFalse(guard.enabled("rules"))
+        out = hook({"hook_event_name": "SessionStart", "session_id": "s1"})
+        self.assertIn("Mode: auto", out["systemMessage"])
+        self.assertIn("decide.py ask --items", out["hookSpecificOutput"]["additionalContext"])
+        again = hook({"hook_event_name": "SessionStart", "session_id": "s1"})
+        self.assertNotIn("systemMessage", again)                # chosen → no repeated notice to the user
+        self.assertIn("hookSpecificOutput", again)              # ... but Claude keeps getting the hint
+
+    def test_manual_mode_runs_nothing_automatic(self):
+        del os.environ["DECISION_MAKER_GUARD"]
+        self.mode("manual")
         self.assertFalse(guard.enabled("prefetch"))
-        msg = hook({"hook_event_name": "SessionStart", "session_id": "s1"})["systemMessage"]
-        self.assertIn("Guard hooks: off", msg)
+        out = hook({"hook_event_name": "SessionStart", "session_id": "s1"})
+        self.assertIn("Mode: manual", out["systemMessage"])
+        self.assertNotIn("hookSpecificOutput", out)
+        n = len(FakeSystemOne.calls)
+        hook({"hook_event_name": "UserPromptSubmit", "session_id": "s1", "cwd": str(self.repo),
+              "prompt": "Which files implement refund logic?"})
+        self.assertEqual(len(FakeSystemOne.calls), n)           # not even the per-prompt call
+
+    def test_explicit_guard_choice_beats_mode(self):
+        del os.environ["DECISION_MAKER_GUARD"]
+        self.mode("auto")
+        import decide
+        with contextlib.redirect_stdout(io.StringIO()):
+            decide.main(["guard", "off"])
+        self.assertFalse(guard.enabled("prefetch"))
+        self.mode("manual")
+        with contextlib.redirect_stdout(io.StringIO()):
+            decide.main(["guard", "on", "rules"])
+        self.assertTrue(guard.enabled("rules"))
 
     def test_guard_on_keeps_default_prefetch(self):
         del os.environ["DECISION_MAKER_GUARD"]
+        self.mode("auto")
         import decide
         with contextlib.redirect_stdout(io.StringIO()):
             decide.main(["guard", "on"])
@@ -333,9 +398,11 @@ class TestGuard(unittest.TestCase):
         self.assertIsNone(self.pre("Bash", {"command": "ls"}))
         self.assertEqual(FakeSystemOne.calls, [])
 
-    def test_fails_open_on_api_error(self):
+    def test_fails_open_on_api_error_and_says_so(self):
         os.environ["FAKE_KEY"] = "wrong"
-        self.assertIsNone(self.pre("Bash", {"command": "ls"}))
+        out = self.pre("Bash", {"command": "npm i x"})
+        self.assertNotIn("hookSpecificOutput", out)                     # fails open: allowed
+        self.assertIn("Jev unavailable", out["systemMessage"])
 
     def test_transcript_fallback_reads_real_prompt(self):
         t = self.root / "t.jsonl"
