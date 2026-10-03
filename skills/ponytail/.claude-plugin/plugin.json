@@ -1,7 +1,7 @@
 {
   "name": "ponytail",
   "description": "Wrap up a work session so nothing is left dangling — sweep every loose strand (uncommitted or unpushed work, unlabeled stashes, session debris, promises recorded nowhere), tie each one off, and leave a single 'session tail' report the next session can pick up without archaeology.",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"

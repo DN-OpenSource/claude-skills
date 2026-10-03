@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Acme Cloud</title>
+<style>body{font-family:sans-serif;margin:0}header,aside{padding:8px;background:#eee}.view{display:none;padding:16px}.view.on{display:block}
+#cookie{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:end;justify-content:center}#cookie div{background:#fff;padding:16px;margin:16px}
+#menu{display:none;border:1px solid #999;padding:4px}#menu.on{display:block}.toast{color:#b00}</style></head><body>
+<header aria-label="Site header"><a href="#home">Acme Cloud</a> <a href="#pricing">Pricing</a> <a href="#docs">Docs</a>
+ <button id="signin">Sign in</button> <span id="avatarbox" style="display:none"><button aria-label="Account menu" id="avatar">DN</button>
+ <div id="menu" role="menu"><a role="menuitem" href="#account">Account settings</a> <a role="menuitem" href="#home" id="logout">Log out</a></div></span></header>
+<main>
+<section class="view on" id="v-home"><h1>Ship faster with Acme Cloud</h1><button id="trial">Start free trial</button> <a href="#docs">Read the docs</a></section>
+<section class="view" id="v-pricing"><h1>Pricing</h1><p>Annual plans are non-refundable.</p></section>
+<section class="view" id="v-docs"><h1>Docs</h1></section>
+<section class="view" id="v-login"><h1>Welcome back</h1><form aria-label="Login form" onsubmit="return false">
+ <label>Full name <input id="name"></label><br><label>Company email <input id="email" type="email"></label><br>
+ <label>Password <input id="pw" type="password"></label><br><label><input type="checkbox"> Remember me</label><br>
+ <a href="#forgot">Forgot password?</a> <button type="button" id="signup">Sign up instead</button> <button id="go">Continue</button>
+ <p class="toast" id="err"></p></form></section>
+<section class="view" id="v-loading"><p>Signing you in…</p></section>
+<section class="view" id="v-dash"><aside aria-label="Workspace"><a href="#wsettings">Settings</a> <a href="#billing">Billing settings</a> <a href="#members">Members</a></aside><h1>Dashboard</h1><p>3 projects</p></section>
+<section class="view" id="v-wsettings"><h1>Workspace settings</h1><p>Workspace name: Acme</p></section>
+<section class="view" id="v-billing"><h1>Billing settings</h1></section>
+<section class="view" id="v-account"><h1>Account settings</h1><p>Name: Dana N</p><p id="acc-email"></p></section>
+<section class="view" id="v-forgot"><h1>Reset password</h1></section><section class="view" id="v-members"><h1>Members</h1></section>
+</main>
+<div id="cookie" role="dialog" aria-label="Cookie consent"><div>We use cookies to improve your experience.
+ <button id="ok">Accept all</button> <button onclick="cookie.remove()">Reject</button> <button>Cookie settings</button></div></div>
+<script>
+const show=v=>{document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));};
+window.__state={loginEmail:null};
+const route=()=>{const h=(location.hash||'#home').slice(1);show(h==='signin'?'login':h);menu.classList.remove('on');};
+window.onhashchange=route; ok.onclick=()=>cookie.remove(); signin.onclick=()=>location.hash='#signin';
+avatar.onclick=()=>menu.classList.toggle('on');
+go.onclick=()=>{ if(!email.value){err.textContent='Please enter your email';return}
+ if(pw.value!=='hunter22'){err.textContent='Wrong password';return}
+ window.__state.loginEmail=email.value; show('loading');
+ setTimeout(()=>{signin.style.display='none';avatarbox.style.display='inline';document.getElementById('acc-email').textContent='Email: '+email.value;location.hash='#dash';show('dash')},900);};
+route();
+</script></body></html>

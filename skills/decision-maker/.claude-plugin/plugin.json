@@ -1,0 +1,25 @@
+{
+  "name": "decision-maker",
+  "description": "Fast, cheap, calibrated decisions via TypeSafe's Jev System One model — typed yes/no, choice, and score answers with confidence, batched in one call. User-managed providers (TypeSafe, OpenRouter, OpenJEV, LiteLLM, or any System One gateway) with editable base URL and API key, plus decision recipes for every other skill in this repo. Stdlib-only Python client; falls back to Claude's own judgment when unconfigured. Opt-in guard hooks check edits and commands against CLAUDE.md/AGENTS.md rules and the user's request, answer Claude's questions when confident (asking the user only when not), and compare the diff with the request before Claude finishes.",
+  "version": "1.4.0",
+  "author": {
+    "name": "dhirajnikam",
+    "email": "dhirajnikam78@gmail.com"
+  },
+  "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/decision-maker",
+  "repository": "https://github.com/DN-OpenSource/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "skills",
+    "decisions",
+    "typesafe",
+    "jev",
+    "system-one",
+    "classification",
+    "routing",
+    "openjev",
+    "claude-code",
+    "hooks",
+    "guardrails"
+  ]
+}
