@@ -33,7 +33,31 @@ FEATURES = ("rules", "scope", "ask", "stop", "prefetch")
 # Defaults follow the mode the user picks after install (decide.py mode auto|manual): auto = prefetch
 # (measured 20-30% faster, ~40% cheaper on find-type prompts); manual or not chosen = nothing automatic.
 # `guard on <features>` / `guard off` always override the mode default.
-EDIT_TOOLS = {"Edit", "Write", "MultiEdit", "NotebookEdit"}
+EDIT_TOOLS = {"Edit", "Write", "MultiEdit", "NotebookEdit", "apply_patch"}   # apply_patch: Codex file edits
+PATCH_PATH = re.compile(r"^\*\*\* (?:(?:Add|Update|Delete) File|Move to): (.+?)\s*$", re.M)
+# The agent host. Codex runs the same hooks (and sets CLAUDE_PLUGIN_ROOT for compatibility) but marks
+# itself with PLUGIN_ROOT / a turn_id, can't "ask" from PreToolUse, and continues via Stop decision:block.
+AGENT = "Claude"
+
+
+def is_codex(event: dict) -> bool:
+    return bool(os.environ.get("PLUGIN_ROOT")) or "turn_id" in event
+
+
+def jev_cmd(arg: str = "") -> str:
+    """How the user reaches the status/mode switch on this host."""
+    if AGENT == "Codex":
+        return f'ask Codex "$decision-maker {arg or "status"}"'
+    return f"/decision-maker:jev {arg}".strip()
+
+
+def edit_paths(inp: dict, cwd=None) -> list:
+    """Files an edit touches: file_path/notebook_path (Claude) or the paths inside a Codex apply_patch."""
+    fp = inp.get("file_path") or inp.get("notebook_path")
+    if fp:
+        return [fp]
+    paths = PATCH_PATH.findall(inp.get("command", "") if isinstance(inp.get("command"), str) else "")
+    return [p if os.path.isabs(p) or not cwd else os.path.join(cwd, p) for p in dict.fromkeys(paths)]
 DIR_RULE_FILES = ("AGENTS.md", "CLAUDE.md")                  # checked in every dir, file → repo root
 ROOT_RULE_FILES = (".claude/CLAUDE.md", "CLAUDE.local.md")   # checked at the repo root only
 MAX_RULES = 40
@@ -306,7 +330,7 @@ def prefetch(prompt: str, cwd: str, p_find: float):
     log({"event": "prefetch", "items": len(items), "hits": len(hits), "unsure": len(unsure),
          "latency_s": round(secs, 2), "tokens": tokens})
     return ctx, notice("pre-scan", [f"checked {len(items)} items in {secs:.1f}s: {len(hits)} relevant, "
-                                    f"{len(unsure)} unsure; handed to Claude"])
+                                    f"{len(unsure)} unsure; handed to {AGENT}"])
 
 
 def split_sentences(text: str) -> list:
@@ -344,12 +368,12 @@ def update_session_rules(prompt: str, rules: list, answers=None) -> list:
 
 
 def remember_edit(event):
-    inp = event.get("tool_input") or {}
-    fp = inp.get("file_path") or inp.get("notebook_path")
-    if fp:
+    paths = edit_paths(event.get("tool_input") or {}, event.get("cwd"))
+    if paths:
         s = load_session(event)
-        if fp not in s.setdefault("touched", []):
-            s["touched"].append(fp)
+        new = [p for p in paths if p not in s.setdefault("touched", [])]
+        if new:
+            s["touched"] += new
             save_session(event, s)
 
 
@@ -393,6 +417,8 @@ def load_rules(cwd: str, target=None, session_rules=()) -> list:
 def describe_action(tool: str, inp: dict) -> str:
     if tool == "Bash":
         return f"Run shell command: {inp.get('command', '')}\n(description: {inp.get('description', '')})"
+    if tool == "apply_patch":
+        return f"Apply patch (file edits):\n{inp.get('command', '')}"
     path = inp.get("file_path") or inp.get("notebook_path", "")
     if tool == "Write":
         return f"Write file {path}:\n{inp.get('content', '')}"
@@ -433,6 +459,11 @@ def notice(what: str, lines: list) -> str:
 
 
 def pre_tool_decision(decision, reason, user_note):
+    if decision == "ask" and AGENT == "Codex":   # unsupported there: it would fail the hook and run the tool
+        decision = "deny"
+        reason = ("Not confident this is OK. Ask the user in chat to confirm before doing it, and say why:\n"
+                  + reason)
+        user_note += "\n  • Codex hooks can't prompt you, so Codex was told to ask you in chat first"
     return {"systemMessage": user_note,
             "hookSpecificOutput": {"hookEventName": "PreToolUse",
                                    "permissionDecision": decision,
@@ -442,10 +473,9 @@ def pre_tool_decision(decision, reason, user_note):
 def short_target(tool, inp, cwd=None):
     if tool == "Bash":
         return inp.get("command", "")[:80]
-    path = inp.get("file_path") or inp.get("notebook_path") or ""
-    if cwd and path.startswith(str(cwd).rstrip("/") + "/"):
-        return os.path.relpath(path, cwd)   # show src/app.py, not the full absolute path
-    return path
+    paths = edit_paths(inp, cwd)
+    shown = [os.path.relpath(p, cwd) if cwd and p.startswith(str(cwd).rstrip("/") + "/") else p for p in paths]
+    return (shown[0] + (f" (+{len(shown) - 1} more)" if len(shown) > 1 else "")) if shown else ""
 
 
 def classify(qid: str, a: dict, act: float, concern: float) -> str:
@@ -499,7 +529,7 @@ def check_action(event):
     if tool == "Bash" and read_only(inp.get("command", "")):
         return None
     request, _ = context(event)
-    target = inp.get("file_path") or inp.get("notebook_path")
+    target = (edit_paths(inp, event.get("cwd")) or [None])[0]
     rules = (load_rules(event.get("cwd") or os.getcwd(), target, load_session(event).get("rules", []))
              if enabled("rules") else [])
     qs = {}
@@ -535,8 +565,8 @@ def check_action(event):
         return pre_tool_decision("deny", "Jev guard blocked this action:\n- " + "\n- ".join(deny) +
                                  "\nAdjust it to comply with the rule / the user's request. If you believe the "
                                  "check is wrong, say why to the user instead of retrying the same action.",
-                                 notice("blocked", [f"BLOCKED {what}"] + deny + ["Claude was told to adjust. "
-                                        "Tell Claude if the block is wrong."]))
+                                 notice("blocked", [f"BLOCKED {what}"] + deny + [f"{AGENT} was told to adjust. "
+                                        f"Tell {AGENT} if the block is wrong."]))
     if ask:
         return pre_tool_decision("ask", "Jev guard is unsure about this action:\n- " + "\n- ".join(ask),
                                  notice("needs you", [f"unsure about {what}"] + ask +
@@ -559,7 +589,7 @@ def answer_question(event):
                        "instructions": {"question": q.get("question", ""),
                                         "task": "Pick the option that best serves `request`."}}
         qs[f"user{i}"] = {"type": "noul", "instructions": {"question": q.get("question", ""), "ask": Q_USER_ONLY}}
-    NOTE.update(what="tried to answer Claude's question for you", ok="not confident or your call: asking you")
+    NOTE.update(what=f"tried to answer {AGENT}'s question for you", ok="not confident or your call: asking you")
     answers = ask_jev({"request": request or "(unknown)"}, qs)
     picks = []
     for i, q in enumerate(questions):
@@ -573,7 +603,7 @@ def answer_question(event):
                              "\n".join(picks) + "\nProceed with these answers and tell the user in one line "
                              "what was chosen. Ask again only if you have information Jev lacked.",
                              notice("answered for you", [p.lstrip("- ") for p in picks] +
-                                    ["tell Claude if you want a different answer"]))
+                                    [f"tell {AGENT} if you want a different answer"]))
 
 
 def check_stop(event):
@@ -604,11 +634,15 @@ def check_stop(event):
     log({"event": "Stop", "touched": touched, "problems": problems})
     if not problems:
         return None
+    if AGENT == "Codex":   # Codex continues the agent from decision:block + reason
+        return {"decision": "block", "reason": "Jev guard, request vs. diff: " + "; ".join(problems) +
+                ". Re-read the user's request, finish or revert as needed, or explain to the user why it's complete.",
+                "systemMessage": notice("request vs. diff", problems + ["Codex was sent back to finish or revert"])}
     # additionalContext (not decision:block): same loop protection, shown as "Stop hook feedback", not an error
     return {"hookSpecificOutput": {"hookEventName": "Stop", "additionalContext":
                 "Jev guard, request vs. diff: " + "; ".join(problems) +
                 ". Re-read the user's request, finish or revert as needed, or explain to the user why it's complete."},
-            "systemMessage": notice("request vs. diff", problems + ["Claude was sent back to finish or revert"])}
+            "systemMessage": notice("request vs. diff", problems + [f"{AGENT} was sent back to finish or revert"])}
 
 
 def status_lines(p) -> list:
@@ -618,30 +652,30 @@ def status_lines(p) -> list:
         return ["decision-maker is installed but INACTIVE: no Jev provider key, so nothing is sent anywhere.",
                 f"  Set one: python3 {d / 'decide.py'} provider edit openjev --api-key KEY --default "
                 "(or export TYPESAFE_API_KEY before starting claude)",
-                "  Then choose how to use it: /decision-maker:jev auto (by default) or manual (only when you ask).",
-                "  /decision-maker:jev explains what it does."]
+                f"  Then choose how to use it: {jev_cmd('auto')} (by default) or {jev_cmd('manual')} (only when you ask).",
+                f"  {jev_cmd()} explains what it does."]
     cfg = decide.load_config()
     mode = decide.mode_of(cfg)
     on = [f for f in FEATURES if enabled(f)]
     sent = []
     if any(f in on for f in ("rules", "scope", "ask", "stop")):
-        sent.append("your prompts, Claude's proposed edits/commands/questions and diffs (guard)")
+        sent.append(f"your prompts, {AGENT}'s proposed edits/commands/questions and diffs (guard)")
     if "prefetch" in on:
         sent.append("repo file contents for find-type prompts (prefetch; secrets/.env skipped)")
     mode_line = {
-        None: "  • Mode: NOT CHOSEN, so nothing runs automatically. Choose once: /decision-maker:jev auto "
-              "(use Jev by default) or /decision-maker:jev manual (only when you ask)",
-        "auto": "  • Mode: auto. Prefetch pre-scans \"which files…\" prompts, and Claude uses Jev for batch sorting "
-                "and browser steps by default (switch: /decision-maker:jev manual)",
+        None: f"  • Mode: NOT CHOSEN, so nothing runs automatically. Choose once: {jev_cmd('auto')} "
+              f"(use Jev by default) or {jev_cmd('manual')} (only when you ask)",
+        "auto": "  • Mode: auto. Prefetch pre-scans \"which files…\" prompts, and " + AGENT + " uses Jev for batch sorting "
+                f"and browser steps by default (switch: {jev_cmd('manual')})",
         "manual": "  • Mode: manual. Jev runs only when you ask: /decision-maker:decision-maker, or \"use Jev\" "
-                  "(switch: /decision-maker:jev auto)"}[mode]
+                  f"(switch: {jev_cmd('auto')})"}[mode]
     return [f"decision-maker active: Jev via {p['name']} ({p['base_url']})",
             mode_line,
             "  • Guard hooks: " + (", ".join(on) if on else "off (nothing is checked automatically)") +
             (" (mode default)" if "guard" not in cfg and os.environ.get("DECISION_MAKER_GUARD") is None else "") +
             "  · turn on/off: decide.py guard on|off [rules scope ask stop prefetch]",
-            "  • Sent to the provider: " + ("; ".join(sent) if sent else "only what Claude explicitly asks Jev"),
-            "  • Every block/ask/answer is shown to you · history: decide.py guard log · details: /decision-maker:jev"]
+            "  • Sent to the provider: " + ("; ".join(sent) if sent else f"only what {AGENT} explicitly asks Jev"),
+            f"  • Every Jev call is shown to you · history: decide.py usage / guard log · details: {jev_cmd()}"]
 
 
 def changed_since_last_notice(text: str) -> bool:
@@ -713,7 +747,7 @@ def report_claude_usage(event):
     recs = [r for r in recs if r.get("ts", 0) >= since and r.get("source") != "hook"]
     if not recs:
         return None
-    who = "browser runner" if any(r["source"] == "browser" for r in recs) else "Claude (decide.py)"
+    who = "browser runner" if any(r["source"] == "browser" for r in recs) else f"{AGENT} (decide.py)"
     return {"systemMessage": f"⚖ Jev used by {who}: {decide.summarize(recs)} via {recs[-1].get('provider')}"}
 
 
@@ -735,11 +769,30 @@ def with_usage(out, calls):
     return out
 
 
+RELAY_EVENTS = ("SessionStart", "UserPromptSubmit", "PreToolUse", "PostToolUse")
+
+
+def relay_for_codex(out, name):
+    """Codex may not display hook systemMessages (codex exec shows none), so also hand the notice to the
+    model as context with an instruction to tell the user. Not combined with a deny: its reason carries it."""
+    if AGENT != "Codex" or not out or not out.get("systemMessage") or name not in RELAY_EVENTS:
+        return out
+    hso = out.setdefault("hookSpecificOutput", {"hookEventName": name})
+    if "permissionDecision" in hso:
+        return out
+    relay = ("Jev activity (the user may not see hook messages in Codex, so tell them in one short line "
+             "in your next message): " + out["systemMessage"])
+    hso["additionalContext"] = (hso.get("additionalContext", "") + "\n" + relay).strip()
+    return out
+
+
 def main():
+    global AGENT
     os.environ["DECISION_MAKER_SOURCE"] = "hook"
-    n0, out = len(decide.CALLS), None
+    n0, out, name = len(decide.CALLS), None, None
     try:
         event = json.load(sys.stdin)
+        AGENT = "Codex" if is_codex(event) else "Claude"
         name, tool = event.get("hook_event_name"), event.get("tool_name")
         if name == "SessionStart":
             out = session_start()
@@ -761,8 +814,11 @@ def main():
     except Exception as e:  # fail open, always: a guard must never break the session
         log({"error": f"{type(e).__name__}: {e}"})
     out = with_usage(out, decide.CALLS[n0:])
+    out = relay_for_codex(out, name)
     if out:
         print(json.dumps(out))
+    elif AGENT == "Codex":
+        print("{}")
     return 0
 
 

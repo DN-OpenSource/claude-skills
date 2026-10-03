@@ -44,6 +44,13 @@ python3 $D ask --brief --state "Help! Payouts failing for 3 days." \
 
 State comes from `--state`, `--state-file` or stdin; JSON is sent structured. Refer to fields with backticks and put such questions in **single quotes**. For rich criteria, use `--questions @file.json`. Without `--brief` the output is full JSON, with an `act` flag per answer (`--min-confidence`, default 0.8).
 
+## Status, mode and visibility (Claude Code and Codex)
+
+- **Always tell the user when you use Jev:** one line saying what you asked, how many items, and the result, e.g. "Asked Jev about 300 files: 9 match, 1 unsure, which I checked". The hooks also show every call, but say it yourself too.
+- **"Jev status", "what does Jev do":** run `python3 $D guard status` and `python3 $D usage`, and explain them in plain words: the mode, what runs automatically, what is sent to the provider, and recent calls.
+- **"Use Jev automatically / only when I ask":** run `python3 $D mode auto` or `python3 $D mode manual`. **"Turn the guard on/off":** run `python3 $D guard on|off [rules scope ask stop prefetch]`.
+- **In Codex** the skill is `$decision-maker`. Codex plugins have no `/decision-maker:jev` command, so handle these requests directly as above.
+
 ## Rules
 
 1. **Batch.** Put every independent question and item in one call. Never send one call per item.
