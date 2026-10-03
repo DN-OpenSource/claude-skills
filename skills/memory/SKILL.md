@@ -225,3 +225,13 @@ Drop any section that genuinely has nothing to say — don't pad.
 - **Silently overwriting user-edited files.** If a `MEMORY.md` has clearly been hand-edited and you're about to clobber it during a re-bootstrap, ask first.
 - **Reciting user memory back unprompted.** Use it the way you'd use anything else you know — naturally, not performatively.
 - **Auto-bootstrapping in the wrong place.** Don't create `MEMORY.md` files in a directory that isn't a repo, or when the user has said not to.
+
+## Composes with (optional, never required)
+
+Self-contained: nothing here is needed for this skill to work. When a companion is installed:
+
+- **codebase-guardian**: reads `MEMORY.md` in its Orient phase and writes learnings back at closeout. This skill does the bookkeeping.
+- **lsp** / **schema-aware-db**: record per-project server quirks and confirmed schema facts or access patterns under *Gotchas*, so the next session starts from ground truth.
+- **teammates**: peers read `MEMORY.md` before claiming work. The merger folds new learnings back in.
+- **ponytail**: durable facts from the session tail (follow-ups, watch-outs, half-applied state) land here.
+- **decision-maker**: before writing a fact, run the durable / derivable / duplicate check (`decision-maker/references/use-cases.md` §3). It is cheap and keeps memory free of noise.

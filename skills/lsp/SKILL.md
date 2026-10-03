@@ -1,6 +1,6 @@
 ---
 name: lsp
-description: Semantic code navigation via real language servers — go-to-definition, find-references, hover/type info, file and workspace symbols, diagnostics, and safe project-wide rename. Use whenever a task involves locating where a symbol is defined, finding all usages or callers of a function/class/variable, renaming a symbol across a project, impact analysis before a refactor, or exploring a large codebase where text search returns too many false positives. Covers TypeScript/Node, Python, Dart/Flutter, and Rust through a bundled stdlib-only Python client (scripts/lsp.py). Trigger on phrases like "where is X defined", "find all usages", "who calls this", "rename X to Y everywhere", "what's the type of this". If the needed language server isn't installed, show the install hint and fall back to grep — never block the task.
+description: Semantic code navigation via real language servers — go-to-definition, find-references, hover/type info, symbols, diagnostics, and safe project-wide rename for TypeScript/Node, Python, Dart/Flutter, and Rust (bundled stdlib-only client, scripts/lsp.py). Use for "where is X defined", "find all usages", "who calls this", "rename X to Y everywhere", impact analysis before a refactor, or when grep returns too many false positives. Missing server → show install hint and fall back to grep; never block.
 ---
 
 # LSP — Semantic Code Navigation
@@ -74,6 +74,9 @@ Any failure — server missing, crash, timeout, empty results you suspect are wr
 
 - **codebase-guardian** — use lsp during guardian's Orient phase for impact analysis (`references` before deciding scope) and guardian's verification loop after `rename --apply`.
 - **memory** — accumulate per-project server quirks in `MEMORY.md` so the next session doesn't rediscover them.
+- **schema-aware-db** — its Phase 2 usage map uses `references` on the ORM model/class rather than grepping table names.
+- **teammates** — peers run `references` before claiming to spot work items that touch the same symbols.
+- **decision-maker** — when `symbols` returns several candidates for what the user named, one Choice call picks the intended one (`decision-maker/references/use-cases.md` §8).
 
 ## Limitations
 

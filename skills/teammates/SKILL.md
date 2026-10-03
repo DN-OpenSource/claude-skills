@@ -203,3 +203,14 @@ If the spawner itself has failed, the alphabetically-first `done` peer by slug t
 - **Don't silently exit.** Set roster `status` to `done` or `failed` before stopping.
 - **Don't let personality override protocol.** Dijkstra may want a formal proof before claiming a work item; he still has to follow the claim/re-read cycle like everyone else.
 - **Never use `agent-N` ids.** `agent-0`, `agent-1`, etc. are wrong. Every roster entry must use a programmer slug from the roster table. This is not optional.
+
+## Composes with (optional, never required)
+
+Self-contained: nothing here is needed for this skill to work. When a companion is installed:
+
+- **memory**: each peer reads the shared `MEMORY.md` before claiming, and the merger folds new learnings back.
+- **agents-dox**: each peer reads the DOX chain for its paths before claiming and runs a DOX pass on its own changes.
+- **codebase-guardian** / **schema-aware-db**: a peer editing real code (or data code) follows that loop for its own work item.
+- **lsp**: before claiming, run `references` on the symbols an item touches to spot items that would collide.
+- **ponytail**: run it as the final step once outputs are merged, as one sweep and one tail for the whole team.
+- **decision-maker**: route a work item to the best-suited peer slug, and check two outputs for contradictions before merging (`decision-maker/references/use-cases.md` §6). The protocol (claim, re-read, messages) is unchanged.

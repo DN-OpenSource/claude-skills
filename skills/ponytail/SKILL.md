@@ -1,6 +1,6 @@
 ---
 name: ponytail
-description: Wrap up a work session so nothing is left dangling. Use whenever the user says "wrap up", "tie up loose ends", "end of day", "before I go", "hand this off", "clean up before we stop", or is about to leave a task mid-flight — and at the natural end of any long coding session, even unprompted. Sweeps the workspace for every loose strand — uncommitted or unpushed work, unlabeled stashes, debug prints and stray TODOs introduced this session, failing checks, half-done renames, promises made in conversation but recorded nowhere — then ties each one off (commit, push, clean, or hand off) and ends with a single "session tail" report so the next session starts from one place, not from archaeology.
+description: Wrap up a work session so nothing is left dangling. Use when the user says "wrap up", "tie up loose ends", "end of day", "before I go", "hand this off", or is leaving a task mid-flight — and at the natural end of any long coding session, even unprompted. Sweeps every loose strand (uncommitted/unpushed work, unlabeled stashes, debug prints and TODOs introduced this session, failing checks, half-done renames, promises recorded nowhere), ties each off (commit, push, clean, or hand off), and ends with one "session tail" report for the next session.
 ---
 
 # Ponytail
@@ -84,4 +84,4 @@ The test of a good tail: someone with no memory of this session reads it and kno
 
 ## Companion skills (optional, never required)
 
-If the **memory** skill is installed, fold durable facts from the tail into `MEMORY.md`; if **agents-dox** manages the repo, run its closing pass alongside this one; after a **teammates** run, ponytail is the natural final step once outputs merge. Without any of them, the tail in chat stands on its own.
+If the **memory** skill is installed, fold durable facts from the tail into `MEMORY.md`; if **agents-dox** manages the repo, run its closing pass alongside this one; after a **teammates** run, ponytail is the natural final step once outputs merge. Without any of them, the tail in chat stands on its own. **codebase-guardian** closes out each change; ponytail runs once per session to catch what fell between changes. With **decision-maker** configured, the Sort move sends every strand in one call (a Choice over tie_off / hand_off / discard, `decision-maker/references/use-cases.md` §2). Apply a fate only when `act` is true. Otherwise ask, or preserve. Never discard on low confidence.
