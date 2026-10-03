@@ -55,7 +55,8 @@ State comes from `--state`, `--state-file` or stdin; JSON is sent structured. Re
 ## More
 
 - `references/use-cases.md`: recipes and thresholds for every companion skill (§1–9), general coding (§10, §13), the user's own app (§11), **browser and app testing** (§12: which element to click, blockers and errors, form fields, step and acceptance checks), and **rules, request drift and decide-don't-ask** (§14).
-- `references/guard.md` **prefetch** (on by default once a key is set): for "which files…" prompts, the hook scans the repo with Jev *before* your first turn and hands you the hits plus unsure excerpts. When that context is present, answer from it.
+- **Mode:** the user chooses after install: `decide.py mode auto` (use Jev by default) or `manual` (only when asked). In manual mode, use Jev only when the user asks or invokes the skill.
+- `references/guard.md` **prefetch** (on when the user chose auto mode): for "which files…" prompts, the hook scans the repo with Jev *before* your first turn and hands you the hits plus unsure excerpts. When that context is present, answer from it.
 - `references/guard.md`: Claude Code hooks; the per-edit checks need `decide.py guard on` that check every edit and command against `CLAUDE.md`/`AGENTS.md` and the user's **in-prompt rules**, compare the diff with the request before Claude stops, and answer Claude's questions when confident. The user sees every intervention.
 - `references/providers.md`: add or edit providers, base URLs and keys (TypeSafe, OpenRouter, OpenJEV, LiteLLM, any System One gateway).
 - `references/building.md`: writing Jev into the **user's own app**: find the shape, design each judgment, compose and verify (condensed from TypeSafe's official skill).

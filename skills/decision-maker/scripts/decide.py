@@ -427,13 +427,38 @@ def cmd_provider(args):
 
 
 GUARD_FEATURES = ("rules", "scope", "ask", "stop", "prefetch")
+MODES = ("auto", "manual")
+
+
+def mode_of(cfg: dict):
+    """The user's choice after install: 'auto' (Jev by default), 'manual' (only when asked), or None (not chosen)."""
+    m = os.environ.get("DECISION_MAKER_MODE") or cfg.get("mode")
+    return m if m in MODES else None
+
+
+def default_features(cfg: dict) -> list:
+    """Guard features when the user hasn't picked any: prefetch in auto mode, nothing otherwise."""
+    return ["prefetch"] if mode_of(cfg) == "auto" else []
+
+
+def cmd_mode(args):
+    cfg = load_config()
+    if args.mode:
+        cfg["mode"] = args.mode
+        save_config(cfg)
+    m = mode_of(cfg)
+    print({"auto": "mode: auto. Jev is used by default: prefetch pre-scans find-type prompts, and Claude gets the "
+                   "Jev commands at session start.",
+           "manual": "mode: manual. Jev runs only when you ask for it (/decision-maker:decision-maker, or ask "
+                     "Claude to use Jev). Nothing runs automatically except guard checks you turned on yourself.",
+           None: "mode: not chosen yet, so nothing runs automatically. Choose with: decide.py mode auto | manual"}[m])
 
 
 def cmd_guard(args):
     cfg = load_config()
     if args.action == "on":
         # No args: add the per-edit checks and keep prefetch as it was (on by default, until turned off).
-        keep_prefetch = "prefetch" in cfg.get("guard", ["prefetch"])
+        keep_prefetch = "prefetch" in cfg.get("guard", default_features(cfg))
         feats = args.features or [f for f in GUARD_FEATURES if f != "prefetch" or keep_prefetch]
         bad = set(feats) - set(GUARD_FEATURES)
         if bad:
@@ -478,7 +503,7 @@ def cmd_guard(args):
     if args.action != "status":
         save_config(cfg)
     env = os.environ.get("DECISION_MAKER_GUARD")
-    on = cfg.get("guard", ["prefetch"])   # shipped default until the user chooses
+    on = cfg.get("guard", default_features(cfg))   # mode default until the user picks features
     print(f"guard: {', '.join(on) if on else 'off'}" + ("  (default)" if "guard" not in cfg else "") +
           (f"  (overridden by $DECISION_MAKER_GUARD={env})" if env is not None else ""))
     sessions = sorted((config_path().parent / "sessions").glob("*.json"), key=lambda f: f.stat().st_mtime)
@@ -537,6 +562,10 @@ def parser():
     p.add_argument("--api-key-env", help="read the key from this env var instead (preferred)")
     p.add_argument("--default", action="store_true", help="also make this the default provider")
     p.set_defaults(func=cmd_provider)
+
+    md = sub.add_parser("mode", help="how Jev is used in Claude Code: auto (by default) or manual (when asked)")
+    md.add_argument("mode", nargs="?", choices=MODES, help="omit to show the current mode")
+    md.set_defaults(func=cmd_mode)
 
     g = sub.add_parser("guard", help="turn the Claude Code Jev guard hooks on/off")
     g.add_argument("action", choices=["on", "off", "status", "log", "replay"])

@@ -30,9 +30,9 @@ ACT = float(os.environ.get("DECISION_MAKER_ACT", 0.8))          # confident enou
 CONCERN = float(os.environ.get("DECISION_MAKER_CONCERN", 0.5))
 RISKY_CONCERN = 0.3   # risky commands: a false alarm is cheap, a miss is not
 FEATURES = ("rules", "scope", "ask", "stop", "prefetch")
-# Shipped default when the user has never chosen: prefetch only (measured 20-30% faster, ~40% cheaper on
-# find-type prompts; no per-edit checks). `guard off` or `guard on <features>` overrides it.
-DEFAULT_FEATURES = "prefetch"
+# Defaults follow the mode the user picks after install (decide.py mode auto|manual): auto = prefetch
+# (measured 20-30% faster, ~40% cheaper on find-type prompts); manual or not chosen = nothing automatic.
+# `guard on <features>` / `guard off` always override the mode default.
 EDIT_TOOLS = {"Edit", "Write", "MultiEdit", "NotebookEdit"}
 DIR_RULE_FILES = ("AGENTS.md", "CLAUDE.md")                  # checked in every dir, file → repo root
 ROOT_RULE_FILES = (".claude/CLAUDE.md", "CLAUDE.local.md")   # checked at the repo root only
@@ -90,7 +90,8 @@ Q_EXTRA = "Do `changes` include edits unrelated to `request`?"
 def enabled(feature: str) -> bool:
     raw = os.environ.get("DECISION_MAKER_GUARD")
     if raw is None:
-        raw = decide.load_config().get("guard", DEFAULT_FEATURES)
+        cfg = decide.load_config()
+        raw = cfg.get("guard", decide.default_features(cfg))
     raw = raw if isinstance(raw, str) else ",".join(raw)
     vals = {v.strip().lower() for v in raw.split(",") if v.strip()}
     if feature == "prefetch":   # sends file contents to the provider: only when named explicitly
@@ -599,18 +600,27 @@ def status_lines(p) -> list:
         return ["decision-maker is installed but INACTIVE: no Jev provider key, so nothing is sent anywhere.",
                 f"  Set one: python3 {d / 'decide.py'} provider edit openjev --api-key KEY --default "
                 "(or export TYPESAFE_API_KEY before starting claude)",
+                "  Then choose how to use it: /decision-maker:jev auto (by default) or manual (only when you ask).",
                 "  /decision-maker:jev explains what it does."]
+    cfg = decide.load_config()
+    mode = decide.mode_of(cfg)
     on = [f for f in FEATURES if enabled(f)]
     sent = []
     if any(f in on for f in ("rules", "scope", "ask", "stop")):
         sent.append("your prompts, Claude's proposed edits/commands/questions and diffs (guard)")
     if "prefetch" in on:
         sent.append("repo file contents for find-type prompts (prefetch; secrets/.env skipped)")
+    mode_line = {
+        None: "  • Mode: NOT CHOSEN, so nothing runs automatically. Choose once: /decision-maker:jev auto "
+              "(use Jev by default) or /decision-maker:jev manual (only when you ask)",
+        "auto": "  • Mode: auto. Prefetch pre-scans \"which files…\" prompts, and Claude uses Jev for batch sorting "
+                "and browser steps by default (switch: /decision-maker:jev manual)",
+        "manual": "  • Mode: manual. Jev runs only when you ask: /decision-maker:decision-maker, or \"use Jev\" "
+                  "(switch: /decision-maker:jev auto)"}[mode]
     return [f"decision-maker active: Jev via {p['name']} ({p['base_url']})",
-            "  • Claude may call Jev to sort many files/lines and run browser test steps (you'll see those commands)",
+            mode_line,
             "  • Guard hooks: " + (", ".join(on) if on else "off (nothing is checked automatically)") +
-            (" (the default)" if "guard" not in decide.load_config() and
-             os.environ.get("DECISION_MAKER_GUARD") is None else "") +
+            (" (mode default)" if "guard" not in cfg and os.environ.get("DECISION_MAKER_GUARD") is None else "") +
             "  · turn on/off: decide.py guard on|off [rules scope ask stop prefetch]",
             "  • Sent to the provider: " + ("; ".join(sent) if sent else "only what Claude explicitly asks Jev"),
             "  • Every block/ask/answer is shown to you · history: decide.py guard log · details: /decision-maker:jev"]
@@ -643,9 +653,11 @@ def session_start():
         p = None
     out = {}
     lines = status_lines(p)
-    if changed_since_last_notice("\n".join(lines)):
+    unchosen = p is not None and decide.mode_of(decide.load_config()) is None
+    # Until the user picks a mode, remind every session; afterwards only when something changes.
+    if changed_since_last_notice("\n".join(lines)) or unchosen:
         out["systemMessage"] = "⚖ " + "\n".join(lines)
-    hint = session_hint(p) if p else None
+    hint = session_hint(p) if p and decide.mode_of(decide.load_config()) == "auto" else None
     if hint:
         out["hookSpecificOutput"] = hint
     return out or None

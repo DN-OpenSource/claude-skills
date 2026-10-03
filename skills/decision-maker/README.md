@@ -23,21 +23,27 @@ python3 scripts/decide.py provider edit mygw --base-url https://gw2.example.com/
 
 ## What happens after you install
 
-| | Without a Jev key | With a key (`decide.py provider edit openjev --api-key …` or `export TYPESAFE_API_KEY=…`) |
-|---|---|---|
-| **First session** | One notice: *installed but INACTIVE: nothing is sent anywhere*, plus the setup command | One notice: provider, which guard checks are on, and **exactly what is sent to the provider** |
-| **Later sessions** | Silent | Silent. The notice comes back only when that changes: new key, provider or guard features |
-| **Claude's context** | Nothing added | About 80 tokens of ready-made commands, so Claude can call Jev without loading the skill. Turn it off with `DECISION_MAKER_HINT=0` |
-| **Automatic checks** | None | **Prefetch is on by default:** "which files…" prompts are pre-scanned by Jev before Claude's first turn, and the notice tells you. The per-edit checks (rules, scope, ask, stop) need `decide.py guard on`. `decide.py guard off` turns everything off |
-| **Sent anywhere** | Nothing | What Claude explicitly asks Jev (you see those commands), file contents for find-type prompts (prefetch, the default; secrets skipped), plus whatever the guard features you enable send: prompts, proposed edits and commands, diffs, and for prefetch the file contents (secrets and `.env` are skipped) |
+**You choose how Jev is used, once, after install:**
+
+| | **Auto**: `/decision-maker:jev auto` | **Manual**: `/decision-maker:jev manual` | Not chosen yet |
+|---|---|---|---|
+| **When Jev runs** | By default: "which files…" prompts are pre-scanned before Claude's first turn, and Claude uses Jev for batch sorting and browser steps | Only when you ask (`/decision-maker:decision-maker`, or "use Jev") | Only when you ask |
+| **Claude's context** | About 80 tokens of ready-made Jev commands each session | Nothing added | Nothing added |
+| **Sent to the provider** | File contents for find-type prompts (secrets and `.env` skipped), plus anything Claude asks Jev | Only what you or Claude explicitly ask Jev | Only what's explicitly asked |
+| **Session notice** | Once, and again whenever something changes | Once, and again whenever something changes | **Every session**, until you choose |
+
+- **Without a key,** nothing runs and nothing is sent. The first session shows how to add a key (`decide.py provider edit openjev --api-key …` or `export TYPESAFE_API_KEY=…`) and then how to choose.
+- **The per-edit guard checks** (rules, scope, ask, stop) are separate in both modes. They run only after `decide.py guard on`, and `decide.py guard off` turns everything off.
+- **Switching** at any time: `/decision-maker:jev auto|manual`, or `decide.py mode auto|manual`. Explicit `guard on|off` settings override the mode's defaults.
+- **Running `/decision-maker:jev` with no argument while the mode isn't chosen** makes Claude ask you which mode you want, and what each one sends.
 
 Run **`/decision-maker:jev`** at any time to see what's active, what leaves the machine and what Jev did recently. Every block, question to you and auto-answer appears as a `⚖ Jev guard (…)` line, and `decide.py guard log` keeps the history. Claude Code reports the plugin's always-on cost as about 205 tokens per session; its 4 hooks add nothing to Claude's context.
 
-Verified by installing from a local marketplace into a separate Claude config and running real sessions: first run without a key, first run with one, a quiet second session, and the slash command.
+Verified by installing from a local marketplace into a separate Claude config and running real sessions: first run without a key, first run with one, a quiet second session, and the slash command. The auto/manual choice is covered by unit tests: no automatic Jev calls until a mode is chosen, a reminder every session until then, and manual mode makes no per-prompt call at all.
 
 ## Guard hooks
 
-Prefetch (see above) is on by default with a key. `python3 scripts/decide.py guard on` adds the per-edit Claude Code hooks (shipped in `hooks/hooks.json`) that use Jev to keep Claude on your rules and on your request:
+In auto mode prefetch is on (see above). `python3 scripts/decide.py guard on` adds the per-edit Claude Code hooks (shipped in `hooks/hooks.json`) that use Jev to keep Claude on your rules and on your request:
 
 - **Before each edit or shell command**, Jev checks the action against your rules and against what you asked for. The rules include **temporary ones you give in a prompt** ("don't touch the tests", "use pnpm"), which last for the session until a later prompt cancels them, plus `AGENTS.md`/`CLAUDE.md` from the edited file's folder up to the root, `CLAUDE.local.md` and your global `~/.claude/CLAUDE.md`.
 - **Before Claude asks you a question**, Jev answers it when it is confident and the decision isn't yours alone.
@@ -67,7 +73,7 @@ Confident problems are blocked with the reason, so Claude corrects itself. Unsur
 | 300 files: same | 9.3 s · $0.055 · 3.5 turns · recall 0.67 | 9.9 s · $0.045 · 2 turns · 1.00 | **7.5 s (−19%) · $0.031 (−44%) · 1 turn · 1.00** |
 | 80 grep hits (one small file) | 7.3 s · $0.052 · 2 turns · recall 0.90 | 10.3 s · $0.051 · 2.5 turns · 1.00 | 10.7 s · $0.056 · 2 turns · 1.00 |
 
-Precision was 1.00 for the final prefetch version (on by default; see `references/guard.md`). The redesign moves Jev before Claude's first turn: the prompt hook recognises a find task, scans the repo in parallel batches (about 1–2.5 s) and hands Claude the answer, so no tool turn is needed. What got it there:
+Precision was 1.00 for the final prefetch version (on in auto mode; see `references/guard.md`). The redesign moves Jev before Claude's first turn: the prompt hook recognises a find task, scans the repo in parallel batches (about 1–2.5 s) and hands Claude the answer, so no tool turn is needed. What got it there:
 
 - **Criteria instead of a long question:** this moved look-alikes ("refund", but to the merchant) from confident hits into "unsure with excerpt", which raised precision from 0.90 to 1.00.
 - **Earlier wins:** a SessionStart command hint, compact batch output, parallel batches and a 4.6 KB skill file got the tool-call mode from +53% cost down to below plain Claude.

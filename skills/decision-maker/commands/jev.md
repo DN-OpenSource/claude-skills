@@ -17,4 +17,9 @@ Then explain in plain words, briefly:
 - **What Jev did recently,** from the log, or say it has done nothing yet.
 - **How to change it:** `decide.py guard on|off [features]`, `decide.py provider ...`, and `DECISION_MAKER_HINT=0` to stop the session hint.
 
-If the user passed an argument ($ARGUMENTS) such as "off", "on", or a feature list, run `guard <that>` first, then show the status.
+Arguments ($ARGUMENTS):
+- `auto` or `manual`: run `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/decide.py" mode <that>` first. Then confirm in one line what changes: in auto, prefetch and the Jev command hint are on; in manual, Jev runs only when the user asks.
+- `on`, `off` or a feature list: run `guard <that>` first.
+- Nothing, while the status says the mode is NOT CHOSEN: ask the user one question with the AskUserQuestion tool. The options are **Auto (use Jev by default)** and **Manual (only when I ask)**, each described by what it means for them, including what auto sends to the provider. Then run `decide.py mode <choice>`.
+
+Then show the status.
