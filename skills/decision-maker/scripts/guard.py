@@ -87,6 +87,9 @@ Q_MISSING = "Does `request` ask for something that `changes` do not do yet?"
 Q_EXTRA = "Do `changes` include edits unrelated to `request`?"
 
 
+NOTE = {}   # what this hook invocation asked Jev, and the outcome when it stayed silent
+
+
 def enabled(feature: str) -> bool:
     raw = os.environ.get("DECISION_MAKER_GUARD")
     if raw is None:
@@ -201,6 +204,10 @@ def remember_prompt(event):
         qs["find"] = {"type": "noul", "instructions": Q_FIND}
     answers = {}
     if qs:
+        NOTE.update(what="read your prompt (" + " + ".join(
+            ([f"rules"] if enabled("rules") else []) + (["find-task check"] if enabled("prefetch") else [])) + ")",
+            ok="no new rules" * enabled("rules") + (", " if enabled("rules") and enabled("prefetch") else "") +
+               "not a find task" * enabled("prefetch"))
         try:
             answers = ask_jev({"prompt": clip(prompt, 6000)}, qs)
         except Exception as e:
@@ -432,8 +439,13 @@ def pre_tool_decision(decision, reason, user_note):
                                    "permissionDecisionReason": reason}}
 
 
-def short_target(tool, inp):
-    return inp.get("command", "")[:80] if tool == "Bash" else (inp.get("file_path") or inp.get("notebook_path") or "")
+def short_target(tool, inp, cwd=None):
+    if tool == "Bash":
+        return inp.get("command", "")[:80]
+    path = inp.get("file_path") or inp.get("notebook_path") or ""
+    if cwd and path.startswith(str(cwd).rstrip("/") + "/"):
+        return os.path.relpath(path, cwd)   # show src/app.py, not the full absolute path
+    return path
 
 
 def classify(qid: str, a: dict, act: float, concern: float) -> str:
@@ -500,6 +512,9 @@ def check_action(event):
         qs["risky"] = {"type": "noul", "instructions": Q_RISKY}
     if not qs:
         return None
+    what = f"{tool} {short_target(tool, inp, event.get('cwd'))}".strip()
+    NOTE.update(what=f"checked {what} against {len(rules)} rule{'s' if len(rules) != 1 else ''}"
+                     + (" + scope" if "scope" in qs else "") + (" + risk" if "risky" in qs else ""), ok="OK, allowed")
     answers = ask_jev({"request": request or "(unknown)", "action": clip(describe_action(tool, inp))}, qs)
 
     deny, ask = [], []
@@ -515,7 +530,7 @@ def check_action(event):
         elif p >= CONCERN:
             ask.append(f"{label} (p={p:.2f})")
     log({"event": "PreToolUse", "tool": tool, "deny": deny, "ask": ask})
-    what = f"{tool} {short_target(tool, inp)}".strip()
+    what = f"{tool} {short_target(tool, inp, event.get("cwd"))}".strip()
     if deny:
         return pre_tool_decision("deny", "Jev guard blocked this action:\n- " + "\n- ".join(deny) +
                                  "\nAdjust it to comply with the rule / the user's request. If you believe the "
@@ -544,6 +559,7 @@ def answer_question(event):
                        "instructions": {"question": q.get("question", ""),
                                         "task": "Pick the option that best serves `request`."}}
         qs[f"user{i}"] = {"type": "noul", "instructions": {"question": q.get("question", ""), "ask": Q_USER_ONLY}}
+    NOTE.update(what="tried to answer Claude's question for you", ok="not confident or your call: asking you")
     answers = ask_jev({"request": request or "(unknown)"}, qs)
     picks = []
     for i, q in enumerate(questions):
@@ -574,6 +590,8 @@ def check_stop(event):
         diff = ""
     if not diff.strip():
         diff = "Files edited this turn: " + ", ".join(touched)
+    NOTE.update(what=f"compared this turn's changes ({len(touched)} file{'s' if len(touched) != 1 else ''}) with your request",
+                ok="complete, nothing unrelated")
     answers = ask_jev({"request": request, "changes": clip(diff)},
                       {"missing": {"type": "noul", "instructions": Q_MISSING},
                        "extra": {"type": "noul", "instructions": Q_EXTRA}})
@@ -677,19 +695,59 @@ def session_hint(p):
             f"--url URL --steps 'step 1' 'step 2' ... (needs playwright-core; exit 3 = do that step yourself)."}
 
 
+JEV_CMD = re.compile(r"decide\.py|browser_steps\.mjs")
+
+
+def report_claude_usage(event):
+    """PostToolUse(Bash): Claude ran decide.py / the browser runner. Tell the user what Jev did."""
+    cmd = (event.get("tool_input") or {}).get("command", "")
+    if not JEV_CMD.search(cmd):
+        return None
+    f = decide.config_path().parent / "usage.log"
+    since = time.time() - (event.get("duration_ms") or 60000) / 1000 - 2
+    try:
+        recs = [json.loads(l) for l in f.read_text(encoding="utf-8").splitlines()[-500:]]
+    except (OSError, ValueError):
+        return None
+    # ponytail: time-window match; two sessions running Jev at the same second could share a line
+    recs = [r for r in recs if r.get("ts", 0) >= since and r.get("source") != "hook"]
+    if not recs:
+        return None
+    who = "browser runner" if any(r["source"] == "browser" for r in recs) else "Claude (decide.py)"
+    return {"systemMessage": f"⚖ Jev used by {who}: {decide.summarize(recs)} via {recs[-1].get('provider')}"}
+
+
+def with_usage(out, calls):
+    """Every Jev call a hook made is shown to the user: interventions get a usage line, passes get one line."""
+    if not calls:
+        return out
+    stats = decide.summarize(calls)
+    out = out or {}
+    if any(c.get("error") for c in calls):
+        err = next(c["error"] for c in calls if c.get("error"))
+        line = f"⚖ Jev unavailable ({err[:80]}): continued without it ({stats})"
+    elif out.get("systemMessage"):
+        out["systemMessage"] += f"\n  ({NOTE.get('what', 'Jev')}: {stats})"
+        return out
+    else:
+        line = f"⚖ Jev {NOTE.get('what', 'was used')} → {NOTE.get('ok', 'done')} ({stats})"
+    out["systemMessage"] = (out["systemMessage"] + "\n" + line) if out.get("systemMessage") else line
+    return out
+
+
 def main():
+    os.environ["DECISION_MAKER_SOURCE"] = "hook"
+    n0, out = len(decide.CALLS), None
     try:
         event = json.load(sys.stdin)
         name, tool = event.get("hook_event_name"), event.get("tool_name")
-        out = None
         if name == "SessionStart":
             out = session_start()
-            if out:
-                print(json.dumps(out))
-            return 0
-        if not any(enabled(f) for f in FEATURES):
-            return 0
-        if name == "UserPromptSubmit":
+        elif name in ("PostToolUse", "PostToolUseFailure"):
+            out = report_claude_usage(event)            # always: Claude's own Jev use, in any mode
+        elif not any(enabled(f) for f in FEATURES):
+            pass
+        elif name == "UserPromptSubmit":
             out = remember_prompt(event)
         elif name == "PreToolUse" and tool == "AskUserQuestion" and enabled("ask"):
             out = answer_question(event)
@@ -700,10 +758,11 @@ def main():
                 out = check_action(event)
         elif name == "Stop" and enabled("stop"):
             out = check_stop(event)
-        if out:
-            print(json.dumps(out))
     except Exception as e:  # fail open, always: a guard must never break the session
         log({"error": f"{type(e).__name__}: {e}"})
+    out = with_usage(out, decide.CALLS[n0:])
+    if out:
+        print(json.dumps(out))
     return 0
 
 

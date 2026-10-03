@@ -272,7 +272,43 @@ def gate(answers: dict, threshold: float) -> dict:
 
 # --------------------------------------------------------------------- http
 
+CALLS = []   # every Jev decision call this process made, so hooks can tell the user
+
+
+def record(provider, body, out, secs, error=None):
+    """One line per Jev call in usage.log (and CALLS): who, how much, how long, what it cost."""
+    state = (body or {}).get("state")
+    usage = (out or {}).get("usage", {})
+    rec = {"ts": round(time.time(), 3), "source": os.environ.get("DECISION_MAKER_SOURCE", "cli"),
+           "provider": provider.get("name"), "questions": len((body or {}).get("questions", {})),
+           "items": len(state.get("items", {})) if isinstance(state, dict) else 0,
+           "tokens": usage.get("input_tokens", 0), "cost": usage.get("cost"), "latency_s": round(secs, 3)}
+    if error:
+        rec["error"] = error[:200]
+    CALLS.append(rec)
+    try:
+        f = config_path().parent / "usage.log"
+        f.parent.mkdir(parents=True, exist_ok=True)
+        with open(f, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(rec) + "\n")
+    except OSError:
+        pass
+
+
 def http(provider: dict, method: str, path: str, body=None, retries=3, timeout=30.0):
+    t0 = time.monotonic()
+    try:
+        out = _http(provider, method, path, body, retries, timeout)
+    except DecideError as e:
+        if path.endswith("/systemone"):
+            record(provider, body, None, time.monotonic() - t0, str(e))
+        raise
+    if path.endswith("/systemone"):
+        record(provider, body, out, time.monotonic() - t0)
+    return out
+
+
+def _http(provider: dict, method: str, path: str, body=None, retries=3, timeout=30.0):
     url = provider["base_url"].rstrip("/") + path
     data = json.dumps(body).encode() if body is not None else None
     headers = {"Authorization": f"Bearer {provider['_key']}", "Accept": "application/json"}
@@ -371,6 +407,38 @@ def ask_items(args, p, questions):
     else:
         print(json.dumps({"provider": p["name"], "labels": labels, "answers": answers,
                           "usage": {"input_tokens": tokens}}, indent=2))
+
+
+def summarize(recs) -> str:
+    calls = len(recs)
+    secs = sum(r.get("latency_s", 0) for r in recs)
+    toks = sum(r.get("tokens", 0) for r in recs)
+    cost = sum(r.get("cost") or 0 for r in recs)
+    items = sum(r.get("items", 0) for r in recs)
+    errs = sum(1 for r in recs if r.get("error"))
+    return (f"{calls} call{'s' if calls != 1 else ''}" + (f", {items} items" if items else "") +
+            f", {secs:.1f}s, {toks:,} tokens" + (f", ${cost:.5f}" if cost else "") +
+            (f", {errs} failed" if errs else ""))
+
+
+def cmd_usage(args):
+    f = config_path().parent / "usage.log"
+    recs = [json.loads(l) for l in f.read_text(encoding="utf-8").splitlines()] if f.exists() else []
+    since = time.time() - args.hours * 3600
+    recs = [r for r in recs if r.get("ts", 0) >= since]
+    if not recs:
+        print(f"Jev was not used in the last {args.hours:g}h.")
+        return
+    print(f"Jev usage, last {args.hours:g}h: {summarize(recs)}")
+    for src in sorted({r["source"] for r in recs}):
+        label = {"hook": "automatic (hooks)", "cli": "called by Claude/you (decide.py)",
+                 "browser": "browser runner"}.get(src, src)
+        print(f"  {label}: {summarize([r for r in recs if r['source'] == src])}")
+    print("recent:")
+    for r in recs[-args.n:]:
+        print(f"  {time.strftime('%H:%M:%S', time.localtime(r['ts']))}  {r['source']:<8} {r['questions']}q"
+              f"{' ' + str(r['items']) + ' items' if r.get('items') else ''}  {r['latency_s']}s"
+              f"{'  ERROR ' + r['error'][:60] if r.get('error') else ''}")
 
 
 def cmd_models(args):
@@ -563,6 +631,11 @@ def parser():
     p.add_argument("--default", action="store_true", help="also make this the default provider")
     p.set_defaults(func=cmd_provider)
 
+    us = sub.add_parser("usage", help="every Jev call: when, by whom, how many, time, tokens, cost")
+    us.add_argument("--hours", type=float, default=24)
+    us.add_argument("-n", type=int, default=10)
+    us.set_defaults(func=cmd_usage)
+
     md = sub.add_parser("mode", help="how Jev is used in Claude Code: auto (by default) or manual (when asked)")
     md.add_argument("mode", nargs="?", choices=MODES, help="omit to show the current mode")
     md.set_defaults(func=cmd_mode)
@@ -572,8 +645,8 @@ def parser():
     g.add_argument("--act", type=float, help="replay: confident threshold to try")
     g.add_argument("--concern", type=float, help="replay: ask-the-user threshold to try")
     g.add_argument("-n", type=int, default=20, help="log: how many recent interventions")
-    g.add_argument("features", nargs="*", help=f"subset of {', '.join(GUARD_FEATURES)} (default: all but prefetch, "
-                                               "which sends file contents to the provider)")
+    g.add_argument("features", nargs="*", help=f"subset of {', '.join(GUARD_FEATURES)} (default for `on`: rules, scope, ask, "
+                                               "stop, keeping prefetch only if it was already on)")
     g.set_defaults(func=cmd_guard)
     return ap
 

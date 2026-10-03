@@ -209,9 +209,32 @@ class TestGuard(unittest.TestCase):
             out = self.submit("Which files implement refund logic?", {"find": YES})
         self.assertIsNone((out or {}).get("hookSpecificOutput"))
 
-    def test_clean_action_is_silent(self):
+    def test_claude_using_jev_is_reported_after_the_command(self):
+        import decide
+        os.environ["DECISION_MAKER_SOURCE"] = "cli"                   # as in Claude's own Bash process
+        with contextlib.redirect_stdout(io.StringIO()):
+            decide.main(["ask", "--state", "s", "--noul", "q", "Is it?"])
+        out = hook({"hook_event_name": "PostToolUse", "tool_name": "Bash", "session_id": "s1", "duration_ms": 900,
+                    "tool_input": {"command": "python3 /x/decide.py ask --state s --noul q 'Is it?'"}})
+        self.assertIn("⚖ Jev used by Claude (decide.py): 1 call", out["systemMessage"])
+        other = hook({"hook_event_name": "PostToolUse", "tool_name": "Bash", "session_id": "s1",
+                      "tool_input": {"command": "ls"}})
+        self.assertIsNone(other)                                        # unrelated commands: nothing
+
+    def test_usage_command_lists_every_call(self):
+        import decide
+        FakeSystemOne.override = {"rule0": NO, "rule1": NO, "scope": NO, "risky": NO}
+        self.pre("Bash", {"command": "npm i x"})                         # one hook call
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            decide.main(["usage"])
+        self.assertIn("automatic (hooks): 2 calls", buf.getvalue())     # setUp's prompt check + this edit check
+
+    def test_clean_action_is_allowed_and_reported(self):
         FakeSystemOne.override = {"rule0": NO, "rule1": NO, "scope": NO}
-        self.assertIsNone(self.pre("Write", {"file_path": "/x/b.py", "content": "x"}))
+        out = self.pre("Write", {"file_path": "/x/b.py", "content": "x"})
+        self.assertNotIn("hookSpecificOutput", out)                     # no decision: allowed
+        self.assertIn("⚖ Jev checked Write /x/b.py against 2 rules + scope → OK, allowed", out["systemMessage"])
 
     def test_risky_command_asks_never_denies(self):
         FakeSystemOne.override = {"rule0": NO, "rule1": NO, "scope": NO, "risky": YES}
@@ -273,10 +296,12 @@ class TestGuard(unittest.TestCase):
         self.assertIn("answered for you", out["systemMessage"])
 
     def test_unsure_answer_lets_user_decide(self):
-        self.assertIsNone(self.ask(0.55, 0.05))
+        out = self.ask(0.55, 0.05)
+        self.assertNotIn("hookSpecificOutput", out)                     # question goes through to the user
+        self.assertIn("asking you", out["systemMessage"])
 
     def test_users_own_call_is_never_auto_answered(self):
-        self.assertIsNone(self.ask(0.99, 0.6))
+        self.assertNotIn("hookSpecificOutput", self.ask(0.99, 0.6))
 
     # -- request vs. diff at Stop -----------------------------------------
 
@@ -373,9 +398,11 @@ class TestGuard(unittest.TestCase):
         self.assertIsNone(self.pre("Bash", {"command": "ls"}))
         self.assertEqual(FakeSystemOne.calls, [])
 
-    def test_fails_open_on_api_error(self):
+    def test_fails_open_on_api_error_and_says_so(self):
         os.environ["FAKE_KEY"] = "wrong"
-        self.assertIsNone(self.pre("Bash", {"command": "ls"}))
+        out = self.pre("Bash", {"command": "npm i x"})
+        self.assertNotIn("hookSpecificOutput", out)                     # fails open: allowed
+        self.assertIn("Jev unavailable", out["systemMessage"])
 
     def test_transcript_fallback_reads_real_prompt(self):
         t = self.root / "t.jsonl"

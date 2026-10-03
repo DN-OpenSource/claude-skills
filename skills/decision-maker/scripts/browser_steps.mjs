@@ -45,7 +45,8 @@ function jev(state, questions) {
   const t = Date.now();
   jevCalls++;
   const out = execFileSync("python3", [DECIDE, "ask", "--questions", JSON.stringify(questions), "--retries", "2"],
-                           { input: JSON.stringify(state), encoding: "utf8" });
+                           { input: JSON.stringify(state), encoding: "utf8",
+                             env: { ...process.env, DECISION_MAKER_SOURCE: "browser" } });
   jevMs += Date.now() - t;
   return JSON.parse(out).answers;
 }
