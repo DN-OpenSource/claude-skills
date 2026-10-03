@@ -1,6 +1,6 @@
 ---
 name: schema-aware-db
-description: Use this skill WHENEVER writing, editing, or reviewing backend code that reads from or writes to a database — SQL (PostgreSQL, MySQL, SQLite, etc.) or NoSQL (MongoDB, DynamoDB, Redis, etc.). Trigger it any time the task involves a query, an ORM model, a migration, a repository/DAO layer, a connection or session, adding or renaming a column/field, joining tables, or changing anything a query touches — even if the user only says "add an endpoint," "fix this query," "save this to the DB," or "add a field." The point of the skill is to STOP guessing schemas — it makes you introspect the real database structure, map every place a table/collection is used across the codebase, THEN make the change and trace its ripple, so you never invent columns, write broken joins, mishandle connections, or update a query in one file while leaving three others stale.
+description: Use WHENEVER writing, editing, or reviewing backend code that reads or writes a database — SQL (PostgreSQL, MySQL, SQLite) or NoSQL (MongoDB, DynamoDB, Redis): a query, ORM model, migration, repository/DAO, connection, adding/renaming a column or field, or a join — even if the user only says "add an endpoint," "fix this query," or "add a field." Stops schema guessing: introspect the real structure, map every usage across the codebase, then change it and trace the ripple so no column is invented and no query, serializer, or test goes stale.
 ---
 
 # Schema-Aware Database Work
@@ -53,3 +53,13 @@ When the task is to create or improve the table/collection design itself (not ju
 At the end, briefly report: (1) the confirmed schema facts you relied on and how you got them (live introspection vs. migrations vs. models), (2) the usage map, (3) the change, (4) the ripple you reconciled. This makes it auditable and catches guesses before they ship.
 
 If at any point you cannot verify a schema fact — no DB access, ambiguous migrations, no sample documents — do not proceed on an assumption. Say what you need (a connection string, a sample document, permission to run a read-only query) and stop there rather than guessing.
+
+## Composes with (optional, never required)
+
+Self-contained: nothing here is needed for this skill to work. When a companion is installed:
+
+- **lsp**: in Phase 2, run `references` on the ORM model or class for precise call sites, instead of grepping a table name and drowning in false positives.
+- **codebase-guardian**: governs the general edit and its Phase 4 verification. This skill specializes Phases 1–3 for the data layer.
+- **memory**: confirmed schema facts and access patterns (keys, GSIs, reconciled migration state) go into `MEMORY.md`.
+- **agents-dox**: a schema or migration change that alters a module's data contract triggers that subtree's DOX pass.
+- **decision-maker**: in Phase 2, score every grep hit as real-usage-or-noise in one call, and check migration risk before Phase 3 (`decision-maker/references/use-cases.md` §5). It never replaces introspection.

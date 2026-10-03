@@ -109,3 +109,15 @@ Read the one matching the project's stack in Phase 1 — each has the exact comm
 - `references/python.md` — Python / Django (mypy/pyright, ruff, migrations, serializers)
 - `references/flutter.md` — Flutter / Dart (analyzer, build_runner codegen, BLoC/router sync)
 - `references/rust.md` — Rust / Tauri (cargo check/clippy, trait impls, IPC command contracts)
+
+## Composes with (optional, never required)
+
+Self-contained: nothing here is needed for this skill to work. When a companion is installed:
+
+- **memory**: see *Companion: the memory skill* above. Read in Phase 1, update in Phase 4.
+- **agents-dox**: in a DOX repo, read the `AGENTS.md` chain in Phase 1, honor the nearest contract while editing, and fold the DOX pass into Phase 4.
+- **lsp**: use `references` in Phase 1 to size the impact before scoping, and `rename --apply` for symbol renames in Phase 3. Then verify in Phase 4.
+- **schema-aware-db**: when the change touches a query, model, or migration, its four phases are this loop specialized for the data layer. Run them as Phases 1–3 here.
+- **teammates**: each peer runs this loop on its own work item, so parallel edits stay safe.
+- **ponytail**: this loop closes out each *change*. Run ponytail once at the end of the *session*.
+- **decision-maker**: in Phase 2, ask match-vs-change plus a ripple-size score in one call (`decision-maker/references/use-cases.md` §4). Act only on high confidence. Otherwise decide as usual.

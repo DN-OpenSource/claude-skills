@@ -1,7 +1,7 @@
 {
   "name": "lsp",
   "description": "Semantic code navigation via real language servers — go-to-definition, find-references, hover, symbols, diagnostics, and safe project-wide rename for TypeScript/Node, Python, Dart/Flutter, and Rust. Ships a stdlib-only Python LSP client; falls back to grep when no server is installed.",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"

@@ -1,0 +1,22 @@
+{
+  "name": "ponytail",
+  "description": "Wrap up a work session so nothing is left dangling — sweep every loose strand (uncommitted or unpushed work, unlabeled stashes, session debris, promises recorded nowhere), tie each one off, and leave a single 'session tail' report the next session can pick up without archaeology.",
+  "version": "1.4.0",
+  "author": {
+    "name": "dhirajnikam",
+    "email": "dhirajnikam78@gmail.com"
+  },
+  "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/ponytail",
+  "repository": "https://github.com/DN-OpenSource/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "skills",
+    "workflow",
+    "wrap-up",
+    "handoff",
+    "session",
+    "git",
+    "loose-ends",
+    "claude-code"
+  ]
+}
