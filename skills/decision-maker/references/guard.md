@@ -56,3 +56,13 @@ Claude can then answer in **one turn with no tool calls**. On semantic file sear
 - **When Claude runs `decide.py` or the browser runner,** the `PostToolUse` hook on Bash reports those calls after the command finishes. It matches them by the command's time window and the `cli` or `browser` source.
 - **`decide.py usage`** gives the totals by source.
 
+## Codex
+
+The same `hooks.json` runs in Codex. `guard.py` detects Codex from the `PLUGIN_ROOT` environment variable or a `turn_id` field in the input, then:
+
+- **Edits:** treats `apply_patch` as the edit tool, reading the patch text and its `*** Add/Update/Delete File:` paths.
+- **Unsure:** turns an "ask" into a deny that tells Codex to confirm with the user in chat, because Codex reports `permissionDecision: "ask"` as a hook error and lets the tool run.
+- **Stop:** sends the agent back with `decision: "block"` plus a reason.
+- **Output:** always prints JSON, at least `{}`, because Codex rejects empty stdout for Stop.
+- **Notices:** also passes every `⚖` notice to Codex as `additionalContext`, with an instruction to tell the user, because `codex exec` doesn't show hook messages.
+

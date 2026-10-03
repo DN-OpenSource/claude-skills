@@ -1,4 +1,4 @@
-# decision-maker: Jev for Claude Code
+# decision-maker: Jev for Claude Code and Codex
 
 Much of a coding session is small judgment calls:
 
@@ -9,7 +9,7 @@ Much of a coding session is small judgment calls:
 
 Claude can reason through each one, but that costs a model turn and tokens every time. **Jev**, TypeSafe's *System One* decision model, answers exactly this kind of question: yes/no, pick-one or a score. It reads text or JSON, replies in under a second, and returns a **calibrated confidence**.
 
-This plugin brings Jev into Claude Code:
+This plugin brings Jev into **Claude Code** and **OpenAI Codex**; see [Using it with Codex](#13-using-it-with-codex):
 
 - **Confident:** Claude or the hook acts on Jev's answer.
 - **Unsure:** Claude decides itself, or asks you.
@@ -29,6 +29,7 @@ This plugin brings Jev into Claude Code:
 10. [Tuning and evaluation](#10-tuning-and-evaluation)
 11. [Safety, failure behaviour and limits](#11-safety-failure-behaviour-and-limits)
 12. [Files in this plugin](#12-files-in-this-plugin)
+13. [Using it with Codex](#13-using-it-with-codex)
 
 `decide.py` below means `python3 <plugin dir>/scripts/decide.py`. Run `/decision-maker:jev` to see the exact path on your machine.
 
@@ -369,5 +370,49 @@ decision-maker/
     ├── eval_usecases.py · eval_guard.py · bench_claude_code.py · bench_browser/
     └── test_decide.py · test_guard.py
 ```
+
+
+## 13. Using it with Codex
+
+The same plugin works in **OpenAI Codex** (tested with codex-cli 0.153). Codex reads Claude-compatible marketplaces, `SKILL.md` skills and `hooks/hooks.json`, and it sets `CLAUDE_PLUGIN_ROOT` for compatibility.
+
+**Install:**
+
+```bash
+codex plugin marketplace add DN-OpenSource/claude-skills
+codex plugin add decision-maker@claude-skills
+```
+
+Then, in Codex, open **`/hooks`** and **trust** the decision-maker hooks. Codex skips plugin hooks until you've reviewed them, and asks again whenever the hook definition changes. The provider config and the auto/manual mode are shared with Claude Code (`~/.config/decision-maker/`), so a key or mode you set in one host applies to both.
+
+**What's the same:**
+- the skill, which Codex invokes as `$decision-maker`;
+- `decide.py`, batch sorting and the browser runner;
+- prefetch;
+- rules from your prompts;
+- rule checks: `AGENTS.md`, which Codex itself uses, and `CLAUDE.md` files are both read;
+- scope and risky-command checks;
+- the end-of-turn request-vs-diff check;
+- `usage.log` and `guard log`.
+
+**What's adapted for Codex:**
+
+| | Claude Code | Codex |
+|---|---|---|
+| File edits | Edit / Write / MultiEdit tools | `apply_patch`: the guard reads the patch text and the file paths inside it |
+| Guard is unsure | Claude Code's own approval prompt asks you | Codex hooks can't prompt, so the edit is blocked and Codex is told to **ask you in chat** first |
+| End-of-turn check sends the agent back | Shown as feedback, not as an error | Codex's `decision: block`, which Codex turns into a continuation prompt |
+| `⚖` notices | Shown directly | Shown as UI warnings where Codex displays them, **and** passed to Codex, which tells you in one line ("Jev checked the request…", "Jev approved the edit…"), because `codex exec` doesn't print hook messages |
+| Status and mode | `/decision-maker:jev` | Ask Codex `$decision-maker status`, "use Jev automatically" or "only when I ask"; it runs `decide.py guard status` or `mode` |
+| Decide-don't-ask | The AskUserQuestion hook | Not available: Codex has no matching question tool |
+
+**Verified in a real Codex run** (`codex exec`, an isolated Codex home, the plugin installed from a marketplace):
+- the skill showed up as `decision-maker`;
+- your prompt's "Don't touch the tests folder" became a rule;
+- `apply_patch` and non-read-only commands were checked;
+- at the end of the turn Codex was sent back once, explained the conflict in the instructions, and left `tests/` untouched;
+- Codex told the user each time Jev was used.
+
+**Skill only, without hooks:** link the folder into Codex's skills directory, with `ln -s <repo>/skills/decision-maker ~/.agents/skills/decision-maker`. You get `decide.py`, batch sorting, the browser runner and the recipes; the automatic features need the plugin's hooks.
 
 Credits: Jev and the System One API are by [TypeSafe AI](https://typesafe.ai); see the docs at https://docs.typesafe.ai. `references/building.md` is condensed from [typesafe-ai/skills](https://github.com/typesafe-ai/skills) (MIT). OpenJEV is an independent gateway and is not affiliated with TypeSafe.

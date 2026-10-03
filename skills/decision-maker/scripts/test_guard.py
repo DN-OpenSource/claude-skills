@@ -230,6 +230,68 @@ class TestGuard(unittest.TestCase):
             decide.main(["usage"])
         self.assertIn("automatic (hooks): 2 calls", buf.getvalue())     # setUp's prompt check + this edit check
 
+    # -- Codex: same hooks, its own tool names and output rules --------------
+
+    PATCH = "*** Begin Patch\n*** Update File: tests/test_dates.py\n@@\n-assert a\n+assert b\n*** End Patch\n"
+
+    def codex_pre(self, tool, tool_input):
+        return hook({"hook_event_name": "PreToolUse", "session_id": "s1", "turn_id": "t1",
+                     "cwd": str(self.repo), "tool_name": tool, "tool_input": tool_input})
+
+    def test_codex_apply_patch_is_checked_against_rules(self):
+        self.prompt("Fix the date parser. Don't touch the tests folder.", {"new0": NO, "new1": YES})
+        FakeSystemOne.override = {"rule0": YES, "rule1": NO, "rule2": NO, "scope": NO}
+        out = self.codex_pre("apply_patch", {"command": self.PATCH})
+        self.assertEqual(out["hookSpecificOutput"]["permissionDecision"], "deny")
+        self.assertIn("BLOCKED apply_patch tests/test_dates.py", out["systemMessage"])
+        self.assertIn("Codex was told to adjust", out["systemMessage"])
+        body = FakeSystemOne.calls[-1][2]
+        self.assertIn("*** Update File: tests/test_dates.py", body["state"]["action"])
+        # the patched file is remembered for the end-of-turn diff check
+        self.assertEqual(guard.load_session({"session_id": "s1"})["touched"],
+                         [str(self.repo / "tests" / "test_dates.py")])
+
+    def test_codex_cannot_ask_so_it_denies_and_asks_in_chat(self):
+        FakeSystemOne.override = {"rule0": NO, "rule1": NO, "scope": MAYBE}
+        out = self.codex_pre("apply_patch", {"command": self.PATCH})
+        d = out["hookSpecificOutput"]
+        self.assertEqual(d["permissionDecision"], "deny")            # never "ask": Codex would just run it
+        self.assertIn("Ask the user in chat to confirm", d["permissionDecisionReason"])
+        self.assertIn("Codex hooks can't prompt you", out["systemMessage"])
+
+    def test_codex_stop_uses_decision_block(self):
+        subprocess.run(["git", "init", "-q"], cwd=self.repo, check=True)
+        FakeSystemOne.override = {"rule0": NO, "rule1": NO, "scope": NO}
+        self.codex_pre("apply_patch", {"command": self.PATCH})
+        FakeSystemOne.override = {"missing": YES, "extra": NO}
+        out = hook({"hook_event_name": "Stop", "session_id": "s1", "turn_id": "t1", "cwd": str(self.repo)})
+        self.assertEqual(out["decision"], "block")
+        self.assertIn("don't do yet", out["reason"])
+        self.assertIn("Codex was sent back", out["systemMessage"])
+
+    def test_codex_relays_notices_to_the_model(self):
+        FakeSystemOne.override = {"find": NO, "new0": NO}
+        out = hook({"hook_event_name": "UserPromptSubmit", "session_id": "s1", "turn_id": "t1",
+                    "cwd": str(self.repo), "prompt": "fix the typo"})
+        ctx = out["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("tell them in one short line", ctx)
+        self.assertIn("⚖ Jev read your prompt", ctx)
+        FakeSystemOne.override = {"find": NO, "new0": NO}
+        claude = hook({"hook_event_name": "UserPromptSubmit", "session_id": "s1", "cwd": str(self.repo),
+                       "prompt": "fix the typo"})
+        self.assertNotIn("hookSpecificOutput", claude)               # Claude shows systemMessage itself
+
+    def test_codex_always_gets_json(self):
+        out = hook({"hook_event_name": "Stop", "session_id": "s1", "turn_id": "t1", "cwd": str(self.repo),
+                    "stop_hook_active": True})
+        self.assertEqual(out, {})                                    # "{}", never empty stdout
+
+    def test_codex_session_notice_names_codex_commands(self):
+        os.environ.update(DECISION_MAKER_MODE="auto", PLUGIN_ROOT="/x")
+        msg = hook({"hook_event_name": "SessionStart", "session_id": "s1"})["systemMessage"]
+        self.assertIn('ask Codex "$decision-maker manual"', msg)
+        self.assertNotIn("/decision-maker:jev", msg)
+
     def test_clean_action_is_allowed_and_reported(self):
         FakeSystemOne.override = {"rule0": NO, "rule1": NO, "scope": NO}
         out = self.pre("Write", {"file_path": "/x/b.py", "content": "x"})
