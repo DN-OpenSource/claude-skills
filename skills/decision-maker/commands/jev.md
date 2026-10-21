@@ -1,9 +1,9 @@
 ---
 description: Show what Jev (decision-maker) does in this Claude Code install, what it sends where, and what it did recently
-allowed-tools: Bash(python3:*)
+allowed-tools: Bash(python3:*), Bash(python:*)
 ---
 
-Run these and show the user the results:
+Run these and show the user the results (on Windows, use `python` if `python3` prints "Python was not found" (the Microsoft Store stub)):
 
 1. `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/decide.py" guard status`
 2. `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/decide.py" guard log -n 10`

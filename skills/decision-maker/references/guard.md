@@ -2,6 +2,8 @@
 
 The plugin ships `hooks/hooks.json`, which runs `scripts/guard.py`. **Defaults follow the mode you choose after install:** auto turns on prefetch; manual, or no choice yet, runs nothing automatically. The per-edit checks (rules, scope, ask, stop) run only after `decide.py guard on`. With no key, nothing runs. It fails open on any error, timeout, or missing key.
 
+On Windows, use `python` if `python3` prints "Python was not found" (the Microsoft Store stub).
+
 ```bash
 python3 decide.py guard on                 # all checks; or pick: guard on rules scope ask stop
 python3 decide.py guard status             # shows what's on and whether the provider key resolves
