@@ -57,9 +57,17 @@ At the start of each session the skill asks the user to pick one:
    doing; a fix in the batch can't be proven green; a veto flag fires; or 5 batches done
    (session ceiling, so a run can't sprawl — the user can start another session).
 
+4. **Complete auto** (user decided) — as 3, but asks **nothing**: the "always ask first"
+   list below is skipped too, ties go to the panel's top option, and veto flags are
+   logged instead of asked. The start-of-session choice is the only permission.
+   Kept even here (my call — these are about recoverability, not permission): every
+   change still goes through a branch + PR, so any merge can be reverted; never rewrite
+   or force-push the default branch; never write secret values into code, logs, or
+   reports. Claude Code's own permission settings still apply — the skill can't bypass them.
+
 The answer applies to this session only; it is never remembered as a standing permission.
 
-**Always ask first, in every mode (user agreed):** deleting a feature, changing the
+**Always ask first, in modes 1–3 (user agreed):** deleting a feature, changing the
 product goal, anything touching payments / auth / secrets, database migrations, force-push.
 
 **Cap (user agreed):** at most 3 items per batch. Mode 2 runs one batch; mode 3 loops.
