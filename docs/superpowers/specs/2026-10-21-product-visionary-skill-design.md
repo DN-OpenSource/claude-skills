@@ -37,7 +37,8 @@ The user decides at the **start of every session** how much autonomy the skill g
 
 ## Anti-goals (a failure even if it "works")
 
-- Silently changing what the product is for, or deleting a feature without asking.
+- Silently changing what the product is for, or deleting a feature — without asking
+  (modes 1–3) or without it being logged and called out in the end report (mode 4).
 - A big unreviewable pile of changes from one run.
 - Claiming something is fixed without a passing `test-report` run that shows it.
 - A panel that just rubber-stamps the first idea — the discussion must actually weigh
@@ -100,7 +101,8 @@ session.
 2. **Load state** — read `PRODUCT.md` (and roadmap / decision log) if present.
 3. **Understand** — read README, docs, manifests, code structure, git history.
    - Infer the **goal**: what the product is for and who it serves. On first run (no
-     `PRODUCT.md`) show the inferred goal and ask the user to confirm or correct it.
+     `PRODUCT.md`) show the inferred goal and ask the user to confirm or correct it (complete auto: use
+     the inferred goal, mark it "unconfirmed" in `PRODUCT.md`).
    - **Where we are:** built / half-built / broken / missing, per feature.
    - **Feature map:** each feature, what it depends on, what depends on it, and how it
      contributes to the goal. Flag features that contribute little or nothing
