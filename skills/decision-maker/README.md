@@ -330,7 +330,7 @@ The use cases were written by the author, so real-world accuracy will be lower. 
   - `python3 eval_guard.py --variants v0,v1 --reps 2` compares guard question wordings;
   - `python3 bench_claude_code.py --reps 2` measures Claude Code token cost with and without Jev;
   - `cd bench_browser && npm i playwright-core && python3 bench_browser.py 2` benchmarks browser testing.
-- **Unit tests:** `cd scripts && python3 -m unittest test_decide test_guard`. There are 51 tests against a local fake server; no key or network is needed.
+- **Unit tests:** `cd scripts && python3 -m unittest discover`. They run against a local fake server; no key or network is needed. CI runs them on Linux, Windows and macOS.
 
 ## 11. Safety, failure behaviour and limits
 
