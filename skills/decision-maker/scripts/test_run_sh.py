@@ -16,7 +16,7 @@ SH = shutil.which("sh")
 
 def _fake(bindir: Path, name: str, body: str):
     p = bindir / name
-    p.write_text("#!/bin/sh\n" + body + "\n", encoding="utf-8", newline="\n")
+    p.write_bytes(("#!/bin/sh\n" + body + "\n").encode())
     p.chmod(0o755)
 
 
@@ -56,6 +56,10 @@ class TestRunSh(unittest.TestCase):
         r = self.run_sh()
         self.assertEqual((r.returncode, r.stdout.strip()), (2, "ran a b"))
         self.assertEqual(self.count.read_text(), "x")  # exit 2 is not retried
+
+    def test_run_sh_negative_launcher_has_no_crlf(self):
+        # a CRLF checkout breaks sh ("\r: not found"); .gitattributes pins *.sh to LF
+        self.assertNotIn(b"\r", (HERE / "run.sh").read_bytes())
 
     def test_run_sh_negative_no_python_fails_open_without_running(self):
         _fake(self.bin, "python3", "exit 9009")
