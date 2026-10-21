@@ -93,6 +93,8 @@ The re-read-after-write pattern only protects the **field you just wrote**. It d
 
 A canonical Python snippet for an edit — copy and adapt:
 
+On Windows, use `python` if `python3` prints "Python was not found" (the Microsoft Store stub).
+
 ```bash
 python3 << 'PYEOF'
 import json, datetime

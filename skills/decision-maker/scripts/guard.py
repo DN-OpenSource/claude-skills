@@ -15,6 +15,7 @@ key resolves. Any error or timeout fails open: the hook prints nothing, exits 0.
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import time
@@ -22,6 +23,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import decide  # noqa: E402
+
+PY = shlex.quote(Path(sys.executable).as_posix())  # the interpreter that works here; "python3" may be a Store stub
 
 # ------------------------------------------------- thresholds (tune here)
 ACT = float(os.environ.get("DECISION_MAKER_ACT", 0.8))          # confident enough to act alone
@@ -651,7 +654,7 @@ def status_lines(p) -> list:
     d = Path(__file__).resolve().parent
     if p is None:
         return ["decision-maker is installed but INACTIVE: no Jev provider key, so nothing is sent anywhere.",
-                f"  Set one: python3 {d / 'decide.py'} provider edit openjev --api-key KEY --default "
+                f"  Set one: {PY} {shlex.quote((d / 'decide.py').as_posix())} provider edit openjev --api-key KEY --default "
                 "(or export TYPESAFE_API_KEY before starting claude)",
                 f"  Then choose how to use it: {jev_cmd('auto')} (by default) or {jev_cmd('manual')} (only when you ask).",
                 f"  {jev_cmd()} explains what it does."]
@@ -720,7 +723,7 @@ def session_hint(p):
     """The ready-to-run batch and browser commands for Claude (~80 tokens)."""
     if os.environ.get("DECISION_MAKER_HINT", "1") == "0":
         return None
-    cmd = f"python3 {Path(__file__).resolve().parent / 'decide.py'}"
+    cmd = f"{PY} {shlex.quote((Path(__file__).resolve().parent / 'decide.py').as_posix())}"
     return {"hookEventName": "SessionStart", "additionalContext":
             f"decision-maker is configured (Jev via {p['name']}). To sort or filter many files/lines by meaning, "
             f"run this first instead of grepping or reading them (no need to load the skill): "

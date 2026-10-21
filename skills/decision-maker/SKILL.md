@@ -7,7 +7,7 @@ description: Fast, cheap, calibrated decisions via TypeSafe's Jev System One mod
 
 Jev (TypeSafe's System One model) answers typed questions about some text: **noul** (yes/no probability), **choice** (one of N, with confidence) and **score** (position on ordered levels). Use it for the many narrow, closed-set judgments inside a task. Claude still does the reasoning.
 
-`D=<this skill's dir>/scripts/decide.py`. Run `python3 $D provider list` to see providers; the default is set by the user (`references/providers.md`).
+`D=<this skill's dir>/scripts/decide.py`. Run `python3 $D provider list` to see providers (on Windows, use `python` if `python3` prints "Python was not found" (the Microsoft Store stub)); the default is set by the user (`references/providers.md`).
 
 ## Batch many items (the main use: content never enters your context)
 

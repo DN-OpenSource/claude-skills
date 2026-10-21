@@ -31,7 +31,7 @@ This plugin brings Jev into **Claude Code** and **OpenAI Codex**; see [Using it 
 12. [Files in this plugin](#12-files-in-this-plugin)
 13. [Using it with Codex](#13-using-it-with-codex)
 
-`decide.py` below means `python3 <plugin dir>/scripts/decide.py`. Run `/decision-maker:jev` to see the exact path on your machine.
+`decide.py` below means `python3 <plugin dir>/scripts/decide.py` (on Windows, use `python` if `python3` prints "Python was not found" (the Microsoft Store stub)). Run `/decision-maker:jev` to see the exact path on your machine.
 
 ---
 

@@ -2,7 +2,7 @@
 
 These are the questions and thresholds the other skills in this repo send through `decide.py`. They are kept in one file so you can review and tune them in one place. Each recipe is **optional**. If `decide.py` exits non-zero (no key, network down, 4xx/5xx), the calling skill does what it did before: Claude decides on its own. Thresholds are starting points. Tune them against real outcomes.
 
-`D` below means `python3 <decision-maker>/scripts/decide.py`.
+`D` below means `python3 <decision-maker>/scripts/decide.py` (on Windows, use `python` if `python3` prints "Python was not found" (the Microsoft Store stub)).
 
 ## 1. Skill routing: which skills apply to this request? (any session)
 
