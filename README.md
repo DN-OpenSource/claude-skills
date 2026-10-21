@@ -2,7 +2,7 @@
 
 A collection of custom skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview). Each skill works on its own, and they compose with one another (see [How the skills work together](#how-the-skills-work-together)).
 
-**Version:** 1.5.0 (all plugins)
+**Version:** 1.5.0 (all plugins) · **Requires:** Python 3.9+ for the scripted skills (lsp, decision-maker) · tested on Linux, Windows, macOS
 
 ## What are skills?
 
