@@ -561,7 +561,7 @@ def check_action(event):
         elif p >= CONCERN:
             ask.append(f"{label} (p={p:.2f})")
     log({"event": "PreToolUse", "tool": tool, "deny": deny, "ask": ask})
-    what = f"{tool} {short_target(tool, inp, event.get("cwd"))}".strip()
+    what = f"{tool} {short_target(tool, inp, event.get('cwd'))}".strip()
     if deny:
         return pre_tool_decision("deny", "Jev guard blocked this action:\n- " + "\n- ".join(deny) +
                                  "\nAdjust it to comply with the rule / the user's request. If you believe the "
