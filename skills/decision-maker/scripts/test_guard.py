@@ -54,7 +54,7 @@ class TestGuard(unittest.TestCase):
         cfg = self.root / "cfg" / "providers.json"
         env = {k: v for k, v in os.environ.items()
                if not k.startswith(("TYPESAFE_", "DECISION_MAKER_", "OPENROUTER_", "OPENJEV_", "LITELLM_"))}
-        env.update(DECISION_MAKER_CONFIG=str(cfg), HOME=str(self.root), FAKE_KEY="good-key",
+        env.update(DECISION_MAKER_CONFIG=str(cfg), HOME=str(self.root), USERPROFILE=str(self.root), FAKE_KEY="good-key",
                    DECISION_MAKER_GUARD="all,prefetch")
         self.env = mock.patch.dict(os.environ, env, clear=True)
         self.env.start()
