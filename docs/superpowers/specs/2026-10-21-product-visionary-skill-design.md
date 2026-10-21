@@ -64,72 +64,27 @@ product goal, anything touching payments / auth / secrets, database migrations, 
 
 **Cap (user agreed):** at most 3 items per batch. Mode 2 runs one batch; mode 3 loops.
 
-**What counts as an item (user decided):** fixes for issues found by tests, **and small
-improvements** — both count toward the 3. Big new features never get built on auto; they
-go to the roadmap for the user to approve. "Small" vs "big" is the ranking panel's call
-(my call: big = needs a new screen/endpoint/model, or touches more than one feature).
-An improvement is proven the same way as a fix: `test-report` writes and runs 2+1 tests
-for the improved behavior.
+**What counts as an item (user decided):** fixes for issues found by tests, small
+improvements, **and new features**. The session-start permission is the only approval
+needed — in full auto the skill builds big new features without asking per feature
+(user decided). The user verifies the results at the end of the session.
 
-## The flow (one session)
+- Mode 2 builds features too, but each lands as a PR the user merges.
+- Mode 1 only writes feature proposals to the roadmap.
 
-1. **Ask the autonomy mode.**
-2. **Load state** — read `PRODUCT.md` (and roadmap / decision log) if present.
-3. **Understand** — read README, docs, manifests, code structure, git history.
-   - Infer the **goal**: what the product is for and who it serves. On first run (no
-     `PRODUCT.md`) show the inferred goal and ask the user to confirm or correct it.
-   - **Where we are:** built / half-built / broken / missing, per feature.
-   - **Feature map:** each feature, what it depends on, what depends on it, and how it
-     contributes to the goal. Flag features that contribute little or nothing
-     (dead / orphan code).
-4. **Test** — run `test-report` on the features that matter most to the goal.
-5. **Decide** — panel discussion (below) ranks issues and improvements and picks the
-   top items (max 3 fixes).
-6. **Act** (modes 2 and 3 only) — fix each item; re-run `test-report` to prove it;
-   mode 2 opens a PR, mode 3 merges when green.
-7. **Update state and report back** — update `PRODUCT.md`, roadmap, decision log; tell
-   the user what was found, decided, done, and what's next.
+**How a new feature is built (my call):**
+1. The ranking panel proposes it with: what it is, which part of the goal it serves,
+   which features it connects to, size (small / medium / large).
+2. Small → counts as one of the batch's 3 items. Medium/large → gets **a batch of its
+   own** and a 6-panel to agree the build approach (9-panel if it changes the product's
+   direction).
+3. Built on its own branch + PR; `test-report` writes and runs 2+1 tests for it; the
+   existing suite must show no new failures; mode 3 merges, mode 2 leaves the PR.
+4. `PRODUCT.md` feature map and roadmap are updated in the same PR.
 
-## The panel (3-6-9)
-
-Panel size by decision weight (user agreed):
-
-| Size | Used for |
-|------|----------|
-| **3** | Small calls — a bug fix, which failing test to address first |
-| **6** | Medium — adding a feature, a refactor |
-| **9** | Direction — cutting a feature, changing the goal |
-
-Each panel member takes a distinct **viewpoint** (my call), drawn in this order so a
-3-panel always has the core tension:
-
-1. **User advocate** — what users actually feel and need
-2. **Engineer** — feasibility, cost, maintainability
-3. **Skeptic** — argues against the leading option, hunts for what's being missed
-4. Quality / reliability
-5. Business / growth
-6. Security & risk
-7. Simplicity (what can we *not* do)
-8. Long-term architecture
-9. Newcomer (does this make sense to a first-time user / dev)
-
-**Discussion protocol (my call):**
-
-- **Round 1** — every member, in parallel, gets the same brief (goal, feature map,
-  test-report results, the candidate items) and returns a position: ranked picks, the
-  reason, and what would change their mind.
-- **Round 2** — every member sees all Round 1 positions and may revise, rebut, or hold.
-- **Conclusion** — the decision goes to the option with a majority after Round 2. No
-  majority → one more round limited to the top two options; still tied → the skill
-  presents both to the user, even in full auto.
-- Any member can raise a **veto flag** on an "always ask first" item; a flag forces a
-  user question regardless of mode.
-- The decision log records: question, panel size, final pick, vote count, the winning
-  argument, and the strongest dissent.
-
-Members are spawned with the Agent tool. The `teammates` skill's coordination substrate
-is not required (this is a debate, not a work split); the builder may reuse its
-`.teammates/` state pattern if useful.
+**End-of-session verification (user decided):** the final report lists every item done,
+with PR links, test results, and the decision-log entry, so the user can verify the
+session.
 
 ## Decisions made during review (my calls unless noted)
 
