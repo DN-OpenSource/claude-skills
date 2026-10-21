@@ -89,7 +89,7 @@ needed — in full auto the skill builds big new features without asking per fea
    direction).
 3. Built on its own branch + PR; `test-report` writes and runs 2+1 tests for it; the
    existing suite must show no new failures; mode 3 merges, mode 2 leaves the PR.
-4. `PRODUCT.md` feature map and roadmap are updated in the same PR.
+4. `PRODUCT.md` feature map and roadmap are updated in one end-of-session state PR (changed after review: per-item state edits conflict).
 
 **End-of-session verification (user decided):** the final report lists every item done,
 with PR links, test results, and the decision-log entry, so the user can verify the
@@ -171,8 +171,8 @@ is not required (this is a debate, not a work split); the builder may reuse its
 - **Merging in mode 3:** one branch + PR per item, merged with `gh pr merge --squash`.
   Never force-push; if the branch is protected or needs review, stop at the PR.
 - **Report-only file writes:** tests, `test-reports/`, and state files are written to the
-  working tree but not committed; the user is told where they are. In modes 2/3 state
-  updates go into each PR.
+  working tree but not committed; the user is told where they are. In modes 2–4 state
+  updates go into one end-of-session state PR (changed after review).
 
 ## Durable state (my call on names and location)
 
