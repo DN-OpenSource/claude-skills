@@ -62,7 +62,7 @@ Append-only. Newest at the bottom.
 
 ```markdown
 ### D-<n> — YYYY-MM-DD — <question>
-- **Status:** proposed (mode 1) | in progress | done | failed: <reason>
+- **Status:** proposed (mode 1) | in progress | awaiting user merge | done | failed: <reason>
 - **Panel:** <3|6|9> — <viewpoints> — rounds: <1|2|3>
 - **Pick:** <decision>
 - **Votes:** <score or count, e.g. 7/9; note "tie-break" if one was used>
@@ -78,7 +78,7 @@ Shown to the user at the end; also appended to `docs/product/decisions.md` as-is
 
 ```markdown
 ### End-of-session report — YYYY-MM-DD
-**Mode:** <1-4> · **Batches:** <n> · **Stopped because:** <single batch (modes 1-2) | nothing left | unproven item | veto | 5 batches>
+**Mode:** <1-4> · **Batches:** <n> · **Stopped because:** <single batch (modes 1-2) | no PR/merge available | nothing left | unproven item | veto | 5 batches>
 
 | # | Item | Kind | PR | Tests | Decision |
 |---|------|------|----|-------|----------|

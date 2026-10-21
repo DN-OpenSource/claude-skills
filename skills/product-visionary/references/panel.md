@@ -52,19 +52,19 @@ veto: none | <always-ask item this touches>
 **Round 1 prompt:**
 > You are the <viewpoint> on a product panel. <viewpoint one-liner>. Read the brief and
 > return your position in the exact format. Argue from your viewpoint; don't hedge.
-> You may read the repo to check claims. Do not edit, create, or delete any file.
+> You may read the repo to check claims. Do not edit, create, or delete any file. Never quote secret values.
 > <brief>
 
 **Round 2 prompt:**
 > You are the <viewpoint>. Here are every member's Round 1 positions, verbatim. Revise,
 > rebut, or hold — say which and why. Return your position in the exact format.
-> Do not edit, create, or delete any file.
+> Do not edit, create, or delete any file. Never quote secret values.
 > <brief> <all Round 1 positions, verbatim>
 
 **Tie round prompt:**
 > You are the <viewpoint>. The panel is split between exactly two options: <A> and <B>.
 > Here are all positions so far, verbatim. Pick one and give the single strongest reason.
-> Return `pick: A|B`, `reason:`, `veto:`. Do not edit, create, or delete any file.
+> Return `pick: A|B`, `reason:`, `veto:`. Do not edit, create, or delete any file. Never quote secret values.
 
 ## Conclusion
 
@@ -78,8 +78,9 @@ veto: none | <always-ask item this touches>
 - **No majority, or a tie that changes which items are picked** → a tie round on the
   **top two**. A tie that only changes the order of items all picked anyway isn't a tie —
   order them by first-place votes.
-- **Still tied** → modes 1–3: ask the user, showing both sides. Mode 4: take the option the
-  **skeptic objected to least**, and log it as a tie-break.
+- **Still tied** → modes 1–3: ask the user, showing both sides. Mode 4: take the option
+  ranked higher in the skeptic's picks (the one the skeptic objected to least), and log
+  it as a tie-break.
 
 ## Veto
 
@@ -92,5 +93,5 @@ Any member may flag `veto: <item>` when a pick touches the always-ask list. A ve
 ## Logging
 
 Write the decision to `docs/product/decisions.md` **before acting**, with status `in progress` (mode 1: `proposed`): question, panel size, final pick, vote
-count, the winning argument, the strongest dissent. Update the status to `done` or
-`failed` (with the reason) after. Format: `references/templates.md`.
+count, the winning argument, the strongest dissent. Update the status to `done`,
+`awaiting user merge`, or `failed` (with the reason) after. Format: `references/templates.md`.
