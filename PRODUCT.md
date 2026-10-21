@@ -1,7 +1,7 @@
 # claude-skills
 
 **Goal:** a collection of standalone, composable Claude Code skills that users install once to make Claude better at recurring work.
-**Goal status:** unconfirmed (inferred from README, mode 4 session 2026-10-21)
+**Goal status:** confirmed by the owner on 2026-10-21
 **Success looks like:** each skill triggers when relevant, works on its own (Linux, Windows, macOS; Python 3.9+), and costs little context — every description loads into every session (budget `scripts/check_token_budget.py`, 1300 tokens).
 
 ## Where we are
