@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-skills",
-  "description": "A collection of custom skills for Claude Code — flat peer-agent coordination (teammates), disciplined codebase editing (codebase-guardian), durable hierarchical memory (memory), the DOX AGENTS.md contract hierarchy (agents-dox), semantic code navigation via language servers (lsp), schema-aware database work (schema-aware-db), end-of-session loose-end wrap-up (ponytail), and fast calibrated decisions via TypeSafe Jev with user-managed providers (decision-maker). The skills work standalone and compose with each other.",
+  "description": "A collection of custom skills for Claude Code — flat peer-agent coordination (teammates), disciplined codebase editing (codebase-guardian), durable hierarchical memory (memory), the DOX AGENTS.md contract hierarchy (agents-dox), semantic code navigation via language servers (lsp), schema-aware database work (schema-aware-db), end-of-session loose-end wrap-up (ponytail), fast calibrated decisions via TypeSafe Jev with user-managed providers (decision-maker), and run-and-report feature testing for web, backend, and mobile (test-report). The skills work standalone and compose with each other.",
   "owner": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"
@@ -134,6 +134,22 @@
       },
       "category": "workflow",
       "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/decision-maker"
+    },
+    {
+      "name": "test-report",
+      "description": "Test features or a branch across web, backend, and mobile — write 2 positive and 1 negative test per feature in the project's own framework, actually run them, and write a Markdown pass/fail report with failure causes and a re-run command.",
+      "version": "1.4.0",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/DN-OpenSource/claude-skills.git",
+        "path": "skills/test-report"
+      },
+      "author": {
+        "name": "dhirajnikam",
+        "email": "dhirajnikam78@gmail.com"
+      },
+      "category": "testing",
+      "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/test-report"
     }
   ]
 }
