@@ -14,7 +14,7 @@ _(none)_
 - **C7 — one owner for context files** (merge memory / agents-dox / codebase-guardian) — weight: direction — serves: fewer overlapping skills — connects to: memory, agents-dox, codebase-guardian, teammates — panel: 0/3 picked; vetoed by User advocate and Skeptic — strongest argument against: breaks existing installs; the boundary is already drawn in memory's description.
 
 ## Open questions
-- Is the inferred goal right? It is marked unconfirmed in `PRODUCT.md`. — raised by session 2026-10-21
+_(none — goal confirmed by the owner 2026-10-21)_
 
 ## Deferred (below the bar twice)
 - **C5** — trim decision-maker README (418 lines): no runtime cost, 1/3 votes.
