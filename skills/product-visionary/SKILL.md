@@ -20,7 +20,8 @@ Ask this first, every session. Never reuse an earlier session's answer.
 > 4. **Complete auto** — like 3, but I ask nothing. This choice is the only permission.
 
 **Always ask first (modes 1–3):** deleting a feature, changing the product goal, anything
-touching payments / auth / secrets, database migrations, force-push.
+touching payments / auth / secrets, database migrations, force-push. "Database migration"
+means any schema change, including creating new tables or a new datastore.
 
 **Mode 4 floor — kept even in complete auto** (recoverability, not permission):
 every change goes through a branch + PR so any merge can be reverted; never rewrite or
@@ -41,7 +42,8 @@ Claude Code's own permission settings still apply; this skill can't bypass them.
    - **Feature map:** each feature, what it depends on, what uses it, how it contributes to
      the goal. Flag dead or orphan features. Several products in one repo → one section
      per product.
-4. **Test** — run the key features through `test-report` (below).
+4. **Baseline + test** — run the existing suite (and build/lint if configured) and save the
+   result, in every mode; then run the key features through `test-report` (below).
 5. **Decide** — panel ranks candidates (below).
 6. **Act** — modes 2–4 only (see Acting and merging).
 7. **Update state and report** — see Ending the session.
@@ -50,7 +52,8 @@ Templates for every file: `references/templates.md`.
 
 ## Testing
 
-Use the `test-report` skill on the features that matter most to the goal. If it isn't
+Use the `test-report` skill on the features on the goal's critical path — at most 5, skip
+dead/orphan ones (they're already flagged). Name them to `test-report` explicitly. If it isn't
 installed, follow its rules inline: per feature, 2 positive tests + 1 negative test in the
 project's own framework; run them for real; retry a failure once (passes → flaky);
 can't run → blocked with reason; write `test-reports/YYYY-MM-DD-<scope>.md`.
@@ -61,9 +64,13 @@ Never install a test framework without asking — not even in mode 4.
 Candidates come from failing tests, the feature map (gaps, orphans, weak links to the goal),
 and the roadmap. Each batch:
 
-- **One 3-agent panel** ranks all candidates and picks up to 3 items.
-- Any picked item of **medium** weight (feature, refactor) gets its own **6-agent** panel on
-  how to do it; **direction** weight (cut a feature, change the goal) gets **9**.
+- **One 3-agent panel** ranks all candidates, picks up to 3 items, and labels each pick's
+  weight: **small**, **medium** (new screen / endpoint / model, a refactor, or touches more
+  than one feature), or **direction** (cut a feature, change the goal). Applies to fixes,
+  improvements, and features alike.
+- Modes 2–4: each **medium** pick gets its own batch and its own **6-agent** panel on how to
+  do it; **direction** gets **9**. Mode 1 runs only the 3-panel — nothing is built, so the
+  how-to panels would be wasted.
 
 Protocol, viewpoints, prompts, tie-breaks, vetoes: `references/panel.md`.
 
@@ -71,18 +78,18 @@ Protocol, viewpoints, prompts, tie-breaks, vetoes: `references/panel.md`.
 
 Fixes for test failures, small improvements, and new features. The session-start choice is
 the only approval needed — modes 3–4 build new features without asking per feature.
-Mode 2 builds them too but leaves the PR. Mode 1 writes them to the roadmap as proposals.
+Mode 2 builds them too but leaves the PR. Mode 1 writes every pick to the roadmap —
+fixes under Fix, improvements under Build, new features under Proposed features — with
+decision status `proposed`.
 
-New features: the ranking panel proposes it (what, goal served, connected features, size).
-**Small** → one of the batch's 3 items. **Medium/large** (new screen / endpoint / model, or
-touches more than one feature) → a batch of its own plus a 6-panel on the build approach
-(9 if it changes direction). Prove it like a fix: 2+1 tests for the new behavior.
+New features: the ranking panel proposes it (what, goal served, connected features, weight).
+Prove it like a fix: 2+1 tests for the new behavior.
 
 ## Acting and merging
 
 **Before the first change:**
-- **Baseline:** run the existing suite (and build/lint if configured) and save the result.
-  Only *new* failures block; pre-existing ones go in the end report.
+- **Baseline** (taken in flow step 4): only *new* failures block; pre-existing ones go in
+  the end report.
 - **Dirty working tree:** modes 2–3 ask what to do. Mode 4 works in a fresh
   `git worktree` so the user's uncommitted changes are never touched.
 - **No git:** fall back to mode 1 and say so. **No `gh` or no remote:** branch locally,

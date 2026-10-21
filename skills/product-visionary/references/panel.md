@@ -24,9 +24,10 @@ Take the first N, in this order, so a 3-panel always has the core tension.
 
 ## Spawning
 
-Use the Agent tool. Spawn **every member of a round in one message** so they run in
-parallel. Each gets the same brief plus its viewpoint. Members only read and argue — they
-never edit files.
+Use the Agent tool with `subagent_type: general-purpose`. Spawn **every member of a round
+in one message** so they run in parallel. Each gets the same brief plus its viewpoint.
+Members may read the repo to check claims; they never edit files (the prompts say so).
+Keep the brief's feature map to the rows that matter for the question.
 
 **The brief:**
 ```
@@ -51,29 +52,45 @@ veto: none | <always-ask item this touches>
 **Round 1 prompt:**
 > You are the <viewpoint> on a product panel. <viewpoint one-liner>. Read the brief and
 > return your position in the exact format. Argue from your viewpoint; don't hedge.
+> You may read the repo to check claims. Do not edit, create, or delete any file.
 > <brief>
 
 **Round 2 prompt:**
-> You are the <viewpoint>. Here are every member's Round 1 positions. Revise, rebut, or
-> hold — say which and why. Return your position in the exact format.
-> <brief> <all Round 1 positions>
+> You are the <viewpoint>. Here are every member's Round 1 positions, verbatim. Revise,
+> rebut, or hold — say which and why. Return your position in the exact format.
+> Do not edit, create, or delete any file.
+> <brief> <all Round 1 positions, verbatim>
+
+**Tie round prompt:**
+> You are the <viewpoint>. The panel is split between exactly two options: <A> and <B>.
+> Here are all positions so far, verbatim. Pick one and give the single strongest reason.
+> Return `pick: A|B`, `reason:`, `veto:`. Do not edit, create, or delete any file.
 
 ## Conclusion
 
-- **Majority** after Round 2 decides: score ranked picks (1st = 3 pts, 2nd = 2, 3rd = 1);
-  highest total wins each slot. For a single-answer question, most first-place votes wins.
-- **No majority / tie** → one more round with only the **top two** options.
+- **Scoring:** ranked picks score 1st = 3 pts, 2nd = 2, 3rd = 1; top scores fill the slots.
+  A candidate is **worth doing** only if more than half the members picked it at all. The
+  loop's "nothing worth doing" stop means no candidate clears that bar.
+- **Clear after Round 1** — more than two thirds of members picked the same set (or, for a
+  single-answer question, the same answer): skip Round 2.
+- Otherwise run Round 2 and score again. **Majority** = the winning option is picked by
+  more than half the members.
+- **No majority, or a tie that changes which items are picked** → a tie round on the
+  **top two**. A tie that only changes the order of items all picked anyway isn't a tie —
+  order them by first-place votes.
 - **Still tied** → modes 1–3: ask the user, showing both sides. Mode 4: take the option the
   **skeptic objected to least**, and log it as a tie-break.
 
 ## Veto
 
-Any member may flag `veto: <item>` when a pick touches the always-ask list.
-- Modes 1–3: a veto stops that item until the user answers, and stops the loop in 3.
+Any member may flag `veto: <item>` when a pick touches the always-ask list. A veto raised in
+**any** round counts, even if withdrawn later — the always-ask list is the user's call.
+- Mode 1: mark the roadmap item "needs user OK: <item>" and list it in the end report.
+- Modes 2–3: a veto stops that item until the user answers, and stops the loop in 3.
 - Mode 4: logged and highlighted in the end-of-session report; work continues.
 
 ## Logging
 
-Write the decision to `docs/product/decisions.md` **before acting**, with status `in progress`: question, panel size, final pick, vote
+Write the decision to `docs/product/decisions.md` **before acting**, with status `in progress` (mode 1: `proposed`): question, panel size, final pick, vote
 count, the winning argument, the strongest dissent. Update the status to `done` or
 `failed` (with the reason) after. Format: `references/templates.md`.

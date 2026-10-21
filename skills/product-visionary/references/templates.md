@@ -46,8 +46,11 @@ under a `## <product>` heading each).
 1. <item> — <why it doesn't earn its keep>
 
 ## Proposed features
-- **<name>** — size: small | medium | large — serves: <part of goal> — connects to:
+- **<name>** — weight: small | medium | direction — serves: <part of goal> — connects to:
   <features> — panel: <votes, e.g. 5/6> — strongest argument against: <one line>
+
+## Open questions
+- <question only the user can answer> — raised by <decision id>
 
 ## Rejected
 - <item> — <user's reason> — YYYY-MM-DD   (never propose again unless the goal changes)
@@ -59,8 +62,8 @@ Append-only. Newest at the bottom.
 
 ```markdown
 ### D-<n> — YYYY-MM-DD — <question>
-- **Status:** in progress | done | failed: <reason>
-- **Panel:** <3|6|9> — <viewpoints>
+- **Status:** proposed (mode 1) | in progress | done | failed: <reason>
+- **Panel:** <3|6|9> — <viewpoints> — rounds: <1|2|3>
 - **Pick:** <decision>
 - **Votes:** <score or count, e.g. 7/9; note "tie-break" if one was used>
 - **Winning argument:** <one or two lines, attributed to its viewpoint>
@@ -71,12 +74,11 @@ Append-only. Newest at the bottom.
 
 ## End-of-session report
 
-Shown to the user at the end; also appended to `docs/product/decisions.md` as a
-`### Session YYYY-MM-DD` block.
+Shown to the user at the end; also appended to `docs/product/decisions.md` as-is.
 
 ```markdown
-## End-of-session report — YYYY-MM-DD
-**Mode:** <1-4> · **Batches:** <n> · **Stopped because:** <nothing left | unproven item | veto | 5 batches>
+### End-of-session report — YYYY-MM-DD
+**Mode:** <1-4> · **Batches:** <n> · **Stopped because:** <single batch (modes 1-2) | nothing left | unproven item | veto | 5 batches>
 
 | # | Item | Kind | PR | Tests | Decision |
 |---|------|------|----|-------|----------|
@@ -85,5 +87,6 @@ Shown to the user at the end; also appended to `docs/product/decisions.md` as a
 **Pre-existing failures** (in the baseline, not caused by this session): <list or none>
 **Logged instead of asked** (mode 4 only): <vetoes, tie-breaks, unconfirmed goal, always-ask items>
 **Left open:** <unmerged PRs and why>
+**Files left uncommitted** (mode 1 only): <paths>
 **Next on the roadmap:** <top 3>
 ```
