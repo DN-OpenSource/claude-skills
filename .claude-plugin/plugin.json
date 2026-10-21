@@ -1,6 +1,6 @@
 {
   "name": "claude-skills",
-  "description": "A collection of custom skills for Claude Code — teammates (subagent teams with no orchestrator), codebase-guardian (disciplined, toolchain-validated editing of existing codebases), memory (durable hierarchical context across sessions), agents-dox (the DOX AGENTS.md contract hierarchy), lsp (semantic code navigation via language servers), schema-aware-db (introspect-first database work for SQL and NoSQL), ponytail (end-of-session loose-end wrap-up with a handoff tail), and decision-maker (fast, calibrated typed decisions via TypeSafe Jev with any System One provider). Each works standalone and composes with the others.",
+  "description": "A collection of custom skills for Claude Code — teammates (subagent teams with no orchestrator), codebase-guardian (disciplined, toolchain-validated editing of existing codebases), memory (durable hierarchical context across sessions), agents-dox (the DOX AGENTS.md contract hierarchy), lsp (semantic code navigation via language servers), schema-aware-db (introspect-first database work for SQL and NoSQL), ponytail (end-of-session loose-end wrap-up with a handoff tail), decision-maker (fast, calibrated typed decisions via TypeSafe Jev with any System One provider), and test-report (run-and-report feature testing for web, backend, and mobile). Each works standalone and composes with the others.",
   "version": "1.4.0",
   "author": {
     "name": "dhirajnikam",
@@ -30,6 +30,7 @@
     "session",
     "decisions",
     "typesafe",
-    "jev"
+    "jev",
+    "testing"
   ]
 }
