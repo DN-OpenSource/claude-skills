@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Standalone, composable Claude Code skills: catalog, install commands, roadmap and decisions.">
+<title>claude-skills catalog</title>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a plugin registry sheet — manifest header, status strip, catalog grid, then the product ledger (goal → roadmap → decisions). */
+:root {
+  --bg: #f4f5f9;
+  --surface: #ffffff;
+  --ink: #141a2e;
+  --muted: #5b627a;
+  --line: #dde1ea;
+  --accent: #3346d3;
+  --accent-soft: #e7eafc;
+  --ok: #1d8657;
+  --ok-soft: #e2f4ea;
+  --warn: #a86c12;
+  --warn-soft: #fbf0dc;
+  --bad: #b4372f;
+  --bad-soft: #fbe4e2;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1120; --surface: #161a2d; --ink: #e7e9f3; --muted: #9aa1b9; --line: #2a3049;
+    --accent: #8d9bff; --accent-soft: #222a55; --ok: #4cc38a; --ok-soft: #15301f;
+    --warn: #e3b14b; --warn-soft: #33270f; --bad: #f07a71; --bad-soft: #3a1714; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1120; --surface: #161a2d; --ink: #e7e9f3; --muted: #9aa1b9; --line: #2a3049;
+  --accent: #8d9bff; --accent-soft: #222a55; --ok: #4cc38a; --ok-soft: #15301f;
+  --warn: #e3b14b; --warn-soft: #33270f; --bad: #f07a71; --bad-soft: #3a1714; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 40px 64px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: 1.55rem; font-weight: 700; }
+h3 { font-size: 1.08rem; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+.eyebrow { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 18px; }
+.section-head p { color: var(--muted); max-width: 60ch; }
+
+/* Header */
+header { display: grid; gap: 20px; }
+.manifest { font: 400 0.82rem/1.5 var(--mono); color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.manifest b { color: var(--ink); font-weight: 500; }
+h1 { font-size: clamp(2.3rem, 6vw, 3.8rem); font-weight: 800; line-height: 1.02; }
+h1 span { color: var(--accent); }
+.goal { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 28px; align-items: start; max-width: 900px; }
+.goal p { font-size: 1.15rem; line-height: 1.5; max-width: 62ch; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 500 0.72rem/1 var(--mono); letter-spacing: 0.04em; padding: 6px 10px; border-radius: 999px; white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.ok { color: var(--ok); background: var(--ok-soft); }
+.pill.warn { color: var(--warn); background: var(--warn-soft); }
+.pill.bad { color: var(--bad); background: var(--bad-soft); }
+.pill.info { color: var(--accent); background: var(--accent-soft); }
+.criteria { display: flex; flex-wrap: wrap; gap: 8px; }
+.criteria span { border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 0.86rem; color: var(--muted); }
+
+/* Status strip */
+.strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.stat { padding: 18px 20px; display: grid; gap: 6px; border-left: 1px solid var(--line); min-width: 0; }
+.stat:first-child { border-left: 0; }
+.stat .num { font: 700 1.9rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.stat .num small { font-size: 0.95rem; color: var(--muted); font-weight: 500; }
+.stat .sub { font-size: 0.85rem; color: var(--muted); }
+.meter { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.dots { display: flex; gap: 5px; flex-wrap: wrap; }
+.dots span { font: 500 0.66rem/1 var(--mono); padding: 4px 6px; border-radius: 4px; color: var(--ok); background: var(--ok-soft); }
+
+/* Featured */
+.featured { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
+.featured .lead { display: grid; gap: 14px; align-content: start; }
+.featured .lead h3 { font-size: 1.6rem; }
+.modes { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: m; }
+.modes li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 2px 10px; padding: 10px 12px; border-radius: 10px; background: var(--bg); counter-increment: m; }
+.modes li::before { content: counter(m); grid-row: span 2; font: 700 1.1rem/1.4 var(--display); color: var(--accent); }
+.modes b { font-weight: 600; }
+.modes span { color: var(--muted); font-size: 0.88rem; }
+.panel-sizes { display: flex; gap: 8px; flex-wrap: wrap; }
+.panel-sizes div { flex: 1 1 90px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.panel-sizes strong { font: 700 1.4rem/1 var(--display); color: var(--accent); display: block; }
+.panel-sizes span { font-size: 0.8rem; color: var(--muted); }
+
+/* Catalog */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.filters button { font: 500 0.86rem/1 var(--body); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+.filters button[aria-pressed="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
+.filters button:hover { border-color: var(--ink); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; grid-template-rows: auto auto 1fr auto auto; gap: 10px; min-width: 0; }
+.card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.card .cat { font: 500 0.68rem/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.card .tag { color: var(--ink); font-weight: 500; }
+.card .what { color: var(--muted); font-size: 0.9rem; }
+.facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-size: 0.82rem; align-items: center; }
+.facts dt { color: var(--muted); font-family: var(--mono); font-size: 0.74rem; }
+.facts dd { margin: 0; display: flex; align-items: center; gap: 8px; min-width: 0; font-variant-numeric: tabular-nums; }
+.facts .meter { flex: 1; max-width: 120px; }
+.install { display: flex; align-items: center; gap: 8px; background: var(--bg); border-radius: 8px; padding: 6px 6px 6px 10px; min-width: 0; }
+.install code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font-size: 0.76rem; color: var(--ink); }
+.copy { font: 500 0.74rem/1 var(--body); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; cursor: pointer; white-space: nowrap; }
+.copy:hover { border-color: var(--ink); }
+
+/* Connections */
+.links { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0 28px; border-top: 1px solid var(--line); }
+.link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.link .pair { font: 500 0.82rem/1.4 var(--mono); }
+.link .pair i { color: var(--accent); font-style: normal; padding: 0 6px; }
+.link p { color: var(--muted); font-size: 0.88rem; }
+
+/* Roadmap */
+.road { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.lane { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.lane h3 { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.item { display: grid; gap: 4px; padding-top: 12px; border-top: 1px solid var(--line); }
+.item:first-of-type { border-top: 0; padding-top: 0; }
+.item b { font-weight: 600; }
+.item p { color: var(--muted); font-size: 0.88rem; }
+.question { border: 1px dashed var(--warn); background: var(--warn-soft); color: var(--ink); border-radius: 12px; padding: 14px 16px; font-size: 0.92rem; margin-top: 14px; }
+
+/* Decisions */
+.session-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 18px; color: var(--muted); font-size: 0.9rem; }
+.timeline { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.d { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 4px 18px; padding: 16px 0; border-top: 1px solid var(--line); align-items: start; }
+.d:last-child { border-bottom: 1px solid var(--line); }
+.d .id { font: 700 1.25rem/1.2 var(--display); color: var(--accent); }
+.d .body { display: grid; gap: 6px; min-width: 0; }
+.d .meta { font: 400 0.76rem/1.4 var(--mono); color: var(--muted); }
+.d .why { font-size: 0.9rem; color: var(--muted); }
+.d .why b { color: var(--ink); font-weight: 600; }
+.d .right { display: grid; gap: 6px; justify-items: end; }
+.d .pr { font: 500 0.8rem/1 var(--mono); }
+
+footer { color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; border-top: 1px solid var(--line); padding-top: 20px; }
+
+@media (max-width: 860px) {
+  .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat:nth-child(3) { border-left: 0; }
+  .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .featured, .road { grid-template-columns: minmax(0, 1fr); }
+  .goal { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .wrap { padding-block: 24px 48px; gap: 44px; }
+  .strip { grid-template-columns: minmax(0, 1fr); }
+  .stat { border-left: 0; border-top: 1px solid var(--line); }
+  .stat:first-child { border-top: 0; }
+  .featured { padding: 18px; }
+  .grid, .links { grid-template-columns: minmax(0, 1fr); }
+  .d { grid-template-columns: 48px minmax(0, 1fr); }
+  .d .right { grid-column: 2; justify-items: start; grid-auto-flow: column; justify-content: start; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card, .filters button, .copy { transition: border-color .15s, background-color .15s, transform .15s; }
+  .card:hover { transform: translateY(-2px); }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="manifest">
+      <span>marketplace <b>DN-OpenSource/claude-skills</b></span>
+      <span>version <b>1.5.1</b></span>
+      <span>license <b>Apache-2.0</b></span>
+      <span>python <b>3.9+</b></span>
+    </div>
+    <h1>claude-skills<span>.</span></h1>
+    <div class="goal">
+      <p>Standalone, composable Claude Code skills you install once to make Claude better at recurring work.</p>
+      <span class="pill ok" title="Confirmed by the owner on 2026-10-21">goal confirmed</span>
+    </div>
+    <div class="criteria" aria-label="What success looks like">
+      <span>Triggers when relevant</span>
+      <span>Works on its own</span>
+      <span>Linux · Windows · macOS</span>
+      <span>Costs little context</span>
+    </div>
+  </header>
+
+  <section class="strip" aria-label="Current status">
+    <div class="stat">
+      <span class="eyebrow">Skills</span>
+      <span class="num">10</span>
+      <span class="sub">all built, no orphans</span>
+    </div>
+    <div class="stat">
+      <span class="eyebrow">Tests</span>
+      <span class="num">111<small> / 111</small></span>
+      <span class="sub">lsp 44 · decision-maker 61 · repo 6</span>
+    </div>
+    <div class="stat">
+      <span class="eyebrow">CI matrix</span>
+      <span class="num">5<small> / 5 green</small></span>
+      <div class="dots"><span>ubuntu 3.9</span><span>3.12</span><span>3.13</span><span>windows 3.12</span><span>macos 3.9</span></div>
+    </div>
+    <div class="stat">
+      <span class="eyebrow">Context per session</span>
+      <span class="num">1,245<small> / 1,300 tok</small></span>
+      <div class="meter" role="img" aria-label="96% of the description budget used"><i style="width:95.8%"></i></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pv">
+    <div class="section-head">
+      <h2 id="pv">The product manager</h2>
+      <p>The newest skill ran on this repo and produced the goal, roadmap and decisions on this page.</p>
+    </div>
+    <div class="featured">
+      <div class="lead">
+        <span class="eyebrow">product-visionary · new in 1.5.0</span>
+        <h3>Works out the goal, maps every feature to it, then lets a panel decide what to do.</h3>
+        <p style="color:var(--muted)">It finds real issues with test-report, has 3, 6 or 9 agents argue each decision, and acts only as far as you allow at the start of the session.</p>
+        <div class="panel-sizes" aria-label="Panel sizes">
+          <div><strong>3</strong><span>small calls, ranking</span></div>
+          <div><strong>6</strong><span>how to build a feature</span></div>
+          <div><strong>9</strong><span>direction changes</span></div>
+        </div>
+        <div class="install"><code>claude plugin install product-visionary@claude-skills</code><button class="copy" type="button" data-copy="claude plugin install product-visionary@claude-skills">Copy</button></div>
+      </div>
+      <ol class="modes" aria-label="Session modes">
+        <li><b>Report only</b><span>Goal, state, feature map, tests, ranked issues. No code changes.</span></li>
+        <li><b>Fix on a branch</b><span>Fixes the top items and opens PRs. You merge.</span></li>
+        <li><b>Full auto</b><span>Fixes, proves, merges and keeps going. Still asks before risky changes.</span></li>
+        <li><b>Complete auto</b><span>Asks nothing. Every change still goes through its own PR.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section aria-labelledby="cat">
+    <div class="section-head">
+      <h2 id="cat">All skills</h2>
+      <p>Each one installs on its own. The bar shows how much of every session's context its description takes.</p>
+    </div>
+    <div class="filters" role="group" aria-label="Filter skills">
+      <button type="button" id="f-all" data-f="all" aria-pressed="true">All 10</button>
+      <button type="button" id="f-code" data-f="code">Editing code</button>
+      <button type="button" id="f-context" data-f="context">Context &amp; memory</button>
+      <button type="button" id="f-agents" data-f="agents">Agents &amp; decisions</button>
+      <button type="button" id="f-tested" data-f="tested">Ships scripts</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section aria-labelledby="con">
+    <div class="section-head">
+      <h2 id="con">How they work together</h2>
+      <p>None of these is required. Each pairing makes the other skill better when both are installed.</p>
+    </div>
+    <div class="links">
+      <div class="link"><span class="pair">codebase-guardian<i>+</i>memory</span><p>Guardian reads MEMORY.md before editing and writes what it learned back after.</p></div>
+      <div class="link"><span class="pair">lsp<i>+</i>codebase-guardian</span><p>Find every reference before deciding how big a change is.</p></div>
+      <div class="link"><span class="pair">schema-aware-db<i>+</i>lsp</span><p>Map real ORM call sites instead of grepping a table name.</p></div>
+      <div class="link"><span class="pair">agents-dox<i>+</i>everything</span><p>AGENTS.md contracts govern how the other skills edit each folder.</p></div>
+      <div class="link"><span class="pair">teammates<i>+</i>codebase-guardian</span><p>Each peer agent follows the safe-edit loop for its own work item.</p></div>
+      <div class="link"><span class="pair">ponytail<i>+</i>memory</span><p>The end-of-session tail folds durable follow-ups into MEMORY.md.</p></div>
+      <div class="link"><span class="pair">product-visionary<i>+</i>test-report</span><p>Finds issues and proves every fix with 2 positive and 1 negative test.</p></div>
+      <div class="link"><span class="pair">decision-maker<i>+</i>everything</span><p>Fast typed yes/no and pick-one calls inside the other skills, with confidence.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="road">
+    <div class="section-head">
+      <h2 id="road">Roadmap</h2>
+      <p>From <code>docs/product/roadmap.md</code>, written by the product-visionary panel.</p>
+    </div>
+    <div class="road">
+      <div class="lane">
+        <h3>Next <span class="pill info">build</span></h3>
+        <div class="item"><b>Trigger tests for skill descriptions</b><p>About 10 real prompts per skill, run before and after any description edit, so a shorter description can't stop a skill firing unnoticed.</p></div>
+        <div class="item"><b>Shorten the 6 longest descriptions</b><p>agents-dox, memory, decision-maker, codebase-guardian, ponytail, schema-aware-db. Saves 50+ tokens per session. Waits on the trigger tests.</p></div>
+      </div>
+      <div class="lane">
+        <h3>Proposed <span class="pill warn">needs you</span></h3>
+        <div class="item"><b>One owner for context files</b><p>Merge memory, agents-dox and codebase-guardian. Weight: direction. Two panel members vetoed it because it would break existing installs.</p></div>
+      </div>
+      <div class="lane">
+        <h3>Deferred <span class="pill" style="color:var(--muted);background:var(--bg)">low value</span></h3>
+        <div class="item"><b>Trim the decision-maker README</b><p>418 lines. No context cost at runtime. 1 of 3 votes.</p></div>
+        <div class="item"><b>Shorten the root README's pairing list</b><p>And the top-level manifest descriptions. 1 of 3 votes.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="dec">
+    <div class="section-head">
+      <h2 id="dec">Latest session</h2>
+      <p>Every decision with the argument that won and the strongest dissent.</p>
+    </div>
+    <div class="session-head">
+      <span class="pill info">mode 4 · complete auto</span>
+      <span>2026-10-21 · 4 batches · stopped because the panel voted 3/3 that nothing was left</span>
+    </div>
+    <ol class="timeline">
+      <li class="d">
+        <span class="id">D-1</span>
+        <div class="body">
+          <h3>decision-maker passes on Windows</h3>
+          <span class="meta">panel of 3 · 2 rounds · picked by 3/3</span>
+          <p class="why"><b>Won:</b> three one-line root causes, and Windows is the owner's platform. <b>Dissent:</b> cut description cost first.</p>
+        </div>
+        <div class="right"><span class="pill ok">49 → 57 tests</span><a class="pr" href="https://github.com/DN-OpenSource/claude-skills/pull/6">PR #6</a></div>
+      </li>
+      <li class="d">
+        <span class="id">D-2</span>
+        <div class="body">
+          <h3>Repo tests and CI on 3 platforms, Python 3.9 to 3.13</h3>
+          <span class="meta">panel of 6 · 2 rounds · 4–2 became 6–0</span>
+          <p class="why"><b>Won:</b> hooks run the user's own python3, and stock macOS ships 3.9. <b>Found:</b> guard.py didn't even parse on Python 3.11 and older.</p>
+        </div>
+        <div class="right"><span class="pill ok">CI 5/5</span><a class="pr" href="https://github.com/DN-OpenSource/claude-skills/pull/7">PR #7</a></div>
+      </li>
+      <li class="d">
+        <span class="id">D-3</span>
+        <div class="body">
+          <h3>Hooks run when python3 is the Microsoft Store stub</h3>
+          <span class="meta">panel of 3 · 2 rounds · picked by 3/3</span>
+          <p class="why"><b>Won:</b> all 6 hooks were failing silently on Windows. <b>Dissent:</b> a naive retry would run the guard twice, so the launcher probes first.</p>
+        </div>
+        <div class="right"><span class="pill ok">exit 49 → 0</span><a class="pr" href="https://github.com/DN-OpenSource/claude-skills/pull/8">PR #8</a></div>
+      </li>
+      <li class="d">
+        <span class="id">D-4</span>
+        <div class="body">
+          <h3>Removed the shipped lsp design docs</h3>
+          <span class="meta">panel of 3 · 2 rounds · picked by 3/3</span>
+          <p class="why"><b>Won:</b> nothing referenced them and git keeps the history. <b>Kept:</b> the product-visionary docs, which explain its rules.</p>
+        </div>
+        <div class="right"><span class="pill ok">−1,964 lines</span><a class="pr" href="https://github.com/DN-OpenSource/claude-skills/pull/9">PR #9</a></div>
+      </li>
+      <li class="d">
+        <span class="id">D-5</span>
+        <div class="body">
+          <h3>The README's test command runs every test</h3>
+          <span class="meta">panel of 3 · 1 round · unanimous, then stop</span>
+          <p class="why"><b>Won:</b> fix the command and drop the hard-coded count so it can't go stale again.</p>
+        </div>
+        <div class="right"><span class="pill ok">61 tests</span><a class="pr" href="https://github.com/DN-OpenSource/claude-skills/pull/10">PR #10</a></div>
+      </li>
+    </ol>
+  </section>
+
+  <footer>
+    <span>Install any skill: <code>claude plugin marketplace add DN-OpenSource/claude-skills</code></span>
+    <a href="https://github.com/DN-OpenSource/claude-skills">github.com/DN-OpenSource/claude-skills</a>
+  </footer>
+</div>
+
+<script>
+const SKILLS = [
+  { n: "product-visionary", g: ["agents"], t: "Product manager for your codebase", w: "Goal, state and feature map; a 3/6/9-agent panel decides; acts per the mode you pick.", tok: 62, tests: "via test-report", works: "Claude Code" },
+  { n: "test-report", g: ["code"], t: "Real tests, real report", w: "2 positive and 1 negative test per feature in your own framework, run for real, with a pass/fail report.", tok: 58, tests: "—", works: "Claude Code" },
+  { n: "teammates", g: ["agents"], t: "Peer agents, no boss", w: "Run a task as a flat team of subagents that share a manifest, claim work and merge outputs.", tok: 76, tests: "—", works: "Claude Code" },
+  { n: "decision-maker", g: ["agents", "tested"], t: "Fast typed decisions", w: "Yes/no, pick-one and score answers with confidence from TypeSafe's Jev, plus optional guard hooks.", tok: 166, tests: "61 passing", works: "Claude Code, Codex" },
+  { n: "codebase-guardian", g: ["code"], t: "Safe edits to existing code", w: "Validate with the real toolchain, match the existing pattern, trace the ripple, record what you learned.", tok: 150, tests: "—", works: "Claude Code" },
+  { n: "lsp", g: ["code", "tested"], t: "Real code navigation", w: "Definition, references, hover, diagnostics and safe rename through real language servers.", tok: 126, tests: "44 passing", works: "Claude Code" },
+  { n: "schema-aware-db", g: ["code"], t: "No guessed schemas", w: "Introspect the real schema, map every usage, then change it and trace the ripple. SQL and NoSQL.", tok: 137, tests: "—", works: "Claude Code" },
+  { n: "memory", g: ["context"], t: "Context that lasts", w: "Hierarchical MEMORY.md for codebases and USER.md for you, bootstrapped and kept in sync.", tok: 164, tests: "—", works: "Claude Code" },
+  { n: "agents-dox", g: ["context"], t: "Folder work contracts", w: "A hierarchy of AGENTS.md files, each a binding contract for its subtree, checked before every edit.", tok: 168, tests: "—", works: "Claude Code" },
+  { n: "ponytail", g: ["context"], t: "Clean session wrap-up", w: "Sweep loose ends (uncommitted work, stashes, promises) and leave one handoff for the next session.", tok: 138, tests: "—", works: "Claude Code" },
+];
+const LABEL = { code: "Editing code", context: "Context & memory", agents: "Agents & decisions" };
+const MAX_TOK = 170;
+const grid = document.getElementById("grid");
+
+function card(s) {
+  const el = document.createElement("article");
+  el.className = "card";
+  el.dataset.g = s.g.join(" ");
+  const cmd = `claude plugin install ${s.n}@claude-skills`;
+  el.innerHTML = `
+    <div class="top"><h3>${s.n}</h3><span class="cat">${LABEL[s.g[0]]}</span></div>
+    <p class="tag">${s.t}</p>
+    <p class="what">${s.w}</p>
+    <dl class="facts">
+      <dt>context</dt><dd><span class="meter" role="img" aria-label="${s.tok} tokens per session"><i style="width:${(s.tok / MAX_TOK * 100).toFixed(1)}%"></i></span>${s.tok} tok</dd>
+      <dt>tests</dt><dd>${s.tests}</dd>
+      <dt>works in</dt><dd>${s.works}</dd>
+    </dl>
+    <div class="install"><code>${cmd}</code><button class="copy" type="button" data-copy="${cmd}">Copy</button></div>`;
+  return el;
+}
+SKILLS.forEach(s => grid.appendChild(card(s)));
+
+const buttons = document.querySelectorAll(".filters button");
+function applyFilter(f) {
+  buttons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === f)));
+  grid.querySelectorAll(".card").forEach(c => { c.hidden = f !== "all" && !c.dataset.g.split(" ").includes(f); });
+  try { localStorage.setItem("skills-filter", f); } catch (e) {}
+}
+buttons.forEach(b => b.addEventListener("click", () => applyFilter(b.dataset.f)));
+try { const saved = localStorage.getItem("skills-filter"); if (saved && document.querySelector(`[data-f="${saved}"]`)) applyFilter(saved); } catch (e) {}
+
+document.addEventListener("click", e => {
+  const btn = e.target.closest(".copy");
+  if (!btn) return;
+  const text = btn.dataset.copy;
+  const done = () => { btn.textContent = "Copied"; setTimeout(() => { btn.textContent = "Copy"; }, 1500); };
+  const fallback = () => {
+    const code = btn.parentElement.querySelector("code");
+    const r = document.createRange(); r.selectNodeContents(code);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    btn.textContent = "Selected";
+    setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+  else fallback();
+});
+</script>
+
+</body>
+</html>
