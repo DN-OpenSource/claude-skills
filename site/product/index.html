@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Product status</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233346d3'/%3E%3Cpath d='M9 21l5-10 4 7 2-3 3 6' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<!--
+  product-visionary product page. To generate: copy this file, replace ONLY the JSON inside
+  <script id="product-data">, keep everything else. All text is rendered with textContent.
+-->
+<script type="application/json" id="product-data">
+{
+  "product": "claude-skills",
+  "updated": "2026-10-21",
+  "repo": "https://github.com/DN-OpenSource/claude-skills",
+  "back": {
+    "label": "All skills",
+    "href": "../"
+  },
+  "goal": "Standalone, composable Claude Code skills you install once to make Claude better at recurring work.",
+  "goal_status": "confirmed",
+  "success": [
+    "Triggers when relevant",
+    "Works on its own",
+    "Linux · Windows · macOS",
+    "Costs little context"
+  ],
+  "stats": [
+    {
+      "label": "Skills",
+      "value": "10",
+      "note": "all built, no orphans"
+    },
+    {
+      "label": "Tests",
+      "value": "114",
+      "of": "114",
+      "note": "lsp 44 · decision-maker 61 · repo 9"
+    },
+    {
+      "label": "CI matrix",
+      "value": "5",
+      "of": "5 green",
+      "note": "ubuntu 3.9/3.12/3.13 · windows · macos 3.9"
+    },
+    {
+      "label": "Context per session",
+      "value": "1,245",
+      "of": "1,300 tok",
+      "note": "skill descriptions, loaded every session"
+    }
+  ],
+  "features": [
+    {
+      "name": "product-visionary",
+      "status": "built",
+      "depends": "test-report (optional)",
+      "used_by": "",
+      "contributes": "Goal, state and feature map; panel-driven fixes; writes this page.",
+      "flag": ""
+    },
+    {
+      "name": "test-report",
+      "status": "built",
+      "depends": "project test framework",
+      "used_by": "product-visionary",
+      "contributes": "Real tests and a pass/fail report.",
+      "flag": ""
+    },
+    {
+      "name": "decision-maker",
+      "status": "built",
+      "depends": "Jev provider key",
+      "used_by": "every skill (optional)",
+      "contributes": "Cheap typed judgments and guard hooks. 61 tests.",
+      "flag": ""
+    },
+    {
+      "name": "teammates",
+      "status": "built",
+      "depends": "",
+      "used_by": "product-visionary (panel idea)",
+      "contributes": "Runs big tasks as peer subagents.",
+      "flag": ""
+    },
+    {
+      "name": "codebase-guardian",
+      "status": "built",
+      "depends": "memory (optional)",
+      "used_by": "",
+      "contributes": "Safe edits to existing code.",
+      "flag": ""
+    },
+    {
+      "name": "lsp",
+      "status": "built",
+      "depends": "language servers",
+      "used_by": "codebase-guardian, schema-aware-db",
+      "contributes": "Precise code navigation and rename. 44 tests.",
+      "flag": ""
+    },
+    {
+      "name": "schema-aware-db",
+      "status": "built",
+      "depends": "lsp (optional)",
+      "used_by": "",
+      "contributes": "No guessed schemas in database code.",
+      "flag": ""
+    },
+    {
+      "name": "memory",
+      "status": "built",
+      "depends": "",
+      "used_by": "codebase-guardian, teammates",
+      "contributes": "Context that survives sessions.",
+      "flag": ""
+    },
+    {
+      "name": "agents-dox",
+      "status": "built",
+      "depends": "",
+      "used_by": "codebase-guardian, teammates",
+      "contributes": "Per-folder work contracts.",
+      "flag": ""
+    },
+    {
+      "name": "ponytail",
+      "status": "built",
+      "depends": "memory (optional)",
+      "used_by": "",
+      "contributes": "Clean end-of-session handoff.",
+      "flag": ""
+    }
+  ],
+  "roadmap": {
+    "fix": [],
+    "build": [
+      {
+        "title": "Trigger tests for skill descriptions",
+        "why": "About 10 real prompts per skill, run before and after any description edit."
+      },
+      {
+        "title": "Shorten the 6 longest descriptions",
+        "why": "Saves 50+ tokens every session. Waits on the trigger tests."
+      }
+    ],
+    "proposed": [
+      {
+        "title": "One owner for context files",
+        "why": "Merge memory, agents-dox and codebase-guardian. Vetoed by two panel members: breaks existing installs.",
+        "weight": "direction"
+      }
+    ],
+    "cut": [],
+    "deferred": [
+      {
+        "title": "Trim the decision-maker README",
+        "why": "No runtime context cost. 1 of 3 votes."
+      },
+      {
+        "title": "Shorten the root README pairing list",
+        "why": "1 of 3 votes."
+      }
+    ]
+  },
+  "open_questions": [],
+  "session": {
+    "date": "2026-10-21",
+    "mode": 4,
+    "batches": 4,
+    "stopped": "nothing left (panel voted 3/3)"
+  },
+  "decisions": [
+    {
+      "id": "D-1",
+      "title": "decision-maker passes on Windows",
+      "status": "done",
+      "panel": 3,
+      "rounds": 2,
+      "votes": "picked by 3/3",
+      "won": "Three one-line root causes; Windows is the owner's platform.",
+      "dissent": "Cut description cost first.",
+      "result": "49 → 57 tests",
+      "pr": "PR #6",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/6"
+    },
+    {
+      "id": "D-2",
+      "title": "Repo tests and CI on 3 platforms, Python 3.9 to 3.13",
+      "status": "done",
+      "panel": 6,
+      "rounds": 2,
+      "votes": "4–2 became 6–0",
+      "won": "Hooks run the user's own python3, and stock macOS ships 3.9. Found guard.py didn't parse on 3.11 and older.",
+      "dissent": "The matrix costs CI time (withdrawn: public repo, parallel jobs).",
+      "result": "CI 5/5",
+      "pr": "PR #7",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/7"
+    },
+    {
+      "id": "D-3",
+      "title": "Hooks run when python3 is the Microsoft Store stub",
+      "status": "done",
+      "panel": 3,
+      "rounds": 2,
+      "votes": "picked by 3/3",
+      "won": "All 6 hooks were failing silently on Windows.",
+      "dissent": "A naive retry would run the guard twice, so the launcher probes first.",
+      "result": "exit 49 → 0",
+      "pr": "PR #8",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/8"
+    },
+    {
+      "id": "D-4",
+      "title": "Removed the shipped lsp design docs",
+      "status": "done",
+      "panel": 3,
+      "rounds": 2,
+      "votes": "picked by 3/3",
+      "won": "Nothing referenced them and git keeps the history.",
+      "dissent": "Cleanup users never see.",
+      "result": "−1,964 lines",
+      "pr": "PR #9",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/9"
+    },
+    {
+      "id": "D-5",
+      "title": "The README's test command runs every test",
+      "status": "done",
+      "panel": 3,
+      "rounds": 1,
+      "votes": "unanimous, then stop",
+      "won": "Fix the command and drop the hard-coded count.",
+      "dissent": "",
+      "result": "61 tests",
+      "pr": "PR #10",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/10"
+    }
+  ]
+}
+</script>
+<style>
+/* Layout: a status sheet — header with goal, stat strip, feature map table, roadmap lanes, decision timeline. */
+:root {
+  --bg: #f4f5f9; --surface: #ffffff; --ink: #141a2e; --muted: #5b627a; --line: #dde1ea;
+  --accent: #3346d3; --accent-soft: #e7eafc;
+  --ok: #1d8657; --ok-soft: #e2f4ea; --warn: #a86c12; --warn-soft: #fbf0dc; --bad: #b4372f; --bad-soft: #fbe4e2;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1120; --surface: #161a2d; --ink: #e7e9f3; --muted: #9aa1b9; --line: #2a3049;
+    --accent: #8d9bff; --accent-soft: #222a55; --ok: #4cc38a; --ok-soft: #15301f;
+    --warn: #e3b14b; --warn-soft: #33270f; --bad: #f07a71; --bad-soft: #3a1714; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1120; --surface: #161a2d; --ink: #e7e9f3; --muted: #9aa1b9; --line: #2a3049;
+  --accent: #8d9bff; --accent-soft: #222a55; --ok: #4cc38a; --ok-soft: #15301f;
+  --warn: #e3b14b; --warn-soft: #33270f; --bad: #f07a71; --bad-soft: #3a1714; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 28px 64px; display: grid; gap: 48px; }
+.wrap > * { min-width: 0; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.05; }
+h2 { font-size: 1.45rem; font-weight: 600; margin-bottom: 14px; }
+h3 { font-size: 1rem; font-weight: 600; }
+p { margin: 0; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.eyebrow { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; font: 400 0.82rem/1.4 var(--mono); color: var(--muted); }
+header { display: grid; gap: 16px; }
+.goal { font-size: 1.12rem; line-height: 1.55; max-width: 64ch; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 0.86rem; color: var(--muted); }
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 500 0.72rem/1 var(--mono); letter-spacing: 0.04em; padding: 6px 10px; border-radius: 999px; white-space: nowrap; color: var(--muted); background: var(--bg); }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.ok { color: var(--ok); background: var(--ok-soft); }
+.warn { color: var(--warn); background: var(--warn-soft); }
+.bad { color: var(--bad); background: var(--bad-soft); }
+.info { color: var(--accent); background: var(--accent-soft); }
+.strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; }
+.stat { padding: 16px 18px; display: grid; gap: 4px; border-left: 1px solid var(--line); margin-left: -1px; min-width: 0; }
+.stat .num { font: 800 1.8rem/1.05 var(--display); font-variant-numeric: tabular-nums; }
+.stat .num small { font-size: 0.9rem; font-weight: 600; color: var(--muted); }
+.stat .note { font-size: 0.84rem; color: var(--muted); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 640px; }
+th, td { text-align: left; padding: 11px 14px; border-top: 1px solid var(--line); vertical-align: top; }
+th { border-top: 0; font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+td.name { font-family: var(--mono); font-size: 0.84rem; white-space: nowrap; }
+.lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.lane { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.lane h3 { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.item { display: grid; gap: 2px; padding-top: 10px; border-top: 1px solid var(--line); }
+.item:first-of-type { border-top: 0; padding-top: 0; }
+.item b { font-weight: 600; }
+.item p, .empty { color: var(--muted); font-size: 0.88rem; }
+.question { border: 1px dashed var(--warn); background: var(--warn-soft); border-radius: 12px; padding: 12px 16px; font-size: 0.92rem; margin-top: 14px; }
+.session { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
+.timeline { list-style: none; margin: 0; padding: 0; }
+.d { display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; gap: 4px 18px; padding: 14px 0; border-top: 1px solid var(--line); }
+.d:last-child { border-bottom: 1px solid var(--line); }
+.d .id { font: 800 1.2rem/1.3 var(--display); color: var(--accent); }
+.d .body { display: grid; gap: 4px; min-width: 0; }
+.d .meta { font: 400 0.76rem/1.4 var(--mono); color: var(--muted); }
+.d .why { font-size: 0.9rem; color: var(--muted); }
+.d .why b { color: var(--ink); font-weight: 600; }
+.d .right { display: grid; gap: 6px; justify-items: end; align-content: start; }
+.d .right a { font: 500 0.8rem/1 var(--mono); }
+footer { border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; }
+@media (max-width: 560px) {
+  .d { grid-template-columns: 44px minmax(0, 1fr); }
+  .d .right { grid-column: 2; grid-auto-flow: column; justify-content: start; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="top"><a id="back" href="../"></a><span id="updated"></span></div>
+    <span class="eyebrow">Product status</span>
+    <h1 id="product"></h1>
+    <p class="goal" id="goal"></p>
+    <div class="row" id="success"></div>
+  </header>
+  <section class="strip" id="stats" aria-label="Status"></section>
+  <section aria-labelledby="h-map">
+    <h2 id="h-map">Feature map</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Status</th><th>Depends on</th><th>Used by</th><th>How it serves the goal</th></tr></thead>
+        <tbody id="features"></tbody>
+      </table>
+    </div>
+  </section>
+  <section aria-labelledby="h-road">
+    <h2 id="h-road">Roadmap</h2>
+    <div class="lanes" id="lanes"></div>
+    <div id="questions"></div>
+  </section>
+  <section aria-labelledby="h-dec">
+    <h2 id="h-dec">Decisions</h2>
+    <div class="session" id="session"></div>
+    <ol class="timeline" id="decisions"></ol>
+  </section>
+  <footer><span>Written by the product-visionary skill from PRODUCT.md and docs/product/.</span><a id="repo" href="#"></a></footer>
+</div>
+<script>
+const D = JSON.parse(document.getElementById("product-data").textContent);
+const $ = id => document.getElementById(id);
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function pill(text, tone) { return el("span", "pill " + (tone || ""), text); }
+const STATUS_TONE = { "built": "ok", "half-built": "warn", "broken": "bad", "missing": "bad" };
+const DEC_TONE = { "done": "ok", "proposed": "info", "in progress": "warn", "awaiting user merge": "warn", "failed": "bad" };
+
+document.title = D.product + " · product status";
+$("product").textContent = D.product;
+$("goal").textContent = D.goal;
+$("updated").textContent = "updated " + D.updated;
+$("back").textContent = "← " + ((D.back && D.back.label) || "Home");
+$("back").href = (D.back && D.back.href) || "../";
+$("repo").textContent = (D.repo || "").replace(/^https?:\/\//, "");
+$("repo").href = D.repo || "#";
+const gs = D.goal_status === "confirmed";
+$("success").append(pill(gs ? "goal confirmed" : "goal unconfirmed", gs ? "ok" : "warn"), ...(D.success || []).map(s => el("span", "chip", s)));
+
+for (const s of D.stats || []) {
+  const box = el("div", "stat");
+  box.append(el("span", "eyebrow", s.label));
+  const num = el("span", "num", s.value);
+  if (s.of) num.append(el("small", null, " / " + s.of));
+  box.append(num);
+  if (s.note) box.append(el("span", "note", s.note));
+  $("stats").append(box);
+}
+
+for (const f of D.features || []) {
+  const tr = document.createElement("tr");
+  tr.append(el("td", "name", f.name));
+  const st = el("td"); st.append(pill(f.status, STATUS_TONE[f.status]));
+  if (f.flag) st.append(" ", pill(f.flag, "warn"));
+  tr.append(st, el("td", "muted", f.depends || "—"), el("td", "muted", f.used_by || "—"), el("td", null, f.contributes || ""));
+  $("features").append(tr);
+}
+
+const LANES = [["fix", "Fix", "bad"], ["build", "Build", "info"], ["proposed", "Proposed", "warn"], ["cut", "Cut", ""], ["deferred", "Deferred", ""]];
+for (const [key, name, tone] of LANES) {
+  const items = (D.roadmap || {})[key] || [];
+  if (!items.length && (key === "cut" || key === "deferred")) continue;
+  const lane = el("div", "lane");
+  const h = el("h3", null, name); h.append(pill(String(items.length), key === "fix" && !items.length ? "ok" : tone)); lane.append(h);
+  if (!items.length) lane.append(el("p", "empty", "Nothing here."));
+  for (const it of items) {
+    const box = el("div", "item");
+    box.append(el("b", null, it.title));
+    if (it.why) box.append(el("p", null, it.weight ? it.why + " · weight: " + it.weight : it.why));
+    lane.append(box);
+  }
+  $("lanes").append(lane);
+}
+for (const q of D.open_questions || []) {
+  const p = el("p", "question"); p.append(el("b", null, "Open question: "), q); $("questions").append(p);
+}
+
+const S = D.session || {};
+if (S.date) $("session").append(pill("mode " + S.mode, "info"), el("span", null, S.date + " · " + S.batches + " batch" + (S.batches === 1 ? "" : "es") + " · stopped: " + S.stopped));
+for (const d of D.decisions || []) {
+  const li = el("li", "d");
+  li.append(el("span", "id", d.id));
+  const body = el("div", "body");
+  body.append(el("h3", null, d.title), el("span", "meta", "panel of " + d.panel + " · " + d.rounds + " round" + (d.rounds === 1 ? "" : "s") + " · " + d.votes));
+  const why = el("p", "why"); why.append(el("b", null, "Won: "), d.won || "");
+  if (d.dissent) why.append(" ", el("b", null, "Dissent: "), d.dissent);
+  body.append(why);
+  const right = el("div", "right");
+  right.append(pill(d.result || d.status, DEC_TONE[d.status] || "ok"));
+  if (d.pr_url) { const a = el("a", null, d.pr || "PR"); a.href = d.pr_url; right.append(a); }
+  li.append(body, right);
+  $("decisions").append(li);
+}
+</script>
+</body>
+</html>
