@@ -90,3 +90,18 @@ Shown to the user at the end; also appended to `docs/product/decisions.md` as-is
 **Files left uncommitted** (mode 1 only): <paths>
 **Next on the roadmap:** <top 3>
 ```
+
+## Product page
+
+`references/page.html` is the template. Copy it and replace **only** the JSON inside
+`<script type="application/json" id="product-data">`; everything else stays byte-for-byte,
+and the page renders all text with `textContent`. Fields:
+
+- `product`, `updated`, `repo`, `back` (`{label, href}` to the site home, or omit)
+- `goal`, `goal_status` (`confirmed` | `unconfirmed`), `success` (short strings)
+- `stats` — `[{label, value, of?, note?}]` (skills/features, tests, CI, whatever the goal measures)
+- `features` — the feature map: `[{name, status: built|half-built|broken|missing, depends, used_by, contributes, flag: ""|orphan|dead}]`
+- `roadmap` — `{fix, build, proposed, cut, deferred}`, each `[{title, why, weight?}]`
+- `open_questions` — strings
+- `session` — `{date, mode, batches, stopped}`
+- `decisions` — `[{id, title, status, panel, rounds, votes, won, dissent, result, pr, pr_url}]`

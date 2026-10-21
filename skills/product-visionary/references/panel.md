@@ -29,6 +29,10 @@ in one message** so they run in parallel. Each gets the same brief plus its view
 Members may read the repo to check claims; they never edit files (the prompts say so).
 Keep the brief's feature map to the rows that matter for the question.
 
+**Write the brief (and later the Round 1 positions) to a scratch file** outside the repo and
+give each member its path instead of pasting the text into every prompt — on a 6- or
+9-panel that is most of the round's cost.
+
 **The brief:**
 ```
 Goal: <from PRODUCT.md, note if unconfirmed>
@@ -71,8 +75,10 @@ veto: none | <always-ask item this touches>
 - **Scoring:** ranked picks score 1st = 3 pts, 2nd = 2, 3rd = 1; top scores fill the slots.
   A candidate is **worth doing** only if more than half the members picked it at all. The
   loop's "nothing worth doing" stop means no candidate clears that bar.
-- **Clear after Round 1** — more than two thirds of members picked the same set (or, for a
-  single-answer question, the same answer): skip Round 2.
+- **Clear after Round 1** — every candidate was picked either by more than two thirds of
+  members or by at most one member (for a single-answer question: more than two thirds
+  gave the same answer). Nothing is close, so skip Round 2. Requiring identical sets
+  instead almost never holds on a 3-panel and doubles the cost.
 - Otherwise run Round 2 and score again. **Majority** = the winning option is picked by
   more than half the members.
 - **No majority, or a tie that changes which items are picked** → a tie round on the

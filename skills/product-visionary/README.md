@@ -10,6 +10,8 @@ A visionary product manager for your codebase. It tells you what the product is 
 - **Real issues:** runs [`test-report`](../test-report/SKILL.md) on the key features (2 positive + 1 negative test each).
 - **Decisions by debate:** a panel of **3, 6, or 9** Claude agents argues each decision from different viewpoints (user advocate, engineer, skeptic, and others) and reaches a conclusion by vote. Size grows with the decision: 3 for small fixes, 6 for features, 9 for direction.
 - **Memory between sessions:** `PRODUCT.md`, `docs/product/roadmap.md`, and an append-only `docs/product/decisions.md` record the goal, the map, the plan, and every decision with its winning argument and strongest dissent.
+- **A product page:** every session also writes one self-contained HTML page with the goal, status, feature map, roadmap and decisions, in light and dark. It goes in `docs/product/index.html`, or in your GitHub Pages site as `product/` if you have one. Example: [this repo's product status](https://dn-opensource.github.io/claude-skills/product/).
+- **Checks what actually runs:** besides the test suite, it runs each real entry point (hooks, CLI, start script) once on your machine, and waits for CI before merging.
 
 ## The four modes
 
@@ -38,4 +40,4 @@ Even in complete auto, every change goes through its own branch and PR (so any m
 
 ## Details
 
-See [SKILL.md](SKILL.md) for the session flow, [references/panel.md](references/panel.md) for the debate protocol, and [references/templates.md](references/templates.md) for the state files and end report.
+See [SKILL.md](SKILL.md) for the session flow, [references/panel.md](references/panel.md) for the debate protocol, [references/templates.md](references/templates.md) for the state files and end report, and [references/page.html](references/page.html) for the product page template.

@@ -53,8 +53,11 @@ Claude Code's own permission settings still apply; this skill can't bypass them.
      the goal. Flag dead or orphan features. Several products in one repo → one section
      per product.
 5. **Baseline + test** — run the existing suite (the tests tracked in git right now, plus
-   build/lint if configured) and save the result, in every mode. Then run the key features
-   through `test-report` (below).
+   build/lint if configured) and save the result, in every mode. Then **run each real entry
+   point once on this machine** — hook commands, CLI, start script, exactly as shipped, with
+   realistic input — because a green suite can hide a command that never starts (wrong
+   interpreter, missing binary, bad line endings). Then run the key features through
+   `test-report` (below).
 6. **Decide** — panel ranks candidates (below).
 7. **Act** — modes 2–4 only (see Acting and merging).
 8. **Update state and report** — see Ending the session.
@@ -92,6 +95,8 @@ and the roadmap. Each batch:
   how-to panels would be wasted.
 - Mode 2 runs one batch: the **highest-ranked pick** decides it — medium/direction → that
   item alone; small → the small picks.
+- Modes 2–4: an item **every member picked in Round 1** can't lose — start building it while
+  later rounds settle the rest.
 
 Protocol, viewpoints, prompts, tie-breaks, vetoes: `references/panel.md`.
 
@@ -118,8 +123,9 @@ Only *new* failures vs the baseline block; pre-existing ones go in the end repor
    decision entry with status `in progress`, so an interrupted session can find it.
 3. Make the change and copy in the item's discovery tests. **Code and tests only** — the
    state files go in the state PR (below), so item PRs never conflict with each other.
-4. Prove it: the item's `test-report` tests pass **and** the existing suite shows no new
-   failures vs the baseline.
+4. Prove it: the item's `test-report` tests pass, the existing suite shows no new
+   failures vs the baseline, the entry points from flow step 5 still run, **and** — if the
+   repo has CI — every check on the PR passes (`gh pr checks --watch`).
 5. Open a PR with the decision entry in its description. Mode 2: status
    `awaiting user merge`, stop here. Modes 3–4: merge with `gh pr merge --squash`, status
    `done`; if the branch is protected or needs review, stop at the PR (`awaiting user merge`).
@@ -133,8 +139,15 @@ no PR/merge is available; or **5 batches** are done. Mode 2 runs one batch.
 
 **State PR (modes 2–4):** at the end of the session, branch `pv/state-YYYY-MM-DD` from the
 freshly fetched default, write `PRODUCT.md`, the roadmap, `decisions.md` (every entry with
-its final status, plus the end report) and `test-reports/`, and open one PR. Modes 3–4
-merge it like an item; mode 2 leaves it for the user.
+its final status, plus the end report), `test-reports/` and the **product page** (below), and
+open one PR. Modes 3–4 merge it like an item; mode 2 leaves it for the user.
+
+**Product page (every mode):** copy `references/page.html` and replace **only** the JSON in
+its `product-data` block with this session's goal, stats, feature map, roadmap and
+decisions — the page draws everything from that block. Write it to
+`docs/product/index.html`; if the repo publishes a site folder (GitHub Pages `site/`,
+`docs/`, `public/`), write it to `<site>/product/index.html` instead and link it from the
+site's home page. Mode 1 writes it uncommitted like the other state files.
 
 **Mode 1 writes, doesn't commit:** tests, `test-reports/`, and state files are left in the
 working tree; tell the user where they are.
@@ -144,4 +157,5 @@ working tree; tell the user where they are.
 Write the end-of-session report (`references/templates.md`) and show it to the user: mode,
 batches run, every item with its PR link, test result and decision entry, pre-existing
 failures, and — in mode 4 — everything that would have been asked but was logged instead.
-This is how the user verifies the session. End with what's next on the roadmap.
+This is how the user verifies the session. Give the product page's path (or URL once the
+site deploys). End with what's next on the roadmap.

@@ -69,6 +69,41 @@ def test_packaging_positive_marketplace_readme_and_versions_agree():
         assert f"| [{s}](skills/{s}/SKILL.md) | {root_version} |" in readme, s
 
 
+# --- product-visionary product page ------------------------------------------
+
+PAGE = ROOT / "skills" / "product-visionary" / "references" / "page.html"
+SITE_PAGE = ROOT / "site" / "product" / "index.html"
+DATA = re.compile(r'(<script type="application/json" id="product-data">)(.*?)(</script>)', re.S)
+KEYS = {"product", "updated", "repo", "goal", "goal_status", "success", "stats", "features",
+        "roadmap", "open_questions", "session", "decisions"}
+
+
+def _split(path):
+    html = path.read_text(encoding="utf-8")
+    m = DATA.search(html)
+    assert m, path
+    return json.loads(m.group(2)), html[:m.start(2)] + html[m.end(2):]
+
+
+def test_product_page_positive_template_data_has_every_section():
+    data, _ = _split(PAGE)
+    assert KEYS <= set(data)
+    assert set(data["roadmap"]) == {"fix", "build", "proposed", "cut", "deferred"}
+
+
+def test_product_page_positive_site_page_is_template_plus_data_only():
+    data, shell = _split(SITE_PAGE)
+    _, template_shell = _split(PAGE)
+    assert KEYS <= set(data)
+    assert shell == template_shell  # generating the page = replacing the JSON, nothing else
+
+
+def test_product_page_negative_data_never_rendered_as_html():
+    _, shell = _split(PAGE)
+    for sink in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write"):
+        assert sink not in shell, sink
+
+
 def test_packaging_negative_no_dangling_relative_links_in_readmes():
     bad = []
     for md in [ROOT / "README.md", *ROOT.glob("skills/*/README.md"), *ROOT.glob("skills/*/SKILL.md")]:
