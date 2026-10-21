@@ -57,7 +57,7 @@ def edit_paths(inp: dict, cwd=None) -> list:
     if fp:
         return [fp]
     paths = PATCH_PATH.findall(inp.get("command", "") if isinstance(inp.get("command"), str) else "")
-    return [p if os.path.isabs(p) or not cwd else os.path.join(cwd, p) for p in dict.fromkeys(paths)]
+    return [p if os.path.isabs(p) or not cwd else os.path.normpath(os.path.join(cwd, p)) for p in dict.fromkeys(paths)]
 DIR_RULE_FILES = ("AGENTS.md", "CLAUDE.md")                  # checked in every dir, file → repo root
 ROOT_RULE_FILES = (".claude/CLAUDE.md", "CLAUDE.local.md")   # checked at the repo root only
 MAX_RULES = 40
@@ -403,7 +403,8 @@ def load_rules(cwd: str, target=None, session_rules=()) -> list:
             text = f.read_text(encoding="utf-8")
         except OSError:
             continue
-        src = str(f.relative_to(root)) if root in f.parents else str(f).replace(str(Path.home()), "~")
+        src = (f.relative_to(root).as_posix() if root in f.parents
+               else str(f).replace(str(Path.home()), "~").replace("\\", "/"))
         for line in text.splitlines():
             m = re.match(r"\s*(?:[-*+]|\d+[.)])\s+(.*)", line)
             r = m.group(1).strip() if m else ""
@@ -474,7 +475,7 @@ def short_target(tool, inp, cwd=None):
     if tool == "Bash":
         return inp.get("command", "")[:80]
     paths = edit_paths(inp, cwd)
-    shown = [os.path.relpath(p, cwd) if cwd and p.startswith(str(cwd).rstrip("/") + "/") else p for p in paths]
+    shown = [Path(os.path.relpath(p, cwd)).as_posix() if cwd and Path(p).is_relative_to(cwd) else p for p in paths]
     return (shown[0] + (f" (+{len(shown) - 1} more)" if len(shown) > 1 else "")) if shown else ""
 
 

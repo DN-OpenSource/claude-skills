@@ -121,8 +121,9 @@ class TestDecide(unittest.TestCase):
         cfg = json.loads(self.cfg.read_text())
         self.assertEqual(cfg["default"], "fake")
         self.assertEqual(cfg["providers"]["fake"]["base_url"], self.url)
-        # config may hold keys: owner-only
-        self.assertEqual(stat.S_IMODE(self.cfg.stat().st_mode), 0o600)
+        # config may hold keys: owner-only (POSIX modes; Windows has none to check)
+        if os.name != "nt":
+            self.assertEqual(stat.S_IMODE(self.cfg.stat().st_mode), 0o600)
 
         self.assertEqual(run("provider", "add", "fake", "--base-url", "x")[0], 2)  # exists
         self.assertEqual(run("provider", "edit", "fake", "--api-key", "inline")[0], 0)
