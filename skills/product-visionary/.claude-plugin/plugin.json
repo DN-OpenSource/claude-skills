@@ -1,0 +1,21 @@
+{
+  "name": "product-visionary",
+  "description": "Your product's visionary manager — infers the goal, where the product stands, and how every feature connects to it; finds real issues via test-report; a 3/6/9-agent panel debates and decides; then acts per a session-start mode: report only, fix on a branch, full auto, or complete auto.",
+  "version": "1.4.0",
+  "author": {
+    "name": "dhirajnikam",
+    "email": "dhirajnikam78@gmail.com"
+  },
+  "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/product-visionary",
+  "repository": "https://github.com/DN-OpenSource/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "skills",
+    "product",
+    "roadmap",
+    "multi-agent",
+    "decisions",
+    "testing",
+    "claude-code"
+  ]
+}
