@@ -11,11 +11,12 @@
 <!--
   product-visionary product page. To generate: copy this file, replace ONLY the JSON inside
   <script id="product-data">, keep everything else. All text is rendered with textContent.
+  Optional keys (changes, tests, decision viewpoints/veto/detail) render "None yet." when absent.
 -->
 <script type="application/json" id="product-data">
 {
   "product": "claude-skills",
-  "updated": "2026-10-21",
+  "updated": "2026-10-22",
   "repo": "https://github.com/DN-OpenSource/claude-skills",
   "back": {
     "label": "All skills",
@@ -32,28 +33,125 @@
   "stats": [
     {
       "label": "Skills",
-      "value": "10",
-      "note": "all built, no orphans"
+      "value": "11",
+      "note": "git-conventions is new"
     },
     {
       "label": "Tests",
-      "value": "114",
-      "of": "114",
-      "note": "lsp 44 · decision-maker 61 · repo 9"
+      "value": "139",
+      "of": "139",
+      "note": "plus official plugin validation in CI"
     },
     {
-      "label": "CI matrix",
-      "value": "5",
-      "of": "5 green",
-      "note": "ubuntu 3.9/3.12/3.13 · windows · macos 3.9"
+      "label": "CI",
+      "value": "6",
+      "of": "6 green",
+      "note": "5 OS/Python jobs + validate"
     },
     {
       "label": "Context per session",
-      "value": "1,245",
-      "of": "1,300 tok",
+      "value": "1,305",
+      "of": "1,400 tok",
       "note": "skill descriptions, loaded every session"
     }
   ],
+  "changes": [
+    "Two skills (codebase-guardian, schema-aware-db) never loaded: their frontmatter wasn't valid YAML. Fixed, and CI now runs the official validator (D-9).",
+    "New skill git-conventions: your commit, branch and PR rules; hide Claude's name via the native setting (D-10).",
+    "test-report records video of failing web and mobile tests, kept on your machine (D-8).",
+    "lsp docs run on macOS and Linux (python3) as well as Windows (D-6).",
+    "README explains how to update installed plugins (D-7).",
+    "This page: tests, since-last-session, jump nav, panel detail, status filter (D-11)."
+  ],
+  "tests": {
+    "summary": "12/12 new checks passed · 139/139 in total · backend (pytest) · videos: none (no screen)",
+    "rows": [
+      {
+        "feature": "interpreter docs",
+        "type": "positive",
+        "test": "every documented Python run uses python3",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "interpreter docs",
+        "type": "positive",
+        "test": "skills that run Python carry the Windows note",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "interpreter docs",
+        "type": "negative",
+        "test": "bare python is caught",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "test video",
+        "type": "positive",
+        "test": "SKILL links the rules; report has a Video column",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "test video",
+        "type": "positive",
+        "test": "rules cover every platform and safeguard",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "test video",
+        "type": "negative",
+        "test": "never tells Claude to commit or upload recordings",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "frontmatter",
+        "type": "positive",
+        "test": "every SKILL.md parses with name and description",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "frontmatter",
+        "type": "positive",
+        "test": "parsed description matches what the budget counts",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "frontmatter",
+        "type": "negative",
+        "test": "an unquoted colon is rejected",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "git-conventions",
+        "type": "positive",
+        "test": "file covers what the owner asked for",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "git-conventions",
+        "type": "positive",
+        "test": "attribution uses the native setting safely",
+        "result": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "git-conventions",
+        "type": "negative",
+        "test": "never sets false or rewrites history",
+        "result": "pass",
+        "video": "—"
+      }
+    ]
+  },
   "features": [
     {
       "name": "product-visionary",
@@ -64,11 +162,19 @@
       "flag": ""
     },
     {
+      "name": "git-conventions",
+      "status": "built",
+      "depends": "native attribution setting",
+      "used_by": "",
+      "contributes": "Commits, branches and PRs follow the user's rules.",
+      "flag": ""
+    },
+    {
       "name": "test-report",
       "status": "built",
       "depends": "project test framework",
       "used_by": "product-visionary",
-      "contributes": "Real tests and a pass/fail report.",
+      "contributes": "Real tests, a pass/fail report, video of failures.",
       "flag": ""
     },
     {
@@ -92,7 +198,7 @@
       "status": "built",
       "depends": "memory (optional)",
       "used_by": "",
-      "contributes": "Safe edits to existing code.",
+      "contributes": "Safe edits to existing code. Loads again since D-9.",
       "flag": ""
     },
     {
@@ -108,7 +214,7 @@
       "status": "built",
       "depends": "lsp (optional)",
       "used_by": "",
-      "contributes": "No guessed schemas in database code.",
+      "contributes": "No guessed schemas. Loads again since D-9.",
       "flag": ""
     },
     {
@@ -140,18 +246,22 @@
     "fix": [],
     "build": [
       {
-        "title": "Trigger tests for skill descriptions",
-        "why": "About 10 real prompts per skill, run before and after any description edit."
+        "title": "Trigger tests with claude plugin eval",
+        "why": "The built-in eval runner can check each skill still fires on real prompts."
       },
       {
         "title": "Shorten the 6 longest descriptions",
-        "why": "Saves 50+ tokens every session. Waits on the trigger tests."
+        "why": "Waits on the trigger tests. Saves 50+ tokens every session."
+      },
+      {
+        "title": "Opt-in commit check for git-conventions",
+        "why": "A warning-only hook, off by default, if commits drift from the file."
       }
     ],
     "proposed": [
       {
         "title": "One owner for context files",
-        "why": "Merge memory, agents-dox and codebase-guardian. Vetoed by two panel members: breaks existing installs.",
+        "why": "Merge memory, agents-dox and codebase-guardian. Vetoed by two panel members: breaks installs.",
         "weight": "direction"
       }
     ],
@@ -159,92 +269,117 @@
     "deferred": [
       {
         "title": "Trim the decision-maker README",
-        "why": "No runtime context cost. 1 of 3 votes."
-      },
-      {
-        "title": "Shorten the root README pairing list",
-        "why": "1 of 3 votes."
+        "why": "No runtime cost. 1 of 3 votes."
       }
     ]
   },
   "open_questions": [],
   "session": {
-    "date": "2026-10-21",
+    "date": "2026-10-22",
     "mode": 4,
-    "batches": 4,
-    "stopped": "nothing left (panel voted 3/3)"
+    "batches": 5,
+    "stopped": "5 batches (session ceiling)"
   },
   "decisions": [
     {
-      "id": "D-1",
-      "title": "decision-maker passes on Windows",
+      "id": "D-6",
+      "title": "lsp docs work on macOS and Linux",
       "status": "done",
       "panel": 3,
       "rounds": 2,
       "votes": "picked by 3/3",
-      "won": "Three one-line root causes; Windows is the owner's platform.",
-      "dissent": "Cut description cost first.",
-      "result": "49 → 57 tests",
-      "pr": "PR #6",
-      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/6"
+      "won": "Stock macOS and Ubuntu have no python, so the documented command failed.",
+      "dissent": "Ship the owner's video request first.",
+      "result": "7 commands fixed",
+      "pr": "PR #15",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/15",
+      "viewpoints": "User advocate, Engineer, Skeptic",
+      "veto": "none",
+      "detail": "Found by running the real entry point. Also moved the Python 3.9 CI job to ubuntu-24.04."
     },
     {
-      "id": "D-2",
-      "title": "Repo tests and CI on 3 platforms, Python 3.9 to 3.13",
+      "id": "D-7",
+      "title": "README explains how to update plugins",
+      "status": "done",
+      "panel": 3,
+      "rounds": 2,
+      "votes": "3/3 in Round 2",
+      "won": "The owner's own install sat on 1.5.0 after 1.6.0 shipped.",
+      "dissent": "Check the command against the real CLI first (done).",
+      "result": "verified commands",
+      "pr": "PR #16",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/16",
+      "viewpoints": "User advocate, Engineer, Skeptic",
+      "veto": "none"
+    },
+    {
+      "id": "D-8",
+      "title": "test-report records video of failing tests",
       "status": "done",
       "panel": 6,
       "rounds": 2,
-      "votes": "4–2 became 6–0",
-      "won": "Hooks run the user's own python3, and stock macOS ships 3.9. Found guard.py didn't parse on 3.11 and older.",
-      "dissent": "The matrix costs CI time (withdrawn: public repo, parallel jobs).",
-      "result": "CI 5/5",
-      "pr": "PR #7",
-      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/7"
+      "votes": "D 3 / C 2 / B 1, then C 6/6",
+      "won": "Recordings can capture credentials and personal data, so keep them local and record only failures.",
+      "dissent": "Local-only links are dead for reviewers.",
+      "result": "failures only, local",
+      "pr": "PR #17",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/17",
+      "viewpoints": "User advocate, Engineer, Skeptic, Quality, Business, Security",
+      "veto": "Security on committing recordings (logged, mode 4).",
+      "detail": "Committing recordings was ruled out by the mode-4 floor: never write secret values into reports."
     },
     {
-      "id": "D-3",
-      "title": "Hooks run when python3 is the Microsoft Store stub",
-      "status": "done",
-      "panel": 3,
-      "rounds": 2,
-      "votes": "picked by 3/3",
-      "won": "All 6 hooks were failing silently on Windows.",
-      "dissent": "A naive retry would run the guard twice, so the launcher probes first.",
-      "result": "exit 49 → 0",
-      "pr": "PR #8",
-      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/8"
-    },
-    {
-      "id": "D-4",
-      "title": "Removed the shipped lsp design docs",
-      "status": "done",
-      "panel": 3,
-      "rounds": 2,
-      "votes": "picked by 3/3",
-      "won": "Nothing referenced them and git keeps the history.",
-      "dissent": "Cleanup users never see.",
-      "result": "−1,964 lines",
-      "pr": "PR #9",
-      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/9"
-    },
-    {
-      "id": "D-5",
-      "title": "The README's test command runs every test",
+      "id": "D-9",
+      "title": "Two skills never loaded; validate in CI",
       "status": "done",
       "panel": 3,
       "rounds": 1,
-      "votes": "unanimous, then stop",
-      "won": "Fix the command and drop the hard-coded count.",
-      "dissent": "",
-      "result": "61 tests",
-      "pr": "PR #10",
-      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/10"
+      "votes": "picked by 3/3",
+      "won": "codebase-guardian was installed but missing from the session's skills.",
+      "dissent": "Delete the root plugin.json instead of renaming it (tie-break: rename).",
+      "result": "validator ✔",
+      "pr": "PR #18",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/18",
+      "viewpoints": "User advocate, Engineer, Skeptic",
+      "veto": "none"
+    },
+    {
+      "id": "D-10",
+      "title": "New skill: git-conventions",
+      "status": "done",
+      "panel": 6,
+      "rounds": 2,
+      "votes": "A 4 / B 2, then A 5 / B 1",
+      "won": "The native attribution setting is the deterministic part; a commit hook would miss Claude's usual heredoc commits.",
+      "dissent": "Instructions drift when the skill isn't loaded mid-task.",
+      "result": "11th skill",
+      "pr": "PR #19",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/19",
+      "viewpoints": "User advocate, Engineer, Skeptic, Quality, Business, Security",
+      "veto": "All: ask before any settings change; empty strings, never false; never rewrite history.",
+      "detail": "Answered the dissent with an opt-in CLAUDE.md pointer line and native deny rules for protected branches."
+    },
+    {
+      "id": "D-11",
+      "title": "Product page and website improvements",
+      "status": "done",
+      "panel": 6,
+      "rounds": 1,
+      "votes": "A 5/6",
+      "won": "Every addition is a textContent element, so the existing safety tests still hold.",
+      "dissent": "Keep dissent visible; the real website bug was a hand-kept skill list missing git-conventions.",
+      "result": "this page",
+      "pr": "PR #20",
+      "pr_url": "https://github.com/DN-OpenSource/claude-skills/pull/20",
+      "viewpoints": "User advocate, Engineer, Skeptic, Quality, Business, Security",
+      "veto": "none",
+      "detail": "Video cells are plain text, local paths are masked, nothing is embedded."
     }
   ]
 }
 </script>
 <style>
-/* Layout: a status sheet — header with goal, stat strip, feature map table, roadmap lanes, decision timeline. */
+/* Layout: a status sheet — header, jump nav, stat strip, since-last-session, tests, feature map, roadmap lanes, decision timeline. */
 :root {
   --bg: #f4f5f9; --surface: #ffffff; --ink: #141a2e; --muted: #5b627a; --line: #dde1ea;
   --accent: #3346d3; --accent-soft: #e7eafc;
@@ -321,6 +456,25 @@ td.name { font-family: var(--mono); font-size: 0.84rem; white-space: nowrap; }
 .d .why b { color: var(--ink); font-weight: 600; }
 .d .right { display: grid; gap: 6px; justify-items: end; align-content: start; }
 .d .right a { font: 500 0.8rem/1 var(--mono); }
+.jump { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 0; background: var(--bg); border-bottom: 1px solid var(--line); }
+.jump a { font: 500 0.8rem/1 var(--body); color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+.jump a:hover { color: var(--ink); border-color: var(--ink); }
+section { scroll-margin-top: 56px; }
+.changes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 75ch; }
+.changes .empty, td.empty { color: var(--muted); list-style: none; }
+.fine { color: var(--muted); font-size: 0.82rem; margin-top: 8px; }
+.head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; margin-bottom: 14px; }
+.head-row h2 { margin-bottom: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filters button { font: 500 0.8rem/1 var(--body); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.filters button[aria-pressed="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
+.filters button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details { font-size: 0.86rem; }
+details summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+details dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; margin: 8px 0 0; }
+details dt { font: 500 0.72rem/1.6 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+details dd { margin: 0; color: var(--muted); }
+@media print { .jump, .filters { display: none; } body { background: #fff; } }
 footer { border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; }
 @media (max-width: 560px) {
   .d { grid-template-columns: 44px minmax(0, 1fr); }
@@ -337,9 +491,27 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; color: var(--mute
     <p class="goal" id="goal"></p>
     <div class="row" id="success"></div>
   </header>
+  <nav class="jump" aria-label="On this page">
+    <a href="#h-since">Since last session</a><a href="#h-tests">Tests</a><a href="#h-map">Feature map</a><a href="#h-road">Roadmap</a><a href="#h-dec">Decisions</a>
+  </nav>
   <section class="strip" id="stats" aria-label="Status"></section>
+  <section aria-labelledby="h-since">
+    <h2 id="h-since">Since last session</h2>
+    <ul class="changes" id="changes"></ul>
+  </section>
+  <section aria-labelledby="h-tests">
+    <h2 id="h-tests">Tests</h2>
+    <p class="muted" id="tests-summary"></p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Type</th><th>Test</th><th>Result</th><th>Video</th></tr></thead>
+        <tbody id="tests"></tbody>
+      </table>
+    </div>
+    <p class="fine">Videos of failing tests stay on the machine that ran them and are never published, so this page lists them as text only.</p>
+  </section>
   <section aria-labelledby="h-map">
-    <h2 id="h-map">Feature map</h2>
+    <div class="head-row"><h2 id="h-map">Feature map</h2><div class="filters" id="filters" role="group" aria-label="Filter features by status"></div></div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Feature</th><th>Status</th><th>Depends on</th><th>Used by</th><th>How it serves the goal</th></tr></thead>
@@ -364,8 +536,15 @@ const D = JSON.parse(document.getElementById("product-data").textContent);
 const $ = id => document.getElementById(id);
 function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 function pill(text, tone) { return el("span", "pill " + (tone || ""), text); }
+function none(target, cols) {
+  if (cols) { const tr = el("tr"); const td = el("td", "empty", "None yet."); td.colSpan = cols; tr.append(td); target.append(tr); }
+  else target.append(el("li", "empty", "None yet."));
+}
+// Local paths and user names never reach a published page.
+function clean(s) { return String(s || "").replace(/[A-Za-z]:\\[^\s)]*|\/(?:Users|home)\/[^\s)]*|file:\/\/\S*/g, "<path>"); }
 const STATUS_TONE = { "built": "ok", "half-built": "warn", "broken": "bad", "missing": "bad" };
 const DEC_TONE = { "done": "ok", "proposed": "info", "in progress": "warn", "awaiting user merge": "warn", "failed": "bad" };
+const RESULT_TONE = { "pass": "ok", "fail": "bad", "flaky": "warn", "blocked": "warn" };
 
 document.title = D.product + " · product status";
 $("product").textContent = D.product;
@@ -388,14 +567,41 @@ for (const s of D.stats || []) {
   $("stats").append(box);
 }
 
+const changes = D.changes || [];
+if (!changes.length) none($("changes"));
+for (const c of changes) $("changes").append(el("li", null, c));
+
+const T = D.tests || {};
+$("tests-summary").textContent = T.summary || "No test run recorded yet.";
+const rows = T.rows || [];
+if (!rows.length) none($("tests"), 5);
+for (const r of rows) {
+  const tr = el("tr");
+  const res = el("td"); res.append(pill(r.result, RESULT_TONE[r.result]));
+  tr.append(el("td", "name", r.feature), el("td", "muted", r.type), el("td", null, r.test), res, el("td", "muted", clean(r.video) || "—"));
+  $("tests").append(tr);
+}
+
+const featureRows = [];
 for (const f of D.features || []) {
-  const tr = document.createElement("tr");
+  const tr = el("tr"); tr.dataset.status = f.status;
   tr.append(el("td", "name", f.name));
   const st = el("td"); st.append(pill(f.status, STATUS_TONE[f.status]));
   if (f.flag) st.append(" ", pill(f.flag, "warn"));
   tr.append(st, el("td", "muted", f.depends || "—"), el("td", "muted", f.used_by || "—"), el("td", null, f.contributes || ""));
-  $("features").append(tr);
+  $("features").append(tr); featureRows.push(tr);
 }
+if (!featureRows.length) none($("features"), 5);
+const statuses = ["all", ...new Set(featureRows.map(r => r.dataset.status))];
+for (const s of statuses) {
+  const b = el("button", null, s === "all" ? "All" : s); b.type = "button"; b.setAttribute("aria-pressed", String(s === "all"));
+  b.addEventListener("click", () => {
+    $("filters").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    featureRows.forEach(r => { r.hidden = s !== "all" && r.dataset.status !== s; });
+  });
+  $("filters").append(b);
+}
+if (statuses.length < 3) $("filters").hidden = true;  // one status: nothing to filter
 
 const LANES = [["fix", "Fix", "bad"], ["build", "Build", "info"], ["proposed", "Proposed", "warn"], ["cut", "Cut", ""], ["deferred", "Deferred", ""]];
 for (const [key, name, tone] of LANES) {
@@ -418,7 +624,9 @@ for (const q of D.open_questions || []) {
 
 const S = D.session || {};
 if (S.date) $("session").append(pill("mode " + S.mode, "info"), el("span", null, S.date + " · " + S.batches + " batch" + (S.batches === 1 ? "" : "es") + " · stopped: " + S.stopped));
-for (const d of D.decisions || []) {
+const decisions = D.decisions || [];
+if (!decisions.length) none($("decisions"));
+for (const d of decisions) {
   const li = el("li", "d");
   li.append(el("span", "id", d.id));
   const body = el("div", "body");
@@ -426,12 +634,25 @@ for (const d of D.decisions || []) {
   const why = el("p", "why"); why.append(el("b", null, "Won: "), d.won || "");
   if (d.dissent) why.append(" ", el("b", null, "Dissent: "), d.dissent);
   body.append(why);
+  if (d.viewpoints || d.veto || d.detail) {
+    const more = el("details"); more.append(el("summary", null, "Panel detail"));
+    const dl = el("dl");
+    for (const [k, v] of [["Viewpoints", d.viewpoints], ["Veto", d.veto], ["Notes", d.detail]]) if (v) dl.append(el("dt", null, k), el("dd", null, v));
+    more.append(dl); body.append(more);
+  }
   const right = el("div", "right");
   right.append(pill(d.result || d.status, DEC_TONE[d.status] || "ok"));
   if (d.pr_url) { const a = el("a", null, d.pr || "PR"); a.href = d.pr_url; right.append(a); }
   li.append(body, right);
   $("decisions").append(li);
 }
+
+// Print everything: open every detail and show filtered-out rows.
+addEventListener("beforeprint", () => {
+  document.querySelectorAll("details").forEach(x => { x.open = true; });
+  featureRows.forEach(r => { r.hidden = false; });
+});
 </script>
 </body>
+
 </html>

@@ -114,3 +114,28 @@ def test_packaging_negative_no_dangling_relative_links_in_readmes():
             if not (md.parent / target).exists():
                 bad.append(f"{md.relative_to(ROOT)} -> {target}")
     assert bad == []
+
+
+# --- pages: never embed recordings; home page lists every skill safely --------
+
+HOME = ROOT / "site" / "index.html"
+
+
+def test_product_page_negative_never_embeds_media():
+    _, shell = _split(PAGE)
+    for tag in ("<video", "<source", "<iframe", "<img", "<embed", "<object"):
+        assert tag not in shell.lower(), tag
+    for el in ("video", "source", "iframe", "img", "embed", "object"):  # links (<a>) to PRs are fine
+        assert f'createElement("{el}")' not in shell and f'el("{el}"' not in shell, el
+
+
+def test_home_page_positive_lists_every_skill():
+    html = HOME.read_text(encoding="utf-8")
+    missing = [s for s in SKILLS if f'n: "{s}"' not in html]
+    assert missing == []
+
+
+def test_home_page_negative_never_renders_with_innerhtml():
+    html = HOME.read_text(encoding="utf-8")
+    for sink in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write"):
+        assert sink not in html, sink
