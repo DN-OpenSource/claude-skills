@@ -26,6 +26,16 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 | [product-visionary](skills/product-visionary/SKILL.md) | 1.8.1 | Claude Code | Your product's visionary manager — works out the goal, where the product stands, and how each feature connects to and contributes to it; finds real issues with `test-report`; a panel of 3, 6, or 9 agents debates and decides; then acts according to the mode you pick at session start: **report only**, **fix on a branch**, **full auto**, or **complete auto** (no prompts). See the [README](skills/product-visionary/README.md). |
 | [git-conventions](skills/git-conventions/SKILL.md) | 1.8.1 | Claude Code | Make Claude's commits, branches and PRs follow your rules: commit message pattern, branch naming, PR template, protected branches. Hide Claude's name through the native `attribution` setting. One short interview writes `.claude/git-conventions.md`; every settings change is shown and asked first, and history is never rewritten. See the [README](skills/git-conventions/README.md). |
 
+## Trigger tests
+
+Every skill ships `evals/` for Claude Code's built-in `claude plugin eval`: two prompts that must make the skill fire and one that must not. They call the model with your own credentials, so they run on your machine, not in CI:
+
+```bash
+claude plugin eval skills/git-conventions --runs 1 --ablation none --no-publish --max-cost-usd 2
+```
+
+One skill at one run per case costs about $0.20. Drop `--runs 1` (default 3) and `--ablation none` (adds a no-plugin baseline) for a fuller measurement. Run every skill before changing a description, so a shorter description can't stop a skill firing unnoticed. Structure is checked in CI by `scripts/test_trigger_evals.py`.
+
 ## How the skills work together
 
 Each skill is **self-contained** — install any one on its own and it works with no dependency on the others. They're also designed to **compose**:
