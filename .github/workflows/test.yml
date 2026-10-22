@@ -15,7 +15,7 @@ jobs:
       matrix:
         include:
           # hooks run the user's own python3: stock macOS is 3.9, so 3.9 is the floor
-          - { os: ubuntu-latest, python: "3.9" }
+          - { os: ubuntu-24.04, python: "3.9" }  # ubuntu-latest (26.04) has no 3.9 build
           - { os: ubuntu-latest, python: "3.12" }
           - { os: ubuntu-latest, python: "3.13" }
           - { os: windows-latest, python: "3.12" }
