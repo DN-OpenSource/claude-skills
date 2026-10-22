@@ -95,8 +95,8 @@ Shown to the user at the end; also appended to `docs/product/decisions.md` as-is
 
 `references/page.html` is the template (the "Classical" design: goal + health ring, needs-your-attention,
 tabs for Overview / Tests / Features / Roadmap / Decisions, vote seats on a 3/6/9 scale, light/dark).
-Copy it and replace **only** the JSON inside `<script type="application/json" id="product-data">`;
-everything else stays byte-for-byte, and the page renders all text with `textContent`. Fields:
+Write the data to `docs/product/product.json` and run `scripts/render_page.py --if-stale`; it
+validates every field below, embeds the JSON safely and writes the page. Fields:
 
 - `product` `{name}`, `repo`, `back` `{label, href}` (site home, or omit), `lastUpdated`
 - `goal` `{text, confirmed: bool, note}`; `successCriteria` `[{text, state: met|not met|at risk}]`
