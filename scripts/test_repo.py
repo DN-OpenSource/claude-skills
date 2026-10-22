@@ -107,7 +107,8 @@ def test_product_page_negative_data_never_rendered_as_html():
 def test_packaging_negative_no_dangling_relative_links_in_readmes():
     bad = []
     for md in [ROOT / "README.md", *ROOT.glob("skills/*/README.md"), *ROOT.glob("skills/*/SKILL.md")]:
-        for target in re.findall(r"\]\(([^)#\s]+)(?:#[^)]*)?\)", md.read_text(encoding="utf-8")):
+        prose = re.sub(r"```.*?```", "", md.read_text(encoding="utf-8"), flags=re.S)  # examples in code blocks aren't links
+        for target in re.findall(r"\]\(([^)#\s]+)(?:#[^)]*)?\)", prose):
             if "://" in target or target.startswith("mailto:"):
                 continue
             if not (md.parent / target).exists():

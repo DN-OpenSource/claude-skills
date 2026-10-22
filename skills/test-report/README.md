@@ -11,6 +11,10 @@ For every feature, the skill writes **3 tests** in the project's own test framew
 
 It then **runs them for real**, retries failures once to catch flakiness, and writes `test-reports/YYYY-MM-DD-<feature-or-branch>.md`: a summary line, a per-test results table, error + file:line + likely cause for each failure, and the exact command to re-run.
 
+## Video of failures
+
+Web and mobile tests are recorded, and the clip is kept only when a test fails (Playwright, Cypress, Android, iOS simulator, Detox). Clips stay on your machine: `test-reports/videos/` is added to `.gitignore` first, nothing is ever committed, and every link in the report says **local only**. Details: [references/video.md](references/video.md).
+
 ## Works for
 
 | Type | Frameworks |
