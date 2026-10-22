@@ -1,6 +1,6 @@
 ---
 name: agents-dox
-description: Use when working in a repository that uses the DOX AGENTS.md hierarchy — a tree of AGENTS.md files that act as binding work contracts for their subtrees. Before editing any file, read the applicable chain of AGENTS.md from the repo root down to the nearest one covering the path; after every meaningful change, run a DOX pass to update the nearest owning AGENTS.md and any affected parents or children. Trigger on any edit in a repo that contains AGENTS.md files, when the user mentions DOX, AGENTS.md, or doc contracts, and when asked to set up, index, or maintain the AGENTS.md tree. If a repo has no AGENTS.md yet, bootstrap the tree before continuing. Err on trigger.
+description: "Use in a repo with the DOX AGENTS.md hierarchy (AGENTS.md files as binding work contracts for their subtrees): read the root-to-nearest AGENTS.md chain before editing; after each meaningful change, run a DOX pass to update the owning AGENTS.md and affected parents or children. Trigger on any edit in a repo with AGENTS.md files, when the user mentions DOX, AGENTS.md, or doc contracts, or asks to set up, index, or maintain the AGENTS.md tree; bootstrap one if missing. Err on trigger."
 ---
 
 # DOX framework

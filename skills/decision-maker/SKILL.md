@@ -1,6 +1,6 @@
 ---
 name: decision-maker
-description: Fast, cheap, calibrated decisions via TypeSafe's Jev System One model — typed yes/no (noul), choice, and score answers with confidence, in under a second, instead of reasoning through a judgment call yourself. Use when a step reduces to a closed-set judgment over text in hand (route, classify, triage, rank, verify, gate, or which element to click and whether a step passed while browser-testing an app), when an LLM prompt-and-parse step could be a typed decision, when the user mentions TypeSafe, Jev, System One, or decision provider, or wants to add/edit a provider, base URL, or API key. Confidence-gated; falls back to your own judgment when unconfigured.
+description: Fast, calibrated decisions via TypeSafe's Jev System One model — typed yes/no (noul), choice, and score answers with confidence, instead of reasoning through a judgment call yourself. Use when a step reduces to a closed-set judgment over text in hand (route, classify, triage, rank, verify, gate, or which element to click and whether a step passed while browser-testing an app), or when the user mentions TypeSafe, Jev, System One, or decision provider, or wants to add/edit a provider, base URL, or API key. Falls back to your own judgment when unconfigured.
 ---
 
 # Decision Maker

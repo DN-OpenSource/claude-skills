@@ -1,6 +1,6 @@
 ---
 name: ponytail
-description: Wrap up a work session so nothing is left dangling. Use when the user says "wrap up", "tie up loose ends", "end of day", "before I go", "hand this off", or is leaving a task mid-flight — and at the natural end of any long coding session, even unprompted. Sweeps every loose strand (uncommitted/unpushed work, unlabeled stashes, debug prints and TODOs introduced this session, failing checks, half-done renames, promises recorded nowhere), ties each off (commit, push, clean, or hand off), and ends with one "session tail" report for the next session.
+description: Wrap up a work session so nothing is left dangling. Use when the user says "wrap up", "tie up loose ends", "end of day", "before I go", "hand this off", or leaves a task mid-flight, and at the natural end of any long coding session, even unprompted. Sweeps loose strands (uncommitted or unpushed work, stashes, debug prints and TODOs, failing checks, half-done renames, untracked promises), ties each off, and ends with one session-tail report.
 ---
 
 # Ponytail
