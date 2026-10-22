@@ -1,6 +1,6 @@
 ---
 name: schema-aware-db
-description: Use WHENEVER writing, editing, or reviewing backend code that reads or writes a database — SQL (PostgreSQL, MySQL, SQLite) or NoSQL (MongoDB, DynamoDB, Redis): a query, ORM model, migration, repository/DAO, connection, adding/renaming a column or field, or a join — even if the user only says "add an endpoint," "fix this query," or "add a field." Stops schema guessing: introspect the real structure, map every usage across the codebase, then change it and trace the ripple so no column is invented and no query, serializer, or test goes stale.
+description: 'Use WHENEVER writing, editing, or reviewing backend code that reads or writes a database — SQL (PostgreSQL, MySQL, SQLite) or NoSQL (MongoDB, DynamoDB, Redis): a query, ORM model, migration, repository/DAO, connection, adding/renaming a column or field, or a join — even if the user only says "add an endpoint," "fix this query," or "add a field." Stops schema guessing: introspect the real structure, map every usage across the codebase, then change it and trace the ripple so no column is invented and no query, serializer, or test goes stale.'
 ---
 
 # Schema-Aware Database Work
