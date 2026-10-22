@@ -3,395 +3,364 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Standalone, composable Claude Code skills: catalog, install commands, roadmap and decisions.">
 <title>claude-skills catalog</title>
+<meta name="description" content="Standalone, composable Claude Code skills: install commands, context cost, tests, and the product status.">
 <meta property="og:title" content="claude-skills">
-<meta property="og:description" content="Standalone, composable Claude Code skills: install commands, context cost, goal, roadmap and decisions.">
+<meta property="og:description" content="Standalone, composable Claude Code skills: install commands, context cost, tests, and the product status.">
 <meta property="og:url" content="https://dn-opensource.github.io/claude-skills/">
-<meta name="theme-color" content="#3346d3">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233346d3'/%3E%3Cpath d='M9 21l5-10 4 7 2-3 3 6' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-
+<meta name="theme-color" content="#3550C8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233550C8'/%3E%3Cpath d='M10 11l-4 5 4 5M22 11l4 5-4 5M18 9l-4 14' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a plugin registry sheet — manifest header, status strip, catalog grid, then a status teaser linking to product/. */
+/* Layout: sticky header, hero with goal + four stats, featured skill with its four modes, filterable
+   skill grid, install/update steps, pairings, contribute + status cards. Cobalt palette. */
 :root {
-  --bg: #f4f5f9;
-  --surface: #ffffff;
-  --ink: #141a2e;
-  --muted: #5b627a;
-  --line: #dde1ea;
-  --accent: #3346d3;
-  --accent-soft: #e7eafc;
-  --ok: #1d8657;
-  --ok-soft: #e2f4ea;
-  --warn: #a86c12;
-  --warn-soft: #fbf0dc;
-  --bad: #b4372f;
-  --bad-soft: #fbe4e2;
-  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  --bg: #FAFAF9; --bg-soft: #F3F3F1; --surface: #FFFFFF; --line: #E4E4E0; --fg: #17181C; --fg2: #3B3D44; --fg3: #62656D;
+  --ok: #2F7D4F; --code: #F1F1EE; --bar: #E4E4E0;
+  --accent: #3550C8; --accent-ink: #FFFFFF; --accent-soft: #E8ECFB;
+  --display: Manrope, "Segoe UI", system-ui, sans-serif;
+  --body: Inter, "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1120; --surface: #161a2d; --ink: #e7e9f3; --muted: #9aa1b9; --line: #2a3049;
-    --accent: #8d9bff; --accent-soft: #222a55; --ok: #4cc38a; --ok-soft: #15301f;
-    --warn: #e3b14b; --warn-soft: #33270f; --bad: #f07a71; --bad-soft: #3a1714; color-scheme: dark;
+    --bg: #111214; --bg-soft: #16171A; --surface: #1B1C20; --line: #2C2E33; --fg: #EDEDEA; --fg2: #C4C5C2; --fg3: #9A9C9F;
+    --ok: #6FCF97; --code: #141518; --bar: #2C2E33; --accent: #8FA6FF; --accent-ink: #111214; --accent-soft: #1F2747; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e1120; --surface: #161a2d; --ink: #e7e9f3; --muted: #9aa1b9; --line: #2a3049;
-  --accent: #8d9bff; --accent-soft: #222a55; --ok: #4cc38a; --ok-soft: #15301f;
-  --warn: #e3b14b; --warn-soft: #33270f; --bad: #f07a71; --bad-soft: #3a1714; color-scheme: dark;
+  --bg: #111214; --bg-soft: #16171A; --surface: #1B1C20; --line: #2C2E33; --fg: #EDEDEA; --fg2: #C4C5C2; --fg3: #9A9C9F;
+  --ok: #6FCF97; --code: #141518; --bar: #2C2E33; --accent: #8FA6FF; --accent-ink: #111214; --accent-soft: #1F2747; color-scheme: dark;
 }
 * { box-sizing: border-box; }
-body {
-  background: var(--bg); color: var(--ink); font: 15px/1.6 var(--body);
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.wrap { max-width: 1120px; margin: 0 auto; padding-block: 40px 64px; display: grid; gap: 56px; }
-.wrap > * { min-width: 0; }
-h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
-h2 { font-size: 1.55rem; font-weight: 700; }
-h3 { font-size: 1.08rem; font-weight: 700; }
-p { margin: 0; }
-a { color: var(--accent); text-underline-offset: 3px; }
-a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
-code, .mono { font-family: var(--mono); font-size: 0.86em; }
-.eyebrow { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 18px; }
-.section-head p { color: var(--muted); max-width: 60ch; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; -webkit-font-smoothing: antialiased; background: var(--bg); color: var(--fg); font: 16px/1.55 var(--body); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button, select { font: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(clamp(16px, 5vw, 48px), env(safe-area-inset-left, 0px)); padding-right: max(clamp(16px, 5vw, 48px), env(safe-area-inset-right, 0px)); }
+.kicker { font: 600 13px/1.3 var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.h2 { font: 700 clamp(26px, 4vw, 36px)/1.15 var(--display); letter-spacing: -.018em; }
+section.block { padding-block: 48px; border-top: 1px solid var(--line); display: grid; gap: 24px; scroll-margin-top: 64px; }
+section.block > *, .feat-head > *, .hero > * { min-width: 0; }
+.head { display: grid; gap: 10px; }
 
-/* Header */
-header { display: grid; gap: 20px; }
-.manifest { font: 400 0.82rem/1.5 var(--mono); color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 18px; }
-.manifest b { color: var(--ink); font-weight: 500; }
-h1 { font-size: clamp(2.3rem, 6vw, 3.8rem); font-weight: 800; line-height: 1.02; }
-h1 span { color: var(--accent); }
-.goal { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 28px; align-items: start; max-width: 900px; }
-.goal .pill { justify-self: start; }
-.goal p { font-size: 1.15rem; line-height: 1.5; max-width: 62ch; }
-.pill { display: inline-flex; align-items: center; gap: 6px; font: 500 0.72rem/1 var(--mono); letter-spacing: 0.04em; padding: 6px 10px; border-radius: 999px; white-space: nowrap; }
-.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.pill.ok { color: var(--ok); background: var(--ok-soft); }
-.pill.warn { color: var(--warn); background: var(--warn-soft); }
-.pill.bad { color: var(--bad); background: var(--bad-soft); }
-.pill.info { color: var(--accent); background: var(--accent-soft); }
-.criteria { display: flex; flex-wrap: wrap; gap: 8px; }
-.criteria span { border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 0.86rem; color: var(--muted); }
+/* header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.top .wrap { padding-block: 14px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.logo { display: flex; align-items: baseline; gap: 8px; color: var(--fg); }
+.logo:hover { text-decoration: none; }
+.logo b { font: 800 20px var(--display); letter-spacing: -.02em; }
+.logo span { font: 14px var(--mono); color: var(--fg3); }
+.top nav { display: flex; gap: 18px; flex-wrap: wrap; margin-left: auto; font-size: 14px; font-weight: 500; }
+.top nav a { color: var(--fg2); }
+.pill-btn { font: 500 13px var(--body); color: var(--fg2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; min-height: 32px; white-space: nowrap; }
 
-/* Status strip */
-.strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
-.stat { padding: 18px 20px; display: grid; gap: 6px; border-left: 1px solid var(--line); min-width: 0; }
-.stat:first-child { border-left: 0; }
-.stat .num { font: 700 1.9rem/1 var(--display); font-variant-numeric: tabular-nums; }
-.stat .num small { font-size: 0.95rem; color: var(--muted); font-weight: 500; }
-.stat .sub { font-size: 0.85rem; color: var(--muted); }
-.meter { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
-.meter i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
-.dots { display: flex; gap: 5px; flex-wrap: wrap; }
-.dots span { font: 500 0.66rem/1 var(--mono); padding: 4px 6px; border-radius: 4px; color: var(--ok); background: var(--ok-soft); }
+/* hero */
+.hero { padding-block: clamp(48px, 8vw, 96px) 48px; display: grid; gap: 36px; }
+.hero .intro { display: grid; gap: 18px; max-width: 780px; }
+.hero h1 { font: 800 clamp(34px, 6vw, 60px)/1.04 var(--display); letter-spacing: -.025em; }
+.hero p { font-size: clamp(16px, 2vw, 19px); color: var(--fg2); max-width: 640px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.stat { background: var(--surface); padding: 20px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.stat .l, .stat .n2 { font-size: 13px; color: var(--fg3); }
+.stat .v { font: 800 34px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.stat .v small { font: 600 16px var(--display); color: var(--fg3); }
+.ci { display: flex; align-items: center; gap: 10px; }
+.ci i { width: 12px; height: 12px; border-radius: 50%; background: var(--ok); flex: none; }
+.meter { height: 6px; border-radius: 999px; background: var(--bar); overflow: hidden; margin-top: 4px; }
+.meter i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
 
-/* Featured */
-.featured { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
-.featured .lead { display: grid; gap: 14px; align-content: start; }
-.featured .lead h3 { font-size: 1.6rem; }
-.modes { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: m; }
-.modes li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 2px 10px; padding: 10px 12px; border-radius: 10px; background: var(--bg); counter-increment: m; }
-.modes li::before { content: counter(m); grid-row: span 2; font: 700 1.1rem/1.4 var(--display); color: var(--accent); }
-.modes b { font-weight: 600; }
-.modes span { color: var(--muted); font-size: 0.88rem; }
-.panel-sizes { display: flex; gap: 8px; flex-wrap: wrap; }
-.panel-sizes div { flex: 1 1 90px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
-.panel-sizes strong { font: 700 1.4rem/1 var(--display); color: var(--accent); display: block; }
-.panel-sizes span { font-size: 0.8rem; color: var(--muted); }
+/* copy buttons */
+.copy { display: flex; justify-content: space-between; gap: 10px; align-items: center; font: 400 13px var(--mono); color: var(--fg); background: var(--code);
+  border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; cursor: pointer; text-align: left; width: 100%; min-height: 40px; min-width: 0; }
+.copy .cmd { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.copy .act { font: 600 13px var(--body); color: var(--accent); flex: none; }
+.copy:hover { border-color: var(--accent); }
 
-/* Catalog */
-.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
-.filters button { font: 500 0.86rem/1 var(--body); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
-.filters button[aria-pressed="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
-.filters button:hover { border-color: var(--ink); }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; grid-template-rows: auto auto 1fr auto auto; gap: 10px; min-width: 0; }
-.card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-.card .cat { font: 500 0.68rem/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.card .tag { color: var(--ink); font-weight: 500; }
-.card .what { color: var(--muted); font-size: 0.9rem; }
-.facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-size: 0.82rem; align-items: center; }
-.facts dt { color: var(--muted); font-family: var(--mono); font-size: 0.74rem; }
-.facts dd { margin: 0; display: flex; align-items: center; gap: 8px; min-width: 0; font-variant-numeric: tabular-nums; }
-.facts .meter { flex: 1; max-width: 120px; }
-.install { display: flex; align-items: center; gap: 8px; background: var(--bg); border-radius: 8px; padding: 6px 6px 6px 10px; min-width: 0; }
-.install code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font-size: 0.76rem; color: var(--ink); }
-.copy { font: 500 0.74rem/1 var(--body); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; cursor: pointer; white-space: nowrap; }
-.copy:hover { border-color: var(--ink); }
+/* featured */
+.feat-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
+.feat-head .head { max-width: 640px; }
+.feat-head h2 { font: 500 clamp(24px, 4vw, 34px)/1.2 var(--mono); letter-spacing: -.01em; }
+.feat-head p { color: var(--fg2); }
+.feat-head .copy { width: auto; max-width: 100%; border-radius: 10px; padding: 10px 14px; }
+.modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 16px; }
+.mode { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 10px; align-content: start; grid-template-columns: minmax(0, 1fr); }
+.mode .t { display: flex; align-items: center; gap: 10px; }
+.mode .t span { font: 12px var(--mono); color: var(--accent-ink); background: var(--accent); border-radius: 6px; padding: 2px 7px; }
+.mode h3 { font: 700 20px var(--display); }
+.mode p { font-size: 15px; color: var(--fg2); }
+.mode .try { font-size: 13px; color: var(--fg3); border-top: 1px dashed var(--line); padding-top: 10px; }
+.mode .try em { color: var(--fg2); }
 
-/* Connections */
-.links { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0 28px; border-top: 1px solid var(--line); }
-.link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--line); min-width: 0; }
-.link .pair { font: 500 0.82rem/1.4 var(--mono); }
-.link .pair i { color: var(--accent); font-style: normal; padding: 0 6px; }
-.link p { color: var(--muted); font-size: 0.88rem; }
+/* skills */
+.filters { display: flex; gap: 12px 24px; flex-wrap: wrap; align-items: center; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font: 500 13px var(--body); min-height: 36px; padding: 6px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; border: 1px solid var(--line); background: var(--surface); color: var(--fg2); }
+.chip span { opacity: .7; font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { border-color: var(--fg); background: var(--fg); color: var(--bg); }
+.platform { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg3); }
+.platform select { font: 500 13px var(--body); color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; min-height: 36px; }
+.result { font-size: 13px; color: var(--fg3); margin-left: auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 14px; grid-template-rows: auto 1fr auto auto; grid-template-columns: minmax(0, 1fr); }
+.card .h { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+.card h3 { font: 500 16px var(--mono); word-break: break-word; }
+.cat { flex: none; font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 9px; }
+.new { font: 600 11px var(--body); color: var(--ok); margin-left: 6px; }
+.card p { font-size: 14px; color: var(--fg2); }
+.card dl { margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; font-size: 12px; }
+.card dl div { display: grid; gap: 2px; min-width: 0; }
+.card dt { color: var(--fg3); }
+.card dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.card dd.pass { color: var(--ok); }
+.card .copy { font-size: 12px; color: var(--fg2); }
+.empty { color: var(--fg3); }
 
-/* New badge, contribute card, install steps */
-.new { font: 600 0.62rem/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ok); background: var(--ok-soft); padding: 3px 6px; border-radius: 4px; vertical-align: middle; }
-.card.cta { text-decoration: none; color: var(--ink); border-style: dashed; grid-template-rows: auto auto 1fr auto; }
-.card.cta .go { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
-.card.cta:hover { border-color: var(--accent); }
-.steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.steps > div { display: grid; gap: 8px; align-content: start; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-width: 0; }
-@media (max-width: 720px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+/* install */
+.groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.group { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 16px; align-content: start; grid-template-columns: minmax(0, 1fr); }
+.group h3 { font: 700 20px var(--display); }
+.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+.steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; }
+.steps .num { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; font: 600 13px var(--display); }
+.steps .body { display: grid; gap: 8px; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.steps .body > div { font-size: 15px; color: var(--fg2); padding-top: 3px; }
 
-/* Status teaser */
-.status-teaser { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
-.status-teaser .lead { display: grid; gap: 12px; }
-.status-teaser .lead p { color: var(--muted); max-width: 56ch; }
-.button { justify-self: start; display: inline-block; font: 600 0.92rem/1 var(--body); color: var(--surface); background: var(--accent); border-radius: 10px; padding: 12px 18px; text-decoration: none; }
-.button:hover { filter: brightness(1.08); }
-.teaser-facts { display: grid; margin: 0; }
-.teaser-facts div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); align-items: center; }
-.teaser-facts div:first-child { border-top: 0; }
-.teaser-facts dt { font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.teaser-facts dd { margin: 0; font-size: 0.92rem; }
-.manifest a { color: var(--accent); }
+/* pairings */
+.pairs { display: grid; border-top: 1px solid var(--line); }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 8px 24px; padding-block: 16px; border-bottom: 1px solid var(--line); align-items: center; }
+.chain { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font: 14px var(--mono); }
+.chain .sep { color: var(--fg3); }
+.chain .s { background: var(--accent-soft); border-radius: 6px; padding: 3px 8px; }
+.pair p { font-size: 15px; color: var(--fg2); }
 
-footer { color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; border-top: 1px solid var(--line); padding-top: 20px; }
-
-@media (max-width: 860px) {
-  .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stat:nth-child(3) { border-left: 0; }
-  .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
-  .featured, .status-teaser { grid-template-columns: minmax(0, 1fr); }
-  .goal { grid-template-columns: minmax(0, 1fr); }
-}
-@media (max-width: 520px) {
-  .wrap { padding-block: 24px 48px; gap: 44px; }
-  .strip { grid-template-columns: minmax(0, 1fr); }
-  .stat { border-left: 0; border-top: 1px solid var(--line); }
-  .stat:first-child { border-top: 0; }
-  .featured { padding: 18px; }
-  .grid, .links { grid-template-columns: minmax(0, 1fr); }
-  .status-teaser { padding: 18px; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .card, .filters button, .copy { transition: border-color .15s, background-color .15s, transform .15s; }
-  .card:hover { transform: translateY(-2px); }
-}
+/* closing cards */
+.closing { padding-block: 48px 72px; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.contrib { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: clamp(22px, 4vw, 32px); display: grid; gap: 14px; align-content: start; grid-template-columns: minmax(0, 1fr); }
+.contrib h2, .status h2 { font: 700 26px/1.2 var(--display); letter-spacing: -.015em; }
+.contrib p { color: var(--fg2); }
+.contrib > a { font-weight: 600; font-size: 15px; }
+.status { background: var(--accent); color: var(--accent-ink); border-radius: 20px; padding: clamp(22px, 4vw, 32px); display: grid; gap: 14px; align-content: space-between; grid-template-columns: minmax(0, 1fr); min-height: 220px; }
+.status:hover { text-decoration: none; filter: brightness(1.06); }
+.status .kicker { color: inherit; }
+.status > div { display: grid; gap: 12px; }
+.status .go { font-weight: 600; font-size: 15px; }
+footer { border-top: 1px solid var(--line); background: var(--bg-soft); }
+footer .wrap { padding-block: 24px; display: flex; gap: 12px 24px; flex-wrap: wrap; font-size: 13px; color: var(--fg3); }
+footer a { margin-left: auto; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top"><b>claude</b><span>/skills</span></a>
+  <nav aria-label="Sections"><a href="#skills">Skills</a><a href="#install">Install</a><a href="#pairings">Pairings</a><a href="product/">Status</a></nav>
+  <button class="pill-btn" type="button" id="theme">Theme: Auto</button>
+</div></header>
 
-<div class="wrap">
-  <header>
-    <div class="manifest">
-      <span>marketplace <b>DN-OpenSource/claude-skills</b></span>
-      <span>version <b>1.7.0</b></span>
-      <span>license <b>Apache-2.0</b></span>
-      <span>python <b>3.9+</b></span>
-      <a href="product/">product status →</a>
-      <a href="https://github.com/DN-OpenSource/claude-skills">GitHub →</a>
+<main id="top" class="wrap">
+  <section class="hero">
+    <div class="intro">
+      <div class="kicker">Claude skills library</div>
+      <h1>Standalone Claude Code skills you install once.</h1>
+      <p>Each skill makes Claude better at one kind of recurring work, works on its own on Linux, Windows and macOS, and keeps its share of every session's context small. The numbers below come from CI on main.</p>
     </div>
-    <h1>claude-skills<span>.</span></h1>
-    <div class="goal">
-      <p>Standalone, composable Claude Code skills you install once to make Claude better at recurring work.</p>
-      <span class="pill ok" title="Confirmed by the owner on 2026-10-21">goal confirmed</span>
-    </div>
-    <div class="criteria" aria-label="What success looks like">
-      <span>Triggers when relevant</span>
-      <span>Works on its own</span>
-      <span>Linux · Windows · macOS</span>
-      <span>Costs little context</span>
-    </div>
-  </header>
-
-  <section class="strip" aria-label="Current status">
-    <div class="stat">
-      <span class="eyebrow">Skills</span>
-      <span class="num">11</span>
-      <span class="sub">all built, no orphans</span>
-    </div>
-    <div class="stat">
-      <span class="eyebrow">Tests</span>
-      <span class="num">139<small> / 139</small></span>
-      <span class="sub">lsp 44 · decision-maker 61 · repo 34 · plus plugin validation</span>
-    </div>
-    <div class="stat">
-      <span class="eyebrow">CI matrix</span>
-      <span class="num">6<small> / 6 green</small></span>
-      <div class="dots"><span>ubuntu 3.9</span><span>3.12</span><span>3.13</span><span>windows 3.12</span><span>macos 3.9</span><span>validate</span></div>
-    </div>
-    <div class="stat">
-      <span class="eyebrow">Context per session</span>
-      <span class="num">1,305<small> / 1,400 tok</small></span>
-      <div class="meter" role="img" aria-label="93% of the description budget used"><i style="width:93.2%"></i></div>
-    </div>
+    <div class="stats" id="stats"></div>
   </section>
 
-  <section aria-labelledby="pv">
-    <div class="section-head">
-      <h2 id="pv">The product manager</h2>
-      <p>The newest skill ran on this repo. Its <a href="product/">product status page</a> is what it writes at the end of every session.</p>
-    </div>
-    <div class="featured">
-      <div class="lead">
-        <span class="eyebrow">product-visionary · new in 1.5.0</span>
-        <h3>Works out the goal, maps every feature to it, then lets a panel decide what to do.</h3>
-        <p style="color:var(--muted)">It finds real issues with test-report, has 3, 6 or 9 agents argue each decision, and acts only as far as you allow at the start of the session.</p>
-        <div class="panel-sizes" aria-label="Panel sizes">
-          <div><strong>3</strong><span>small calls, ranking</span></div>
-          <div><strong>6</strong><span>how to build a feature</span></div>
-          <div><strong>9</strong><span>direction changes</span></div>
-        </div>
-        <div class="install"><code>claude plugin install product-visionary@claude-skills</code><button class="copy" type="button" data-copy="claude plugin install product-visionary@claude-skills">Copy</button></div>
+  <section class="block">
+    <div class="feat-head">
+      <div class="head">
+        <div class="kicker">Featured</div>
+        <h2 id="feat-name"></h2>
+        <p id="feat-summary"></p>
       </div>
-      <ol class="modes" aria-label="Session modes">
-        <li><b>Report only</b><span>Goal, state, feature map, tests, ranked issues. No code changes.</span></li>
-        <li><b>Fix on a branch</b><span>Fixes the top items and opens PRs. You merge.</span></li>
-        <li><b>Full auto</b><span>Fixes, proves, merges and keeps going. Still asks before risky changes.</span></li>
-        <li><b>Complete auto</b><span>Asks nothing. Every change still goes through its own PR.</span></li>
-      </ol>
+      <div id="feat-copy"></div>
     </div>
+    <div class="modes" id="modes"></div>
   </section>
 
-  <section aria-labelledby="cat">
-    <div class="section-head">
-      <h2 id="cat">All skills</h2>
-      <p>Each installs on its own. The bar shows how much of every session's context its description takes.</p>
-    </div>
-    <div class="filters" role="group" aria-label="Filter skills">
-      <button type="button" id="f-all" data-f="all" aria-pressed="true">All</button>
-      <button type="button" id="f-code" data-f="code">Editing code</button>
-      <button type="button" id="f-context" data-f="context">Context &amp; memory</button>
-      <button type="button" id="f-agents" data-f="agents">Agents &amp; decisions</button>
-      <button type="button" id="f-tested" data-f="tested">Ships scripts</button>
+  <section class="block" id="skills">
+    <div class="head"><div class="kicker">All skills</div><h2 class="h2" id="skills-title"></h2></div>
+    <div class="filters">
+      <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+      <label class="platform" for="platform">Platform <select id="platform"></select></label>
+      <div class="result" id="result" aria-live="polite"></div>
     </div>
     <div class="grid" id="grid"></div>
+    <p class="empty" id="empty" hidden>No skills match that filter.</p>
   </section>
 
-  <section aria-labelledby="inst">
-    <div class="section-head">
-      <h2 id="inst">Install and update</h2>
-      <p>Installed plugins don't update themselves. Refresh the marketplace, update what you use, then restart Claude Code.</p>
-    </div>
-    <div class="steps">
-      <div><span class="eyebrow">Install</span>
-        <div class="install"><code>claude plugin marketplace add DN-OpenSource/claude-skills</code><button class="copy" type="button" data-copy="claude plugin marketplace add DN-OpenSource/claude-skills">Copy</button></div>
-        <div class="install"><code>claude plugin install git-conventions@claude-skills</code><button class="copy" type="button" data-copy="claude plugin install git-conventions@claude-skills">Copy</button></div>
-      </div>
-      <div><span class="eyebrow">Update</span>
-        <div class="install"><code>claude plugin marketplace update claude-skills</code><button class="copy" type="button" data-copy="claude plugin marketplace update claude-skills">Copy</button></div>
-        <div class="install"><code>claude plugin update product-visionary@claude-skills</code><button class="copy" type="button" data-copy="claude plugin update product-visionary@claude-skills">Copy</button></div>
-      </div>
-    </div>
+  <section class="block" id="install">
+    <div class="head"><div class="kicker">Install and update</div><h2 class="h2">Set up once, update in one line</h2></div>
+    <div class="groups" id="groups"></div>
   </section>
 
-  <section aria-labelledby="con">
-    <div class="section-head">
-      <h2 id="con">How they work together</h2>
-      <p>None of these is required. Each pairing makes the other skill better when both are installed.</p>
-    </div>
-    <div class="links">
-      <div class="link"><span class="pair">codebase-guardian<i>+</i>memory</span><p>Guardian reads MEMORY.md before editing and writes what it learned back after.</p></div>
-      <div class="link"><span class="pair">lsp<i>+</i>codebase-guardian</span><p>Find every reference before deciding how big a change is.</p></div>
-      <div class="link"><span class="pair">schema-aware-db<i>+</i>lsp</span><p>Map real ORM call sites instead of grepping a table name.</p></div>
-      <div class="link"><span class="pair">agents-dox<i>+</i>everything</span><p>AGENTS.md contracts govern how the other skills edit each folder.</p></div>
-      <div class="link"><span class="pair">teammates<i>+</i>codebase-guardian</span><p>Each peer agent follows the safe-edit loop for its own work item.</p></div>
-      <div class="link"><span class="pair">ponytail<i>+</i>memory</span><p>The end-of-session tail folds durable follow-ups into MEMORY.md.</p></div>
-      <div class="link"><span class="pair">product-visionary<i>+</i>test-report</span><p>Finds issues and proves every fix with 2 positive and 1 negative test.</p></div>
-      <div class="link"><span class="pair">decision-maker<i>+</i>everything</span><p>Fast typed yes/no and pick-one calls inside the other skills, with confidence.</p></div>
-    </div>
+  <section class="block" id="pairings">
+    <div class="head"><div class="kicker">Pairings</div><h2 class="h2">Skills that work well together</h2></div>
+    <div class="pairs" id="pairs"></div>
   </section>
 
-  <section aria-labelledby="status" class="status-teaser">
-    <div class="lead">
-      <span class="eyebrow">Product status · updated 2026-10-22</span>
-      <h2 id="status">Goal, feature map, roadmap and every decision</h2>
-      <p>product-visionary keeps this page up to date at the end of each session: what the product is for, how each skill serves it, what's next, and the argument that won each call.</p>
-      <a class="button" href="product/">Open product status →</a>
+  <section class="closing">
+    <div class="contrib">
+      <div class="kicker">Contribute</div>
+      <h2>Make your own skill</h2>
+      <p>Each skill is a folder with a SKILL.md and a clear trigger description. Add a test, open a pull request, and CI checks the context budget and runs the official plugin validator before merge.</p>
+      <div id="contrib-copy"></div>
+      <a href="https://github.com/DN-OpenSource/claude-skills#readme">Read the guide →</a>
     </div>
-    <dl class="teaser-facts">
-      <div><dt>Goal</dt><dd><span class="pill ok">confirmed</span></dd></div>
-      <div><dt>Next up</dt><dd>Trigger tests for skill descriptions</dd></div>
-      <div><dt>Last session</dt><dd>Complete auto · 6 decisions · PRs #15–#20</dd></div>
-      <div><dt>Open fixes</dt><dd>None</dd></div>
-    </dl>
+    <a class="status" href="product/">
+      <div><div class="kicker">Product status</div><h2>Goal, health, roadmap and every decision</h2>
+        <p>product-visionary updates this at the end of each session: goal health, tests, the feature map, what's next, and how each call was voted.</p></div>
+      <span class="go">View status →</span>
+    </a>
   </section>
+</main>
 
-  <footer>
-    <span>Install any skill: <code>claude plugin marketplace add DN-OpenSource/claude-skills</code></span>
-    <a href="https://github.com/DN-OpenSource/claude-skills">github.com/DN-OpenSource/claude-skills</a>
-  </footer>
-</div>
+<footer><div class="wrap"><span>DN-OpenSource/claude-skills · v1.8.0</span><span>Data updated 2026-10-22</span><a href="https://github.com/DN-OpenSource/claude-skills">GitHub</a></div></footer>
 
 <script>
 const SKILLS = [
-  { n: "product-visionary", g: ["agents"], t: "Product manager for your codebase", w: "Goal, state and feature map; a 3/6/9-agent panel decides; writes a product page every session.", tok: 62, tests: "via test-report", works: "Claude Code" },
-  { n: "git-conventions", g: ["code"], t: "Your commit and branch rules", w: "Commit pattern, branch names, PR template, protected branches; hide Claude's name via the native setting.", tok: 60, tests: "—", works: "Claude Code", isNew: true },
-  { n: "test-report", g: ["code"], t: "Real tests, real report", w: "2 positive and 1 negative test per feature, run for real; video of failing web and mobile tests, kept local.", tok: 58, tests: "—", works: "Claude Code" },
-  { n: "teammates", g: ["agents"], t: "Peer agents, no boss", w: "Run a task as a flat team of subagents that share a manifest, claim work and merge outputs.", tok: 76, tests: "—", works: "Claude Code" },
-  { n: "decision-maker", g: ["agents", "tested"], t: "Fast typed decisions", w: "Yes/no, pick-one and score answers with confidence from TypeSafe's Jev, plus optional guard hooks.", tok: 166, tests: "61 passing", works: "Claude Code, Codex" },
-  { n: "codebase-guardian", g: ["code"], t: "Safe edits to existing code", w: "Validate with the real toolchain, match the existing pattern, trace the ripple, record what you learned.", tok: 150, tests: "—", works: "Claude Code" },
-  { n: "lsp", g: ["code", "tested"], t: "Real code navigation", w: "Definition, references, hover, diagnostics and safe rename through real language servers.", tok: 126, tests: "44 passing", works: "Claude Code" },
-  { n: "schema-aware-db", g: ["code"], t: "No guessed schemas", w: "Introspect the real schema, map every usage, then change it and trace the ripple. SQL and NoSQL.", tok: 137, tests: "—", works: "Claude Code" },
-  { n: "memory", g: ["context"], t: "Context that lasts", w: "Hierarchical MEMORY.md for codebases and USER.md for you, bootstrapped and kept in sync.", tok: 164, tests: "—", works: "Claude Code" },
-  { n: "agents-dox", g: ["context"], t: "Folder work contracts", w: "A hierarchy of AGENTS.md files, each a binding contract for its subtree, checked before every edit.", tok: 168, tests: "—", works: "Claude Code" },
-  { n: "ponytail", g: ["context"], t: "Clean session wrap-up", w: "Sweep loose ends (uncommitted work, stashes, promises) and leave one handoff for the next session.", tok: 138, tests: "—", works: "Claude Code" },
+  { n: "product-visionary", c: "Product", s: "Works out the goal, maps every feature to it, and lets a 3, 6 or 9-agent panel decide what to do. Writes a product page every session.", tok: 62, tests: "via test-report", p: ["Claude Code"] },
+  { n: "test-report", c: "Testing", s: "2 positive and 1 negative test per feature in your own framework, run for real, with a pass/fail report and video of failures.", tok: 58, tests: "", p: ["Claude Code"] },
+  { n: "git-conventions", c: "Git", s: "Commits, branches and PRs follow your rules. Hide Claude's name through the native attribution setting.", tok: 60, tests: "", p: ["Claude Code"], isNew: true },
+  { n: "codebase-guardian", c: "Engineering", s: "Validate with the real toolchain, match the existing pattern, trace the ripple, record what you learned.", tok: 150, tests: "", p: ["Claude Code"] },
+  { n: "lsp", c: "Engineering", s: "Definition, references, hover, diagnostics and safe rename through real language servers.", tok: 126, tests: "44/44", p: ["Claude Code"] },
+  { n: "schema-aware-db", c: "Engineering", s: "Introspect the real schema and trace every usage before a query or migration changes. SQL and NoSQL.", tok: 137, tests: "", p: ["Claude Code"] },
+  { n: "memory", c: "Context", s: "Hierarchical MEMORY.md for codebases and USER.md for you, kept in sync across sessions.", tok: 164, tests: "", p: ["Claude Code"] },
+  { n: "agents-dox", c: "Context", s: "A hierarchy of AGENTS.md files, each a binding contract for its folder, read before every edit.", tok: 168, tests: "", p: ["Claude Code"] },
+  { n: "ponytail", c: "Context", s: "Sweep loose ends at the end of a session and leave one handoff for the next.", tok: 138, tests: "", p: ["Claude Code"] },
+  { n: "teammates", c: "Agents", s: "Run a task as a flat team of subagents that share a manifest, claim work and merge outputs.", tok: 76, tests: "", p: ["Claude Code"] },
+  { n: "decision-maker", c: "Agents", s: "Fast yes/no, pick-one and score answers with confidence from TypeSafe's Jev, plus optional guard hooks.", tok: 166, tests: "61/61", p: ["Claude Code", "Codex"] },
 ];
-const LABEL = { code: "Editing code", context: "Context & memory", agents: "Agents & decisions" };
-const MAX_TOK = 170;
-const grid = document.getElementById("grid");
+const MODES = [
+  ["Report only", "Goal, state, feature map, tests and ranked issues. Changes no code.", "What's the goal here, and where does the product stand?"],
+  ["Fix on a branch", "Fixes the top items on their own branches and opens PRs. You merge.", "Fix the top issues and open PRs for me to review."],
+  ["Full auto", "Fixes, proves each fix with tests, merges, and keeps going. Still asks before risky changes.", "Improve the product and keep going until nothing important is left."],
+  ["Complete auto", "Asks nothing. Every change still goes through its own PR, so any merge can be reverted.", "Run the product on your own this session."],
+];
+const PAIRS = [
+  [["product-visionary", "test-report"], "Finds real issues and proves every fix with 2 positive and 1 negative test."],
+  [["codebase-guardian", "memory"], "Guardian reads MEMORY.md before editing and writes what it learned back after."],
+  [["lsp", "codebase-guardian"], "Find every reference before deciding how big a change is."],
+  [["schema-aware-db", "lsp"], "Map real ORM call sites instead of grepping a table name."],
+  [["teammates", "codebase-guardian"], "Each peer agent follows the safe-edit loop for its own work item."],
+  [["ponytail", "memory"], "The end-of-session handoff folds durable follow-ups into MEMORY.md."],
+  [["agents-dox", "codebase-guardian", "teammates"], "AGENTS.md contracts govern how the other skills edit each folder."],
+];
+const MARKET = "claude-skills", REPO = "DN-OpenSource/claude-skills", BUDGET = 1400;
+const install = n => "claude plugin install " + n + "@" + MARKET;
+
+const $ = id => document.getElementById(id);
 function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-
-function card(s) {
-  const c = el("article", "card"); c.dataset.g = s.g.join(" ");
-  const cmd = "claude plugin install " + s.n + "@claude-skills";
-  const top = el("div", "top"); const h = el("h3", null, s.n);
-  if (s.isNew) h.append(" ", el("span", "new", "new"));
-  top.append(h, el("span", "cat", LABEL[s.g[0]]));
-  const facts = el("dl", "facts");
-  const meter = el("span", "meter"); meter.setAttribute("role", "img"); meter.setAttribute("aria-label", s.tok + " tokens per session");
-  const bar = el("i"); bar.style.width = (s.tok / MAX_TOK * 100).toFixed(1) + "%"; meter.append(bar);
-  const ctx = el("dd"); ctx.append(meter, s.tok + " tok");
-  facts.append(el("dt", null, "context"), ctx, el("dt", null, "tests"), el("dd", null, s.tests), el("dt", null, "works in"), el("dd", null, s.works));
-  const inst = el("div", "install"); const btn = el("button", "copy", "Copy"); btn.type = "button"; btn.dataset.copy = cmd;
-  inst.append(el("code", null, cmd), btn);
-  c.append(top, el("p", "tag", s.t), el("p", "what", s.w), facts, inst);
-  return c;
+function copyBtn(cmd) {
+  const b = el("button", "copy"); b.type = "button"; b.dataset.copy = cmd;
+  b.append(el("span", "cmd", cmd), el("span", "act", "Copy")); return b;
 }
-SKILLS.forEach(s => grid.appendChild(card(s)));
-const own = el("a", "card cta"); own.href = "https://github.com/DN-OpenSource/claude-skills";
-own.append(el("span", "cat", "Contribute"), el("h3", null, "Make your own skill"), el("p", "what", "Every skill here is a folder with a SKILL.md. Fork the repo, add yours, and CI checks it on every pull request."), el("span", "go", "Open on GitHub →"));
-grid.appendChild(own);
-
-const buttons = document.querySelectorAll(".filters button");
-function applyFilter(f) {
-  buttons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === f)));
-  grid.querySelectorAll(".card").forEach(c => { c.hidden = f !== "all" && !(c.dataset.g || "").split(" ").includes(f); });
-  try { localStorage.setItem("skills-filter", f); } catch (e) {}
-}
-buttons.forEach(b => b.addEventListener("click", () => applyFilter(b.dataset.f)));
-try { const saved = localStorage.getItem("skills-filter"); if (saved && document.querySelector(`[data-f="${saved}"]`)) applyFilter(saved); } catch (e) {}
-
 document.addEventListener("click", e => {
-  const btn = e.target.closest(".copy");
-  if (!btn) return;
-  const text = btn.dataset.copy;
-  const done = () => { btn.textContent = "Copied"; setTimeout(() => { btn.textContent = "Copy"; }, 1500); };
-  const fallback = () => {
-    const code = btn.parentElement.querySelector("code");
-    const r = document.createRange(); r.selectNodeContents(code);
-    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
-    btn.textContent = "Selected";
-    setTimeout(() => { btn.textContent = "Copy"; }, 1500);
-  };
-  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
-  else fallback();
+  const b = e.target.closest(".copy"); if (!b) return;
+  const act = b.querySelector(".act");
+  const done = t => { act.textContent = t; setTimeout(() => { act.textContent = "Copy"; }, 1600); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(b.querySelector(".cmd")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); done("Selected"); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(b.dataset.copy).then(() => done("Copied"), fallback); else fallback();
 });
-</script>
 
+/* theme: auto -> light -> dark */
+const root = document.documentElement, THEMES = ["auto", "light", "dark"];
+function setTheme(t) { if (t === "auto") delete root.dataset.theme; else root.dataset.theme = t; $("theme").textContent = "Theme: " + t[0].toUpperCase() + t.slice(1); }
+let theme = "auto"; try { const t = localStorage.getItem("skills-theme"); if (THEMES.includes(t)) theme = t; } catch (e) {}
+setTheme(theme);
+$("theme").addEventListener("click", () => { theme = THEMES[(THEMES.indexOf(theme) + 1) % 3]; setTheme(theme); try { localStorage.setItem("skills-theme", theme); } catch (e) {} });
+
+/* stats */
+const used = SKILLS.reduce((a, s) => a + s.tok, 0);
+const cats = ["All", ...new Set(SKILLS.map(s => s.c))];
+const stats = [
+  ["Skills", String(SKILLS.length), "", (cats.length - 1) + " categories"],
+  ["Tests passing", "140/140", "", "All green, plus official plugin validation"],
+  ["CI on main", "Passing", "ci", "5 OS/Python jobs + validate"],
+  ["Context budget", used.toLocaleString("en-US"), " / " + BUDGET.toLocaleString("en-US"), ""],
+];
+for (const [label, value, extra, note] of stats) {
+  const box = el("div", "stat"); box.append(el("div", "l", label));
+  if (extra === "ci") { const r = el("div", "ci"); r.append(el("i"), el("span", "v", value)); box.append(r); }
+  else { const v = el("div", "v", value); if (extra) v.append(el("small", null, extra)); box.append(v); }
+  if (label === "Context budget") { const m = el("div", "meter"); m.setAttribute("role", "img"); m.setAttribute("aria-label", Math.round(used / BUDGET * 100) + "% of the budget used");
+    const i = el("i"); i.style.width = Math.min(100, used / BUDGET * 100).toFixed(1) + "%"; m.append(i); box.append(m, el("div", "n2", "tokens of descriptions, loaded every session")); }
+  else box.append(el("div", "n2", note));
+  $("stats").append(box);
+}
+
+/* featured */
+const f = SKILLS[0];
+$("feat-name").textContent = f.n; $("feat-summary").textContent = f.s; $("feat-copy").append(copyBtn(install(f.n)));
+MODES.forEach(([name, does, prompt], i) => {
+  const m = el("div", "mode"); const t = el("div", "t"); t.append(el("span", null, String(i + 1).padStart(2, "0")), el("h3", null, name));
+  const tr = el("div", "try", "Try: "); tr.append(el("em", null, prompt)); m.append(t, el("p", null, does), tr); $("modes").append(m);
+});
+
+/* skills grid with category + platform filters */
+$("skills-title").textContent = SKILLS.length + " skills, one install each";
+let cat = "All", plat = "All platforms";
+const platforms = ["All platforms", ...new Set(SKILLS.flatMap(s => s.p))];
+for (const p of platforms) { const o = el("option", null, p); o.value = p; $("platform").append(o); }
+$("platform").addEventListener("change", e => { plat = e.target.value; render(); });
+for (const c of cats) {
+  const b = el("button", "chip"); b.type = "button"; b.dataset.cat = c;
+  b.append(c + " ", el("span", null, String(c === "All" ? SKILLS.length : SKILLS.filter(s => s.c === c).length)));
+  b.addEventListener("click", () => { cat = c; render(); }); $("chips").append(b);
+}
+const cards = SKILLS.map(s => {
+  const a = el("article", "card"); a.dataset.cat = s.c; a.dataset.p = s.p.join("|");
+  const h = el("div", "h"); const name = el("h3", null, s.n); if (s.isNew) name.append(el("span", "new", "new"));
+  h.append(name, el("span", "cat", s.c));
+  const dl = el("dl");
+  for (const [dt, dd, cls] of [["Context", s.tok + " tok", ""], ["Tests", s.tests || "docs", s.tests && s.tests.includes("/") ? "pass" : ""], ["Platforms", s.p.map(x => x === "Claude Code" ? "Code" : x).join(" · "), ""]]) {
+    const d = el("div"); d.append(el("dt", null, dt), el("dd", cls, dd)); dl.append(d);
+  }
+  a.append(h, el("p", null, s.s), dl, copyBtn(install(s.n))); $("grid").append(a); return a;
+});
+function render() {
+  let shown = 0;
+  for (const c of cards) { const ok = (cat === "All" || c.dataset.cat === cat) && (plat === "All platforms" || c.dataset.p.split("|").includes(plat)); c.hidden = !ok; if (ok) shown++; }
+  $("chips").querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.cat === cat)));
+  $("result").textContent = "Showing " + shown + " of " + SKILLS.length; $("empty").hidden = shown > 0;
+}
+render();
+
+/* install groups */
+const GROUPS = [
+  ["Claude Code", [["Add the marketplace once.", "claude plugin marketplace add " + REPO],
+                   ["Install the skills you need, or copy a command from any card above.", install("git-conventions")],
+                   ["Refresh the marketplace when a release ships.", "claude plugin marketplace update " + MARKET],
+                   ["Update each installed skill, then restart Claude Code.", "claude plugin update product-visionary@" + MARKET]]],
+  ["OpenAI Codex (decision-maker)", [["Add the marketplace.", "codex plugin marketplace add " + REPO],
+                   ["Install decision-maker.", "codex plugin add decision-maker@" + MARKET],
+                   ["Trust its hooks in /hooks, then run $decision-maker status.", ""]]],
+];
+for (const [title, steps] of GROUPS) {
+  const g = el("div", "group"); g.append(el("h3", null, title)); const ol = el("ol", "steps");
+  steps.forEach(([text, cmd], i) => { const li = el("li"); const body = el("div", "body"); body.append(el("div", null, text)); if (cmd) body.append(copyBtn(cmd));
+    li.append(el("span", "num", String(i + 1)), body); ol.append(li); });
+  g.append(ol); $("groups").append(g);
+}
+
+/* pairings */
+for (const [chain, why] of PAIRS) {
+  const row = el("div", "pair"); const c = el("div", "chain");
+  chain.forEach((n, i) => { if (i) c.append(el("span", "sep", "→")); c.append(el("span", "s", n)); });
+  row.append(c, el("p", null, why)); $("pairs").append(row);
+}
+$("contrib-copy").append(copyBtn("git clone https://github.com/" + REPO + ".git"));
+</script>
 </body>
 </html>
