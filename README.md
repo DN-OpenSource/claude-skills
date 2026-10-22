@@ -64,7 +64,7 @@ claude plugin marketplace update claude-skills
 claude plugin update product-visionary@claude-skills   # repeat for each installed plugin
 ```
 
-`claude plugin list` shows what you have installed. In a session, `/plugin` does the same from a menu. Both manifests pass `claude plugin validate`. See the [official Claude Code docs](https://docs.anthropic.com/en/docs/claude-code) if the install mechanism has changed.
+`claude plugin list` shows what you have installed. In a session, `/plugin` does the same from a menu. The repo and every skill pass `claude plugin validate`, checked in CI on every PR. See the [official Claude Code docs](https://docs.anthropic.com/en/docs/claude-code) if the install mechanism has changed.
 
 After installing decision-maker you choose once whether Jev runs **automatically** (`/decision-maker:jev auto`) or **only when you ask** (`/decision-maker:jev manual`). Nothing runs automatically until you choose, and the notice tells you exactly what each mode sends where. Run `/decision-maker:jev` at any time for the same summary; see [its README](skills/decision-maker/README.md#what-happens-after-you-install). **Note:** the marketplace installs from GitHub, so a plugin only installs after it has been pushed.
 

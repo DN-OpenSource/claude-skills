@@ -26,6 +26,16 @@ jobs:
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
         with:
           python-version: ${{ matrix.python }}
-      - run: python -m pip install pytest
+      - run: python -m pip install pytest pyyaml
       - run: python scripts/check_token_budget.py
-      - run: python -m pytest -q scripts/test_repo.py scripts/test_interpreter_docs.py scripts/test_test_report_video.py skills/lsp/scripts skills/decision-maker/scripts/test_decide.py skills/decision-maker/scripts/test_guard.py skills/decision-maker/scripts/test_run_sh.py
+      - run: python -m pytest -q scripts/test_repo.py scripts/test_interpreter_docs.py scripts/test_test_report_video.py scripts/test_frontmatter.py skills/lsp/scripts skills/decision-maker/scripts/test_decide.py skills/decision-maker/scripts/test_guard.py skills/decision-maker/scripts/test_run_sh.py
+
+  validate:
+    # the official validator: manifests, reserved names, SKILL.md frontmatter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - run: npm install -g @anthropic-ai/claude-code@2.1.293
+      - run: |
+          claude plugin validate .
+          for d in skills/*/; do claude plugin validate "$d"; done
