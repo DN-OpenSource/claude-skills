@@ -16,8 +16,8 @@
 
 ```bash
 cd <a-python-project>
-python <skill-dir>/scripts/lsp.py --root . hover path/to/module.py:LINE:COL
-python <skill-dir>/scripts/lsp.py --root . rename path/to/module.py:LINE:COL new_name   # dry run
+python3 <skill-dir>/scripts/lsp.py --root . hover path/to/module.py:LINE:COL
+python3 <skill-dir>/scripts/lsp.py --root . rename path/to/module.py:LINE:COL new_name   # dry run
 ```
 
 Hover should print the inferred type; the rename dry run should list plausible edit sites.

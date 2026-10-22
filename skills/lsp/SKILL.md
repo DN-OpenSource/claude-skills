@@ -9,10 +9,10 @@ Grep finds *text*; a language server finds *the symbol*. When the task is "who c
 
 ## The helper script
 
-Everything goes through `scripts/lsp.py` (relative to this skill's directory). It is one-shot: each invocation starts the server, runs the queries, and shuts it down. Python 3, stdlib only — nothing to install besides the language server itself.
+Everything goes through `scripts/lsp.py` (relative to this skill's directory). It is one-shot: each invocation starts the server, runs the queries, and shuts it down. Python 3, stdlib only — nothing to install besides the language server itself. On Windows, use `python` if `python3` prints "Python was not found" (the Microsoft Store stub).
 
 ```
-python <skill-dir>/scripts/lsp.py [--server "<cmd>"] [--root <dir>] [--json] \
+python3 <skill-dir>/scripts/lsp.py [--server "<cmd>"] [--root <dir>] [--json] \
     [--timeout <sec>] [--retry <sec>] [--apply] <command> [args...]
 ```
 
@@ -48,7 +48,7 @@ One invocation pays one server startup. When you need several answers (the commo
 
 ```
 echo "definition src/api.ts:42:10
-references src/api.ts:42:10" | python <skill-dir>/scripts/lsp.py --root . batch
+references src/api.ts:42:10" | python3 <skill-dir>/scripts/lsp.py --root . batch
 ```
 
 For rust-analyzer (slow first index), raise the retry window: `--retry 30`.
