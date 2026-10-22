@@ -143,3 +143,54 @@
 **Left open:** none.
 **Next on the roadmap:** 1. trigger tests with `claude plugin eval` · 2. shorten the 6 longest descriptions · 3. git-conventions opt-in commit check
 
+### D-12 — 2026-10-22 — How to build C23 (product page always current)? (session 3, batch 1)
+- **Status:** done
+- **Panel:** 6 — rounds: 2 — Round 1: A 4 / B 2; Round 2 with new option E: E 6/6
+- **Pick:** E — render script + update after every change + a Stop hook that never writes
+- **Winning argument:** Security / Skeptic — a hook that writes after Claude stops leaves unreported changes; E keeps every write in Claude's visible turn.
+- **Strongest dissent:** Skeptic (Round 1) — a hook can't fix "the agent never updated the data"; answered by the per-change rule.
+- **Veto:** Skeptic and Security on any writing hook (logged; E never writes).
+- **PR:** #24
+
+### D-13 — 2026-10-22 — How to build C24 (professional review)? (batch 2)
+- **Status:** done
+- **Panel:** 6 — rounds: 1 (clear: A 5/6)
+- **Pick:** A — evidence-only checklist, at most 5 gaps per session, every area recorded
+- **Winning argument:** Quality — evidence plus "checked" records make each session auditable.
+- **Strongest dissent:** Skeptic — the same generic gaps every session; answered: known gaps aren't re-raised unless worse.
+- **Veto:** Security — checks that run code/install/network ask first, else "not checked"; User advocate — security/licensing fixes never automatic.
+- **PR:** #25
+
+### D-14 — 2026-10-22 — Trigger tests (C18) (batch 3)
+- **Status:** done
+- **Panel:** 3 — rounds: 1 (picked 3/3 in batch 1)
+- **Pick:** 2 fire + 1 quiet `claude plugin eval` case per skill, run locally (evals need the user's credentials)
+- **Winning argument:** Engineer — the only proof of "triggers when relevant"; unblocks C4.
+- **Strongest dissent:** User advocate — keep it cheap; answered with a capped command.
+- **Veto:** none
+- **PR:** #26
+
+### D-15 — 2026-10-22 — Shorten descriptions (C4) (batch 4)
+- **Status:** done
+- **Panel:** 3 — rounds: 2 — C4 2 / STOP 1 both rounds; scope narrowed to four skills by all three
+- **Pick:** agents-dox, decision-maker, codebase-guardian, ponytail shortened (−114 tokens); before/after evals 3/3 each
+- **Winning argument:** User advocate — users pay for descriptions every session.
+- **Strongest dissent:** Skeptic — sandboxed evals can't see duplicate installed copies; memory and schema-aware-db left unchanged.
+- **Veto:** none. How-to panel skipped: the how was fixed by all three in Round 2 (logged).
+- **PR:** #27
+
+### End-of-session report — 2026-10-22 (session 3)
+**Mode:** 4 · **Batches:** 4 · **Stopped because:** nothing left (C25, C26 picked by 0/3 in batch 4)
+
+| # | Item | Kind | PR | Tests | Decision |
+|---|------|------|----|-------|----------|
+| 1 | Product page always current (render script, per-change rule, never-writing Stop hook) | feature (owner) | #24 | ✅ 149/149, CI 6/6 | D-12 |
+| 2 | Professional review every session | feature (owner) | #25 | ✅ 152/152, CI 6/6 | D-13 |
+| 3 | Trigger evals for all 11 skills | improvement | #26 | ✅ 155/155; git-conventions eval 3/3 | D-14 |
+| 4 | Shorter descriptions for four skills | improvement | #27 | ✅ evals 3/3 before and after | D-15 |
+
+**Pre-existing failures:** none.
+**Logged instead of asked** (mode 4): Skeptic's batch-1 veto on a Stop hook; Security and Skeptic vetoes on writing hooks (D-12, answered by E); Security's "first write into a published site folder" (this repo's site/product/ was already published); skipped how-to panel for D-15; eval spend $2.65 in total on the user's credentials.
+**Left open:** none.
+**Next on the roadmap:** 1. health panel once the review proves itself · 2. duplicate-skill check · 3. opt-in commit check
+

@@ -7,7 +7,7 @@
     "label": "All skills",
     "href": "../"
   },
-  "lastUpdated": "22 Oct 2026",
+  "lastUpdated": "22 Oct 2026 (session 3)",
   "goal": {
     "text": "Standalone, composable Claude Code skills you install once to make Claude better at recurring work.",
     "confirmed": true,
@@ -28,25 +28,25 @@
     },
     {
       "text": "Triggering is measured, not assumed: trigger tests run for every skill.",
-      "state": "not met"
+      "state": "met"
     }
   ],
   "health": {
-    "score": 82,
+    "score": 100,
     "label": "On track",
-    "note": "Three of four criteria met. Trigger tests are next on the roadmap."
+    "note": "All four criteria met: trigger tests now run for every skill."
   },
   "stats": [
     {
       "label": "Skills",
       "value": 11,
       "of": 11,
-      "note": "git-conventions is new"
+      "note": "all with trigger tests"
     },
     {
       "label": "Tests passing",
-      "value": 140,
-      "of": 140,
+      "value": 155,
+      "of": 155,
       "note": "plus official plugin validation in CI"
     },
     {
@@ -56,123 +56,80 @@
     },
     {
       "label": "Context budget",
-      "value": 1305,
+      "value": 1191,
       "of": 1400,
-      "note": "tokens of skill descriptions loaded every session"
+      "note": "tokens of skill descriptions, down 114 this session"
     }
   ],
   "sinceLastSession": [
     {
-      "kind": "fixed",
-      "text": "codebase-guardian and schema-aware-db never loaded: invalid frontmatter. Fixed; CI runs the official validator (D-9)."
+      "kind": "added",
+      "text": "The product page stays current: rebuilt from product.json after every change, with a Stop hook that never writes (D-12)."
     },
     {
       "kind": "added",
-      "text": "New skill git-conventions: your commit, branch and PR rules; hide Claude's name (D-10)."
+      "text": "Every session runs a professional review: 12 areas, evidence only, at most 5 gaps raised (D-13)."
     },
     {
       "kind": "added",
-      "text": "test-report records video of failing web and mobile tests, kept on your machine (D-8)."
-    },
-    {
-      "kind": "fixed",
-      "text": "lsp docs run on macOS and Linux with python3 (D-6)."
+      "text": "Trigger tests for all 11 skills with claude plugin eval (D-14)."
     },
     {
       "kind": "changed",
-      "text": "README explains how to update installed plugins (D-7)."
-    },
-    {
-      "kind": "changed",
-      "text": "This page: the Classical design with tabs, health, attention and vote seats."
+      "text": "Four descriptions shortened, 114 fewer tokens every session, triggers proven before and after (D-15)."
     }
   ],
   "tests": {
-    "total": 140,
-    "passing": 140,
-    "summary": "140 of 140 passing. Showing the 12 checks added in the 22 Oct session. All backend, so no videos.",
+    "total": 155,
+    "passing": 155,
+    "summary": "155 of 155 passing, plus trigger evals: every evaluated skill 3/3. Showing a sample of this session's checks.",
     "rows": [
       {
-        "feature": "interpreter docs",
+        "feature": "render page",
         "polarity": "positive",
-        "name": "every documented Python run uses python3",
+        "name": "writes the template shell with the data",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "interpreter docs",
-        "polarity": "positive",
-        "name": "skills that run Python carry the Windows note",
-        "status": "pass",
-        "video": "—"
-      },
-      {
-        "feature": "interpreter docs",
+        "feature": "render page",
         "polarity": "negative",
-        "name": "bare python is caught",
+        "name": "invalid data rejected, nothing written",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "test video",
+        "feature": "stop hook",
         "polarity": "positive",
-        "name": "SKILL links the rules; report has a Video column",
+        "name": "stale page → block, writes nothing",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "test video",
-        "polarity": "positive",
-        "name": "rules cover every platform and safeguard",
-        "status": "pass",
-        "video": "—"
-      },
-      {
-        "feature": "test video",
+        "feature": "stop hook",
         "polarity": "negative",
-        "name": "never tells Claude to commit or upload recordings",
+        "name": "stop_hook_active → never blocks",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "frontmatter",
-        "polarity": "positive",
-        "name": "every SKILL.md parses with name and description",
-        "status": "pass",
-        "video": "—"
-      },
-      {
-        "feature": "frontmatter",
-        "polarity": "positive",
-        "name": "parsed description matches what the budget counts",
-        "status": "pass",
-        "video": "—"
-      },
-      {
-        "feature": "frontmatter",
+        "feature": "professional review",
         "polarity": "negative",
-        "name": "an unquoted colon is rejected",
+        "name": "never marks unrun checks fine or fixes secrets",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "git-conventions",
+        "feature": "agents-dox triggers",
         "polarity": "positive",
-        "name": "file covers what the owner asked for",
+        "name": "fires on a DOX pass after the change",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "git-conventions",
-        "polarity": "positive",
-        "name": "attribution uses the native setting safely",
-        "status": "pass",
-        "video": "—"
-      },
-      {
-        "feature": "git-conventions",
+        "feature": "ponytail triggers",
         "polarity": "negative",
-        "name": "never sets false or rewrites history",
+        "name": "quiet on a translation question",
         "status": "pass",
         "video": "—"
       }
@@ -305,18 +262,18 @@
         "name": "Build",
         "items": [
           {
-            "title": "Trigger tests with claude plugin eval",
-            "reason": "The built-in eval runner checks each skill still fires on real prompts.",
-            "weight": 3
+            "title": "Health panel on the product page",
+            "reason": "Show the professional review per area, once it has proved useful in a few projects.",
+            "weight": 2
           },
           {
-            "title": "Shorten the 6 longest descriptions",
-            "reason": "Waits on trigger tests. Saves 50+ tokens every session.",
+            "title": "Duplicate-skill check",
+            "reason": "Several installed copies of memory or schema-aware-db may compete; measure before shortening them.",
             "weight": 2
           },
           {
             "title": "Opt-in commit check for git-conventions",
-            "reason": "A warning-only hook, off by default, if commits drift.",
+            "reason": "Warning-only, off by default, only if commits drift from the file.",
             "weight": 1
           }
         ]
@@ -350,10 +307,119 @@
   },
   "session": {
     "mode": 4,
-    "batches": 5,
-    "stopReason": "Reached the 5-batch session ceiling, with all three owner requests built."
+    "batches": 4,
+    "stopReason": "Nothing left worth doing: the remaining candidates were picked by 0 of 3 panel members."
   },
   "decisions": [
+    {
+      "id": "D-15",
+      "title": "Shorter descriptions for four skills",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 2,
+      "votes": {
+        "for": 2,
+        "against": 1,
+        "abstain": 0
+      },
+      "winning": "Users pay for descriptions every session; before/after trigger tests prove nothing was lost.",
+      "dissent": "Sandboxed evals can't see duplicate installed copies; memory and schema-aware-db left alone.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#27",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/27",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-14",
+      "title": "Trigger tests for every skill",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 1,
+      "votes": {
+        "for": 3,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "The only proof that skills trigger when relevant.",
+      "dissent": "Keep it cheap: a capped local command.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#26",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/26",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-13",
+      "title": "Professional review every session",
+      "status": "accepted",
+      "panel": 6,
+      "rounds": 1,
+      "votes": {
+        "for": 5,
+        "against": 1,
+        "abstain": 0
+      },
+      "winning": "Evidence plus 'checked' records make each session auditable.",
+      "dissent": "The same generic gaps would repeat; known gaps are now only re-raised if worse.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic",
+        "Quality",
+        "Business",
+        "Security"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#25",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/25",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-12",
+      "title": "The product page is always current",
+      "status": "accepted",
+      "panel": 6,
+      "rounds": 2,
+      "votes": {
+        "for": 6,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "A hook that writes after Claude stops leaves unreported changes; this one only asks Claude to re-render.",
+      "dissent": "A hook can't fix 'the agent never updated the data'; the per-change rule does.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic",
+        "Quality",
+        "Business",
+        "Security"
+      ],
+      "veto": {
+        "by": "Skeptic and Security",
+        "reason": "Vetoed any hook that writes on its own. Logged in complete auto; the chosen hook never writes."
+      },
+      "pr": {
+        "label": "#24",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/24",
+        "merged": true
+      }
+    },
     {
       "id": "D-11",
       "title": "Product page and website improvements",

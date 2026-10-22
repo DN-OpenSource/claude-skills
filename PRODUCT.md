@@ -5,7 +5,23 @@
 **Success looks like:** each skill triggers when relevant, works on its own (Linux, Windows, macOS; Python 3.9+), and costs little context — every description loads into every session (budget `scripts/check_token_budget.py`, 1400 tokens).
 
 ## Where we are
-All 11 skills are built, packaged consistently, and pass the official `claude plugin validate`, now checked in CI. 139/139 tests pass locally and in CI on ubuntu 3.9 (24.04)/3.12/3.13, windows 3.12 and macos 3.9. Session 2026-10-22 found and fixed two skills that never loaded (invalid frontmatter), lsp docs that failed on macOS/Linux, and added git-conventions and test video. Latest report: [`test-reports/2026-10-22-claude-skills.md`](test-reports/2026-10-22-claude-skills.md). Product page: [dn-opensource.github.io/claude-skills/product](https://dn-opensource.github.io/claude-skills/product/).
+All 11 skills are built, pass the official `claude plugin validate`, and have trigger tests (`evals/`, run with `claude plugin eval`). 155/155 tests pass locally and in CI on ubuntu 3.9 (24.04)/3.12/3.13, windows 3.12 and macos 3.9. Session 3 (2026-10-22): the product page now stays current automatically, every session runs a professional review, and four descriptions were shortened (−114 tokens per session) with before/after trigger tests. Latest report: [`test-reports/2026-10-22-session-3.md`](test-reports/2026-10-22-session-3.md). Product page: [dn-opensource.github.io/claude-skills/product](https://dn-opensource.github.io/claude-skills/product/).
+
+## Professional review — 2026-10-22
+| Area | Status | Evidence / reason |
+|------|--------|-------------------|
+| Secrets | fine | no tracked .env/key files; key-pattern scan of tracked files clean |
+| Dependencies | not applicable | no dependency manifests; scripts are stdlib-only |
+| Privacy & data | not applicable | the skills store no personal data |
+| Errors & data loss | fine | hooks and launchers fail open; render_page writes atomically |
+| Accessibility | fine | site and product pages: no images without alt, labelled controls, focus styles |
+| Performance | fine | eager description cost 1191/1400 tokens, enforced in CI |
+| Docs & onboarding | fine | README install, update and trigger-test steps verified against the real CLI |
+| Release & versioning | fine | all manifests in lockstep (checked by tests); GitHub release notes per version |
+| CI & tests | fine | was the one gap (nothing proved triggering); closed by D-14 trigger evals |
+| Observability | not applicable | no running service |
+| Licensing | fine | Apache-2.0 LICENSE at the root |
+| Platform support | fine | Linux, Windows and macOS all in the CI matrix |
 
 ## Feature map
 

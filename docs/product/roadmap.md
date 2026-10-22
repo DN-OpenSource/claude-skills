@@ -4,10 +4,9 @@
 _(none open — all known failures fixed 2026-10-22)_
 
 ## Build
-1. **C18 — trigger tests with `claude plugin eval`** — the built-in eval runner (cases under `evals/`) checks each skill still fires on real prompts. Unblocks C4.
-2. **C4 — tighten the 6 longest descriptions** (agents-dox, memory, decision-maker, codebase-guardian, ponytail, schema-aware-db), keeping every trigger phrase — only after C18. Saves 50+ eager tokens per session.
-3. **git-conventions opt-in commit check** — a warning-only hook, off by default, if commits drift from the file (D-10 dissent).
-4. **product-visionary follows git-conventions** — its `pv/D-<n>` branches and commit messages should respect a conventions file when one exists.
+1. **Health panel on the product page (C25)** — show the professional review per area; wait until the review has run in a few projects and proved useful (D-13, batch 4: 0/3).
+2. **git-conventions opt-in commit check (C26)** — warning-only, off by default; only if commits drift from the file (D-10 dissent; batch 4: 0/3).
+3. **Duplicate-skill check** — users often have several copies of memory / schema-aware-db installed; find out how competing copies affect triggering before shortening those two descriptions (D-15 dissent).
 
 ## Cut
 _(none)_
