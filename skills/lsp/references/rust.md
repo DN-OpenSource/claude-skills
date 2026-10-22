@@ -22,7 +22,7 @@ Always use `batch` for multiple queries on Rust projects — paying the index tw
 
 ```bash
 cd <a-rust-project>
-python <skill-dir>/scripts/lsp.py --root . --retry 30 --timeout 90 workspace-symbols main
+python3 <skill-dir>/scripts/lsp.py --root . --retry 30 --timeout 90 workspace-symbols main
 ```
 
 Expect at least the crate's `main` function with its location.

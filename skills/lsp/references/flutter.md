@@ -17,7 +17,7 @@
 ```bash
 cd <a-flutter-project>
 dart pub get
-python <skill-dir>/scripts/lsp.py --root . --retry 15 symbols lib/main.dart
+python3 <skill-dir>/scripts/lsp.py --root . --retry 15 symbols lib/main.dart
 ```
 
 Expect a class/method outline of the file.

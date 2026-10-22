@@ -17,7 +17,7 @@ The server needs a `typescript` package; the global one works, but it prefers th
 
 ```bash
 cd <a-ts-project>
-python <skill-dir>/scripts/lsp.py --root . references src/index.ts:1:14
+python3 <skill-dir>/scripts/lsp.py --root . references src/index.ts:1:14
 ```
 
 Expect a list of `file:line:col — snippet` lines. Then try `rename` on a local variable (dry run) and confirm the touched lines look right.
