@@ -11,42 +11,131 @@
 <!--
   product-visionary product page. To generate: copy this file, replace ONLY the JSON inside
   <script id="product-data">, keep everything else. All text is rendered with textContent.
+  Optional keys (changes, tests, decision viewpoints/veto/detail) render "None yet." when absent.
 -->
 <script type="application/json" id="product-data">
 {
   "product": "Example product",
   "updated": "2026-01-01",
   "repo": "https://github.com/OWNER/REPO",
-  "back": { "label": "Home", "href": "../" },
+  "back": {
+    "label": "Home",
+    "href": "../"
+  },
   "goal": "One or two sentences: what it is for and who it serves.",
   "goal_status": "unconfirmed",
-  "success": ["Signal one", "Signal two"],
+  "success": [
+    "Signal one",
+    "Signal two"
+  ],
   "stats": [
-    { "label": "Features", "value": "4", "note": "3 built, 1 half-built" },
-    { "label": "Tests", "value": "40", "of": "42", "note": "2 pre-existing failures" }
+    {
+      "label": "Features",
+      "value": "4",
+      "note": "3 built, 1 half-built"
+    },
+    {
+      "label": "Tests",
+      "value": "40",
+      "of": "42",
+      "note": "2 pre-existing failures"
+    }
   ],
   "features": [
-    { "name": "login", "status": "built", "depends": "users", "used_by": "every page", "contributes": "Gate to everything.", "flag": "" },
-    { "name": "export-csv", "status": "half-built", "depends": "orders", "used_by": "", "contributes": "Nothing links to it yet.", "flag": "orphan" }
+    {
+      "name": "login",
+      "status": "built",
+      "depends": "users",
+      "used_by": "every page",
+      "contributes": "Gate to everything.",
+      "flag": ""
+    },
+    {
+      "name": "export-csv",
+      "status": "half-built",
+      "depends": "orders",
+      "used_by": "",
+      "contributes": "Nothing links to it yet.",
+      "flag": "orphan"
+    }
   ],
   "roadmap": {
-    "fix": [{ "title": "Search crashes on empty query", "why": "500 instead of 400" }],
-    "build": [{ "title": "Persist notes", "why": "Data is lost on restart" }],
-    "proposed": [{ "title": "Sharing", "why": "Asked for twice", "weight": "medium" }],
+    "fix": [
+      {
+        "title": "Search crashes on empty query",
+        "why": "500 instead of 400"
+      }
+    ],
+    "build": [
+      {
+        "title": "Persist notes",
+        "why": "Data is lost on restart"
+      }
+    ],
+    "proposed": [
+      {
+        "title": "Sharing",
+        "why": "Asked for twice",
+        "weight": "medium"
+      }
+    ],
     "cut": [],
     "deferred": []
   },
-  "open_questions": ["Is the inferred goal right?"],
-  "session": { "date": "2026-01-01", "mode": 1, "batches": 1, "stopped": "single batch (mode 1)" },
+  "open_questions": [
+    "Is the inferred goal right?"
+  ],
+  "session": {
+    "date": "2026-01-01",
+    "mode": 1,
+    "batches": 1,
+    "stopped": "single batch (mode 1)"
+  },
   "decisions": [
-    { "id": "D-1", "title": "Fix search first", "status": "proposed", "panel": 3, "rounds": 1, "votes": "3/3",
-      "won": "User advocate: the main flow is broken.", "dissent": "Engineer: persistence matters more.",
-      "result": "proposed", "pr": "", "pr_url": "" }
-  ]
+    {
+      "id": "D-1",
+      "title": "Fix search first",
+      "status": "proposed",
+      "panel": 3,
+      "rounds": 1,
+      "votes": "3/3",
+      "won": "User advocate: the main flow is broken.",
+      "dissent": "Engineer: persistence matters more.",
+      "result": "proposed",
+      "pr": "",
+      "pr_url": "",
+      "viewpoints": "User advocate, Engineer, Skeptic",
+      "veto": "none",
+      "detail": ""
+    }
+  ],
+  "changes": [
+    "Fixed search crash on empty query (D-1)",
+    "Added CSV export tests"
+  ],
+  "tests": {
+    "summary": "5/6 passed · 1 failed · Playwright",
+    "rows": [
+      {
+        "feature": "search",
+        "type": "negative",
+        "test": "empty query shows hint, no 500",
+        "result": "fail",
+        "video": "local only (this machine)"
+      },
+      {
+        "feature": "search",
+        "type": "positive",
+        "test": "finds notes by word",
+        "result": "pass",
+        "video": "—"
+      }
+    ]
+  }
 }
 </script>
 <style>
-/* Layout: a status sheet — header with goal, stat strip, feature map table, roadmap lanes, decision timeline. */
+/* Layout: a status sheet — header, jump nav, stat strip, since-last-session, tests, feature map, roadmap lanes, decision timeline. */
 :root {
   --bg: #f4f5f9; --surface: #ffffff; --ink: #141a2e; --muted: #5b627a; --line: #dde1ea;
   --accent: #3346d3; --accent-soft: #e7eafc;
@@ -123,6 +212,25 @@ td.name { font-family: var(--mono); font-size: 0.84rem; white-space: nowrap; }
 .d .why b { color: var(--ink); font-weight: 600; }
 .d .right { display: grid; gap: 6px; justify-items: end; align-content: start; }
 .d .right a { font: 500 0.8rem/1 var(--mono); }
+.jump { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 0; background: var(--bg); border-bottom: 1px solid var(--line); }
+.jump a { font: 500 0.8rem/1 var(--body); color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+.jump a:hover { color: var(--ink); border-color: var(--ink); }
+section { scroll-margin-top: 56px; }
+.changes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 75ch; }
+.changes .empty, td.empty { color: var(--muted); list-style: none; }
+.fine { color: var(--muted); font-size: 0.82rem; margin-top: 8px; }
+.head-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; margin-bottom: 14px; }
+.head-row h2 { margin-bottom: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filters button { font: 500 0.8rem/1 var(--body); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.filters button[aria-pressed="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
+.filters button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details { font-size: 0.86rem; }
+details summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+details dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; margin: 8px 0 0; }
+details dt { font: 500 0.72rem/1.6 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+details dd { margin: 0; color: var(--muted); }
+@media print { .jump, .filters { display: none; } body { background: #fff; } }
 footer { border-top: 1px solid var(--line); padding-top: 16px; color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; }
 @media (max-width: 560px) {
   .d { grid-template-columns: 44px minmax(0, 1fr); }
@@ -139,9 +247,27 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; color: var(--mute
     <p class="goal" id="goal"></p>
     <div class="row" id="success"></div>
   </header>
+  <nav class="jump" aria-label="On this page">
+    <a href="#h-since">Since last session</a><a href="#h-tests">Tests</a><a href="#h-map">Feature map</a><a href="#h-road">Roadmap</a><a href="#h-dec">Decisions</a>
+  </nav>
   <section class="strip" id="stats" aria-label="Status"></section>
+  <section aria-labelledby="h-since">
+    <h2 id="h-since">Since last session</h2>
+    <ul class="changes" id="changes"></ul>
+  </section>
+  <section aria-labelledby="h-tests">
+    <h2 id="h-tests">Tests</h2>
+    <p class="muted" id="tests-summary"></p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Type</th><th>Test</th><th>Result</th><th>Video</th></tr></thead>
+        <tbody id="tests"></tbody>
+      </table>
+    </div>
+    <p class="fine">Videos of failing tests stay on the machine that ran them and are never published, so this page lists them as text only.</p>
+  </section>
   <section aria-labelledby="h-map">
-    <h2 id="h-map">Feature map</h2>
+    <div class="head-row"><h2 id="h-map">Feature map</h2><div class="filters" id="filters" role="group" aria-label="Filter features by status"></div></div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Feature</th><th>Status</th><th>Depends on</th><th>Used by</th><th>How it serves the goal</th></tr></thead>
@@ -166,8 +292,15 @@ const D = JSON.parse(document.getElementById("product-data").textContent);
 const $ = id => document.getElementById(id);
 function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 function pill(text, tone) { return el("span", "pill " + (tone || ""), text); }
+function none(target, cols) {
+  if (cols) { const tr = el("tr"); const td = el("td", "empty", "None yet."); td.colSpan = cols; tr.append(td); target.append(tr); }
+  else target.append(el("li", "empty", "None yet."));
+}
+// Local paths and user names never reach a published page.
+function clean(s) { return String(s || "").replace(/[A-Za-z]:\\[^\s)]*|\/(?:Users|home)\/[^\s)]*|file:\/\/\S*/g, "<path>"); }
 const STATUS_TONE = { "built": "ok", "half-built": "warn", "broken": "bad", "missing": "bad" };
 const DEC_TONE = { "done": "ok", "proposed": "info", "in progress": "warn", "awaiting user merge": "warn", "failed": "bad" };
+const RESULT_TONE = { "pass": "ok", "fail": "bad", "flaky": "warn", "blocked": "warn" };
 
 document.title = D.product + " · product status";
 $("product").textContent = D.product;
@@ -190,14 +323,41 @@ for (const s of D.stats || []) {
   $("stats").append(box);
 }
 
+const changes = D.changes || [];
+if (!changes.length) none($("changes"));
+for (const c of changes) $("changes").append(el("li", null, c));
+
+const T = D.tests || {};
+$("tests-summary").textContent = T.summary || "No test run recorded yet.";
+const rows = T.rows || [];
+if (!rows.length) none($("tests"), 5);
+for (const r of rows) {
+  const tr = el("tr");
+  const res = el("td"); res.append(pill(r.result, RESULT_TONE[r.result]));
+  tr.append(el("td", "name", r.feature), el("td", "muted", r.type), el("td", null, r.test), res, el("td", "muted", clean(r.video) || "—"));
+  $("tests").append(tr);
+}
+
+const featureRows = [];
 for (const f of D.features || []) {
-  const tr = document.createElement("tr");
+  const tr = el("tr"); tr.dataset.status = f.status;
   tr.append(el("td", "name", f.name));
   const st = el("td"); st.append(pill(f.status, STATUS_TONE[f.status]));
   if (f.flag) st.append(" ", pill(f.flag, "warn"));
   tr.append(st, el("td", "muted", f.depends || "—"), el("td", "muted", f.used_by || "—"), el("td", null, f.contributes || ""));
-  $("features").append(tr);
+  $("features").append(tr); featureRows.push(tr);
 }
+if (!featureRows.length) none($("features"), 5);
+const statuses = ["all", ...new Set(featureRows.map(r => r.dataset.status))];
+for (const s of statuses) {
+  const b = el("button", null, s === "all" ? "All" : s); b.type = "button"; b.setAttribute("aria-pressed", String(s === "all"));
+  b.addEventListener("click", () => {
+    $("filters").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    featureRows.forEach(r => { r.hidden = s !== "all" && r.dataset.status !== s; });
+  });
+  $("filters").append(b);
+}
+if (statuses.length < 3) $("filters").hidden = true;  // one status: nothing to filter
 
 const LANES = [["fix", "Fix", "bad"], ["build", "Build", "info"], ["proposed", "Proposed", "warn"], ["cut", "Cut", ""], ["deferred", "Deferred", ""]];
 for (const [key, name, tone] of LANES) {
@@ -220,7 +380,9 @@ for (const q of D.open_questions || []) {
 
 const S = D.session || {};
 if (S.date) $("session").append(pill("mode " + S.mode, "info"), el("span", null, S.date + " · " + S.batches + " batch" + (S.batches === 1 ? "" : "es") + " · stopped: " + S.stopped));
-for (const d of D.decisions || []) {
+const decisions = D.decisions || [];
+if (!decisions.length) none($("decisions"));
+for (const d of decisions) {
   const li = el("li", "d");
   li.append(el("span", "id", d.id));
   const body = el("div", "body");
@@ -228,12 +390,25 @@ for (const d of D.decisions || []) {
   const why = el("p", "why"); why.append(el("b", null, "Won: "), d.won || "");
   if (d.dissent) why.append(" ", el("b", null, "Dissent: "), d.dissent);
   body.append(why);
+  if (d.viewpoints || d.veto || d.detail) {
+    const more = el("details"); more.append(el("summary", null, "Panel detail"));
+    const dl = el("dl");
+    for (const [k, v] of [["Viewpoints", d.viewpoints], ["Veto", d.veto], ["Notes", d.detail]]) if (v) dl.append(el("dt", null, k), el("dd", null, v));
+    more.append(dl); body.append(more);
+  }
   const right = el("div", "right");
   right.append(pill(d.result || d.status, DEC_TONE[d.status] || "ok"));
   if (d.pr_url) { const a = el("a", null, d.pr || "PR"); a.href = d.pr_url; right.append(a); }
   li.append(body, right);
   $("decisions").append(li);
 }
+
+// Print everything: open every detail and show filtered-out rows.
+addEventListener("beforeprint", () => {
+  document.querySelectorAll("details").forEach(x => { x.open = true; });
+  featureRows.forEach(r => { r.hidden = false; });
+});
 </script>
 </body>
+
 </html>

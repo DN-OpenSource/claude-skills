@@ -137,6 +137,15 @@ h1 span { color: var(--accent); }
 .link .pair i { color: var(--accent); font-style: normal; padding: 0 6px; }
 .link p { color: var(--muted); font-size: 0.88rem; }
 
+/* New badge, contribute card, install steps */
+.new { font: 600 0.62rem/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ok); background: var(--ok-soft); padding: 3px 6px; border-radius: 4px; vertical-align: middle; }
+.card.cta { text-decoration: none; color: var(--ink); border-style: dashed; grid-template-rows: auto auto 1fr auto; }
+.card.cta .go { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+.card.cta:hover { border-color: var(--accent); }
+.steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.steps > div { display: grid; gap: 8px; align-content: start; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-width: 0; }
+@media (max-width: 720px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+
 /* Status teaser */
 .status-teaser { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
 .status-teaser .lead { display: grid; gap: 12px; }
@@ -180,7 +189,7 @@ footer { color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap
   <header>
     <div class="manifest">
       <span>marketplace <b>DN-OpenSource/claude-skills</b></span>
-      <span>version <b>1.6.0</b></span>
+      <span>version <b>1.7.0</b></span>
       <span>license <b>Apache-2.0</b></span>
       <span>python <b>3.9+</b></span>
       <a href="product/">product status →</a>
@@ -202,23 +211,23 @@ footer { color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap
   <section class="strip" aria-label="Current status">
     <div class="stat">
       <span class="eyebrow">Skills</span>
-      <span class="num">10</span>
+      <span class="num">11</span>
       <span class="sub">all built, no orphans</span>
     </div>
     <div class="stat">
       <span class="eyebrow">Tests</span>
-      <span class="num">114<small> / 114</small></span>
-      <span class="sub">lsp 44 · decision-maker 61 · repo 9</span>
+      <span class="num">139<small> / 139</small></span>
+      <span class="sub">lsp 44 · decision-maker 61 · repo 34 · plus plugin validation</span>
     </div>
     <div class="stat">
       <span class="eyebrow">CI matrix</span>
-      <span class="num">5<small> / 5 green</small></span>
-      <div class="dots"><span>ubuntu 3.9</span><span>3.12</span><span>3.13</span><span>windows 3.12</span><span>macos 3.9</span></div>
+      <span class="num">6<small> / 6 green</small></span>
+      <div class="dots"><span>ubuntu 3.9</span><span>3.12</span><span>3.13</span><span>windows 3.12</span><span>macos 3.9</span><span>validate</span></div>
     </div>
     <div class="stat">
       <span class="eyebrow">Context per session</span>
-      <span class="num">1,245<small> / 1,300 tok</small></span>
-      <div class="meter" role="img" aria-label="96% of the description budget used"><i style="width:95.8%"></i></div>
+      <span class="num">1,305<small> / 1,400 tok</small></span>
+      <div class="meter" role="img" aria-label="93% of the description budget used"><i style="width:93.2%"></i></div>
     </div>
   </section>
 
@@ -251,7 +260,7 @@ footer { color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap
   <section aria-labelledby="cat">
     <div class="section-head">
       <h2 id="cat">All skills</h2>
-      <p>The other nine. Each installs on its own; the bar shows how much of every session's context its description takes.</p>
+      <p>Each installs on its own. The bar shows how much of every session's context its description takes.</p>
     </div>
     <div class="filters" role="group" aria-label="Filter skills">
       <button type="button" id="f-all" data-f="all" aria-pressed="true">All</button>
@@ -261,6 +270,23 @@ footer { color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap
       <button type="button" id="f-tested" data-f="tested">Ships scripts</button>
     </div>
     <div class="grid" id="grid"></div>
+  </section>
+
+  <section aria-labelledby="inst">
+    <div class="section-head">
+      <h2 id="inst">Install and update</h2>
+      <p>Installed plugins don't update themselves. Refresh the marketplace, update what you use, then restart Claude Code.</p>
+    </div>
+    <div class="steps">
+      <div><span class="eyebrow">Install</span>
+        <div class="install"><code>claude plugin marketplace add DN-OpenSource/claude-skills</code><button class="copy" type="button" data-copy="claude plugin marketplace add DN-OpenSource/claude-skills">Copy</button></div>
+        <div class="install"><code>claude plugin install git-conventions@claude-skills</code><button class="copy" type="button" data-copy="claude plugin install git-conventions@claude-skills">Copy</button></div>
+      </div>
+      <div><span class="eyebrow">Update</span>
+        <div class="install"><code>claude plugin marketplace update claude-skills</code><button class="copy" type="button" data-copy="claude plugin marketplace update claude-skills">Copy</button></div>
+        <div class="install"><code>claude plugin update product-visionary@claude-skills</code><button class="copy" type="button" data-copy="claude plugin update product-visionary@claude-skills">Copy</button></div>
+      </div>
+    </div>
   </section>
 
   <section aria-labelledby="con">
@@ -282,7 +308,7 @@ footer { color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap
 
   <section aria-labelledby="status" class="status-teaser">
     <div class="lead">
-      <span class="eyebrow">Product status · updated 2026-10-21</span>
+      <span class="eyebrow">Product status · updated 2026-10-22</span>
       <h2 id="status">Goal, feature map, roadmap and every decision</h2>
       <p>product-visionary keeps this page up to date at the end of each session: what the product is for, how each skill serves it, what's next, and the argument that won each call.</p>
       <a class="button" href="product/">Open product status →</a>
@@ -290,7 +316,7 @@ footer { color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap
     <dl class="teaser-facts">
       <div><dt>Goal</dt><dd><span class="pill ok">confirmed</span></dd></div>
       <div><dt>Next up</dt><dd>Trigger tests for skill descriptions</dd></div>
-      <div><dt>Last session</dt><dd>Complete auto · 5 decisions · PRs #6–#10</dd></div>
+      <div><dt>Last session</dt><dd>Complete auto · 6 decisions · PRs #15–#20</dd></div>
       <div><dt>Open fixes</dt><dd>None</dd></div>
     </dl>
   </section>
@@ -303,7 +329,9 @@ footer { color: var(--muted); font-size: 0.84rem; display: flex; flex-wrap: wrap
 
 <script>
 const SKILLS = [
-  { n: "test-report", g: ["code"], t: "Real tests, real report", w: "2 positive and 1 negative test per feature in your own framework, run for real, with a pass/fail report.", tok: 58, tests: "—", works: "Claude Code" },
+  { n: "product-visionary", g: ["agents"], t: "Product manager for your codebase", w: "Goal, state and feature map; a 3/6/9-agent panel decides; writes a product page every session.", tok: 62, tests: "via test-report", works: "Claude Code" },
+  { n: "git-conventions", g: ["code"], t: "Your commit and branch rules", w: "Commit pattern, branch names, PR template, protected branches; hide Claude's name via the native setting.", tok: 60, tests: "—", works: "Claude Code", isNew: true },
+  { n: "test-report", g: ["code"], t: "Real tests, real report", w: "2 positive and 1 negative test per feature, run for real; video of failing web and mobile tests, kept local.", tok: 58, tests: "—", works: "Claude Code" },
   { n: "teammates", g: ["agents"], t: "Peer agents, no boss", w: "Run a task as a flat team of subagents that share a manifest, claim work and merge outputs.", tok: 76, tests: "—", works: "Claude Code" },
   { n: "decision-maker", g: ["agents", "tested"], t: "Fast typed decisions", w: "Yes/no, pick-one and score answers with confidence from TypeSafe's Jev, plus optional guard hooks.", tok: 166, tests: "61 passing", works: "Claude Code, Codex" },
   { n: "codebase-guardian", g: ["code"], t: "Safe edits to existing code", w: "Validate with the real toolchain, match the existing pattern, trace the ripple, record what you learned.", tok: 150, tests: "—", works: "Claude Code" },
@@ -316,30 +344,33 @@ const SKILLS = [
 const LABEL = { code: "Editing code", context: "Context & memory", agents: "Agents & decisions" };
 const MAX_TOK = 170;
 const grid = document.getElementById("grid");
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
 function card(s) {
-  const el = document.createElement("article");
-  el.className = "card";
-  el.dataset.g = s.g.join(" ");
-  const cmd = `claude plugin install ${s.n}@claude-skills`;
-  el.innerHTML = `
-    <div class="top"><h3>${s.n}</h3><span class="cat">${LABEL[s.g[0]]}</span></div>
-    <p class="tag">${s.t}</p>
-    <p class="what">${s.w}</p>
-    <dl class="facts">
-      <dt>context</dt><dd><span class="meter" role="img" aria-label="${s.tok} tokens per session"><i style="width:${(s.tok / MAX_TOK * 100).toFixed(1)}%"></i></span>${s.tok} tok</dd>
-      <dt>tests</dt><dd>${s.tests}</dd>
-      <dt>works in</dt><dd>${s.works}</dd>
-    </dl>
-    <div class="install"><code>${cmd}</code><button class="copy" type="button" data-copy="${cmd}">Copy</button></div>`;
-  return el;
+  const c = el("article", "card"); c.dataset.g = s.g.join(" ");
+  const cmd = "claude plugin install " + s.n + "@claude-skills";
+  const top = el("div", "top"); const h = el("h3", null, s.n);
+  if (s.isNew) h.append(" ", el("span", "new", "new"));
+  top.append(h, el("span", "cat", LABEL[s.g[0]]));
+  const facts = el("dl", "facts");
+  const meter = el("span", "meter"); meter.setAttribute("role", "img"); meter.setAttribute("aria-label", s.tok + " tokens per session");
+  const bar = el("i"); bar.style.width = (s.tok / MAX_TOK * 100).toFixed(1) + "%"; meter.append(bar);
+  const ctx = el("dd"); ctx.append(meter, s.tok + " tok");
+  facts.append(el("dt", null, "context"), ctx, el("dt", null, "tests"), el("dd", null, s.tests), el("dt", null, "works in"), el("dd", null, s.works));
+  const inst = el("div", "install"); const btn = el("button", "copy", "Copy"); btn.type = "button"; btn.dataset.copy = cmd;
+  inst.append(el("code", null, cmd), btn);
+  c.append(top, el("p", "tag", s.t), el("p", "what", s.w), facts, inst);
+  return c;
 }
 SKILLS.forEach(s => grid.appendChild(card(s)));
+const own = el("a", "card cta"); own.href = "https://github.com/DN-OpenSource/claude-skills";
+own.append(el("span", "cat", "Contribute"), el("h3", null, "Make your own skill"), el("p", "what", "Every skill here is a folder with a SKILL.md. Fork the repo, add yours, and CI checks it on every pull request."), el("span", "go", "Open on GitHub →"));
+grid.appendChild(own);
 
 const buttons = document.querySelectorAll(".filters button");
 function applyFilter(f) {
   buttons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === f)));
-  grid.querySelectorAll(".card").forEach(c => { c.hidden = f !== "all" && !c.dataset.g.split(" ").includes(f); });
+  grid.querySelectorAll(".card").forEach(c => { c.hidden = f !== "all" && !(c.dataset.g || "").split(" ").includes(f); });
   try { localStorage.setItem("skills-filter", f); } catch (e) {}
 }
 buttons.forEach(b => b.addEventListener("click", () => applyFilter(b.dataset.f)));
