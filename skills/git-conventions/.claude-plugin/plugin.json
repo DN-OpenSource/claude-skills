@@ -1,0 +1,21 @@
+{
+  "name": "git-conventions",
+  "description": "Make Claude's commits, branches and PRs follow your rules — commit message pattern, branch naming, PR template, protected branches — and hide Claude's name via the native attribution setting. Asks before any settings change; never rewrites history.",
+  "version": "1.6.0",
+  "author": {
+    "name": "dhirajnikam",
+    "email": "dhirajnikam78@gmail.com"
+  },
+  "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/git-conventions",
+  "repository": "https://github.com/DN-OpenSource/claude-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "skills",
+    "git",
+    "commits",
+    "branches",
+    "conventional-commits",
+    "attribution",
+    "claude-code"
+  ]
+}

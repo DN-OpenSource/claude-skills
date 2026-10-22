@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 PER_SKILL = 260      # max tokens for one skill's description
-TOTAL = 1300         # max tokens for all descriptions combined (10 skills)
+TOTAL = 1400         # max tokens for all descriptions combined (11 skills)
 
 def est_tokens(s: str) -> int:
     return -(-len(s) // 4)  # ceil
