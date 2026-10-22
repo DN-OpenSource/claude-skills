@@ -1,6 +1,6 @@
 ---
 name: codebase-guardian
-description: "Disciplined loop for safely editing existing codebases (TypeScript/Node, Python/Django, Flutter/Dart, Rust/Tauri):  validate changes against the real toolchain (type-checkers, linters, build, tests), match or deliberately change existing patterns/structure/naming/architecture, track the ripple to callers/types/tests/docs/configs, record learnings to MEMORY.md. Trigger on any non-trivial edit — follow the existing pattern, don't break anything, fix without errors, match the codebase, change architecture or state management, refactor the structure, or rename across the project. Err on trigger."
+description: "Safe-editing loop for existing codebases (TypeScript/Node, Python/Django, Flutter/Dart, Rust/Tauri): validate with the real toolchain (type-check, lint, build, tests), match or deliberately change existing patterns, trace the ripple to callers/types/tests/docs/configs, record learnings to MEMORY.md. Trigger on any non-trivial edit — follow the existing pattern, don't break anything, fix without errors, match the codebase, change architecture or state management, refactor the structure, or rename across the project. Err on trigger."
 ---
 
 # Codebase Guardian
