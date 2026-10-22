@@ -69,6 +69,9 @@ project documents (`webServer` in Playwright config, `docker compose up`, etc.).
   Don't fake it, don't skip it silently.
 - Failure from an app bug: **report it, don't fix app code.** Fixing is a separate request.
 - Failure from a mistake in your test: fix the test and re-run; note it in the report.
+- **Video (web and mobile):** record each test and keep the clip only when it fails, on this
+  machine only — gitignore `test-reports/videos/` first and never commit a recording.
+  Per-framework switches and safeguards: `references/video.md`.
 
 ## 5. Report
 
@@ -79,11 +82,11 @@ Write `test-reports/YYYY-MM-DD-<feature-or-branch>.md` in the tested project:
 
 **7/9 passed** · 1 failed · 1 blocked · web + backend · Playwright, pytest
 
-| Feature | Type | Test | Result | Time |
-|---------|------|------|--------|------|
-| login | positive | valid credentials redirect to dashboard | ✅ pass | 1.2s |
-| login | positive | remember-me keeps session | ✅ pass | 1.4s |
-| login | negative | wrong password shows error, no session | ❌ fail | 0.9s |
+| Feature | Type | Test | Result | Time | Video |
+|---------|------|------|--------|------|-------|
+| login | positive | valid credentials redirect to dashboard | ✅ pass | 1.2s | — |
+| login | positive | remember-me keeps session | ✅ pass | 1.4s | — |
+| login | negative | wrong password shows error, no session | ❌ fail | 0.9s | [clip](videos/2026-01-01/login-negative-wrong-password.webm) (local only) |
 
 ## Failures
 
@@ -91,6 +94,7 @@ Write `test-reports/YYYY-MM-DD-<feature-or-branch>.md` in the tested project:
 - **Error:** `expected "Invalid credentials" to be visible, got timeout`
 - **Where:** `tests/e2e/login.spec.ts:42`
 - **Likely cause:** app bug — error toast never renders on 401 (see `src/auth/Login.tsx:88`)
+- **Video:** [clip](videos/2026-01-01/login-negative-wrong-password.webm) (local only)
 
 ## Blocked
 - profile — mobile — all 3: no Android emulator available
@@ -100,6 +104,7 @@ Write `test-reports/YYYY-MM-DD-<feature-or-branch>.md` in the tested project:
 ```
 
 Result values: ✅ pass, ❌ fail, ⚠️ flaky, ⛔ blocked. Every failure gets error, file:line,
-and a one-line cause guess labeled **app bug** or **test issue**.
+a one-line cause guess labeled **app bug** or **test issue**, and its video link — or
+`recording unavailable: <reason>` when there's no clip.
 
 Finish by telling the user the summary line and the report path.
