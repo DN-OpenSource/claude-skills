@@ -10,8 +10,17 @@ A visionary product manager for your codebase. It tells you what the product is 
 - **Real issues:** runs [`test-report`](../test-report/SKILL.md) on the key features (2 positive + 1 negative test each).
 - **Decisions by debate:** a panel of **3, 6, or 9** Claude agents argues each decision from different viewpoints (user advocate, engineer, skeptic, and others) and reaches a conclusion by vote. Size grows with the decision: 3 for small fixes, 6 for features, 9 for direction.
 - **Memory between sessions:** `PRODUCT.md`, `docs/product/roadmap.md`, and an append-only `docs/product/decisions.md` record the goal, the map, the plan, and every decision with its winning argument and strongest dissent.
-- **A product page:** every session also writes one self-contained HTML page with the goal, status, feature map, roadmap and decisions, in light and dark. It goes in `docs/product/index.html`, or in your GitHub Pages site as `product/` if you have one. Example: [this repo's product status](https://dn-opensource.github.io/claude-skills/product/).
+- **A product page:** every session also writes one self-contained HTML page with the goal, status, feature map, roadmap and decisions, in light and dark. It goes in `docs/product/index.html`, or in your GitHub Pages site as `product/` if you have one. Example: [this repo's product status](https://dn-opensource.github.io/claude-skills/product/). At the end of every session the skill prints the page's full path and the command to open it.
 - **Checks what actually runs:** besides the test suite, it runs each real entry point (hooks, CLI, start script) once on your machine, and waits for CI before merging.
+
+## Where to find your product page
+
+| Your project | The page is at |
+|---|---|
+| No website folder | `docs/product/index.html` |
+| A GitHub Pages / site folder (`site/`, `docs/`, `public/`) | `<site folder>/product/index.html`, linked from the site's home page — and live at `https://<owner>.github.io/<repo>/product/` once deployed |
+
+It's one self-contained file: open it in any browser (`start` on Windows, `open` on macOS, `xdg-open` on Linux). In **report only** the file is written but not committed; in the other modes it arrives with the end-of-session state PR.
 
 ## The four modes
 
