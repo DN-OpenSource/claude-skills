@@ -74,8 +74,8 @@ def test_packaging_positive_marketplace_readme_and_versions_agree():
 PAGE = ROOT / "skills" / "product-visionary" / "references" / "page.html"
 SITE_PAGE = ROOT / "site" / "product" / "index.html"
 DATA = re.compile(r'(<script type="application/json" id="product-data">)(.*?)(</script>)', re.S)
-KEYS = {"product", "updated", "repo", "goal", "goal_status", "success", "stats", "features",
-        "roadmap", "open_questions", "session", "decisions"}
+KEYS = {"product", "repo", "lastUpdated", "goal", "successCriteria", "health", "stats", "sinceLastSession",
+        "tests", "features", "roadmap", "session", "decisions"}
 
 
 def _split(path):
@@ -88,7 +88,8 @@ def _split(path):
 def test_product_page_positive_template_data_has_every_section():
     data, _ = _split(PAGE)
     assert KEYS <= set(data)
-    assert set(data["roadmap"]) == {"fix", "build", "proposed", "cut", "deferred"}
+    assert set(data["roadmap"]) == {"lanes", "openQuestions"}
+    assert [l["name"] for l in data["roadmap"]["lanes"]] == ["Fix", "Build", "Proposed", "Cut", "Deferred"]
 
 
 def test_product_page_positive_site_page_is_template_plus_data_only():
@@ -139,3 +140,9 @@ def test_home_page_negative_never_renders_with_innerhtml():
     html = HOME.read_text(encoding="utf-8")
     for sink in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write"):
         assert sink not in html, sink
+
+
+def test_product_page_negative_links_only_http_and_paths_masked():
+    _, shell = _split(PAGE)
+    assert "function safeUrl" in shell and "safeUrl(x.pr.url)" in shell  # no javascript:/file: PR links
+    assert "function clean" in shell and "clean(r.video)" in shell        # no local paths in video cells

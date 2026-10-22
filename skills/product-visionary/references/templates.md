@@ -93,15 +93,23 @@ Shown to the user at the end; also appended to `docs/product/decisions.md` as-is
 
 ## Product page
 
-`references/page.html` is the template. Copy it and replace **only** the JSON inside
-`<script type="application/json" id="product-data">`; everything else stays byte-for-byte,
-and the page renders all text with `textContent`. Fields:
+`references/page.html` is the template (the "Classical" design: goal + health ring, needs-your-attention,
+tabs for Overview / Tests / Features / Roadmap / Decisions, vote seats on a 3/6/9 scale, light/dark).
+Copy it and replace **only** the JSON inside `<script type="application/json" id="product-data">`;
+everything else stays byte-for-byte, and the page renders all text with `textContent`. Fields:
 
-- `product`, `updated`, `repo`, `back` (`{label, href}` to the site home, or omit)
-- `goal`, `goal_status` (`confirmed` | `unconfirmed`), `success` (short strings)
-- `stats` — `[{label, value, of?, note?}]` (skills/features, tests, CI, whatever the goal measures)
-- `features` — the feature map: `[{name, status: built|half-built|broken|missing, depends, used_by, contributes, flag: ""|orphan|dead}]`
-- `roadmap` — `{fix, build, proposed, cut, deferred}`, each `[{title, why, weight?}]`
-- `open_questions` — strings
-- `session` — `{date, mode, batches, stopped}`
-- `decisions` — `[{id, title, status, panel, rounds, votes, won, dissent, result, pr, pr_url}]`
+- `product` `{name}`, `repo`, `back` `{label, href}` (site home, or omit), `lastUpdated`
+- `goal` `{text, confirmed: bool, note}`; `successCriteria` `[{text, state: met|not met|at risk}]`
+- `health` `{score: 0-100, label, note}` — score = share of success criteria met (at risk counts half),
+  minus 10 per open Fix item, never below 0; label On track (≥ 70) / Needs work (40–69) / At risk (< 40)
+- `stats` `[{label, value, of?, unit?, note}]` — a bar shows `value / of`
+- `sinceLastSession` `[{kind: added|changed|fixed|removed, text}]`
+- `tests` `{total, passing, summary, rows: [{feature, polarity: positive|negative, name, status: pass|fail|flaky|blocked, video}]}`
+  — `video` is text only: `local only` or `recording unavailable: <reason>`; never a path or link
+- `features` `[{name, status: done|in progress|broken|planned, dependsOn: [], usedBy: [], servesGoal, flag: null|orphan|dead}]`
+- `roadmap` `{lanes: [{name: Fix|Build|Proposed|Cut|Deferred, items: [{title, reason, weight: 1-3}]}], openQuestions: [{q, context}]}`
+- `session` `{mode: 1-4, batches, stopReason}`
+- `decisions` `[{id, title, status: accepted|vetoed|open|rejected, panel: 3|6|9, rounds, votes: {for, against, abstain},
+  winning, dissent, viewpoints: [], veto: null|{by, reason}, pr: {label, url (https only), merged}}]`, newest first
+
+"Needs your attention" fills itself from vetoes, open questions and unmerged PRs.
