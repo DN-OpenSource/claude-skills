@@ -31,6 +31,18 @@ nothing to the goal).
 Several products in one repo → one section per product (Goal, Where we are, Feature map
 under a `## <product>` heading each).
 
+### PRODUCT.md — Professional review section
+
+```markdown
+## Professional review — YYYY-MM-DD
+| Area | Status | Evidence / reason |
+|------|--------|-------------------|
+| Secrets | fine | no tracked .env/keys; pattern scan clean |
+| Licensing | gap | no LICENSE file at the root |
+| Accessibility | not applicable | no UI |
+| Dependencies | not checked | audit needs network; asked, no answer |
+```
+
 ## docs/product/roadmap.md
 
 ```markdown

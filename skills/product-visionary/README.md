@@ -7,6 +7,7 @@ A visionary product manager for your codebase. It tells you what the product is 
 - **Goal:** works out what the product is for and who it serves. On the first run it asks you to confirm.
 - **Where we are:** which features are built, half-built, broken, or missing.
 - **Feature map:** how each feature depends on the others and contributes to the goal, and which ones are dead or orphaned.
+- **Catches what you missed:** every session runs a professional review (secrets, dependencies, privacy, data loss, accessibility, performance, docs, releases, CI, observability, licensing, platform support). Only evidenced gaps are raised, at most 5 a session; secrets are never quoted and security or licensing fixes are never applied without your yes.
 - **Real issues:** runs [`test-report`](../test-report/SKILL.md) on the key features (2 positive + 1 negative test each).
 - **Decisions by debate:** a panel of **3, 6, or 9** Claude agents argues each decision from different viewpoints (user advocate, engineer, skeptic, and others) and reaches a conclusion by vote. Size grows with the decision: 3 for small fixes, 6 for features, 9 for direction.
 - **Memory between sessions:** `PRODUCT.md`, `docs/product/roadmap.md`, and an append-only `docs/product/decisions.md` record the goal, the map, the plan, and every decision with its winning argument and strongest dissent.

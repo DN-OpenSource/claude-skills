@@ -52,6 +52,10 @@ Claude Code's own permission settings still apply; this skill can't bypass them.
    - **Feature map:** each feature, what it depends on, what uses it, how it contributes to
      the goal. Flag dead or orphan features. Several products in one repo → one section
      per product.
+   - **Professional review:** check what a professional would, even unasked — secrets,
+     dependencies, privacy, errors and data loss, accessibility, performance, docs, releases, CI,
+     observability, licensing, platform support. Read-only and evidence-only; at most 5 gaps become
+     candidates; every area is recorded in `PRODUCT.md`. How: `references/professional-review.md`.
 5. **Baseline + test** — run the existing suite (the tests tracked in git right now, plus
    build/lint if configured) and save the result, in every mode. Then **run each real entry
    point once on this machine** — hook commands, CLI, start script, exactly as shipped, with
@@ -84,7 +88,7 @@ Each item's branch copies in only the tests for its own feature. Mode 1 leaves t
 ## Deciding
 
 Candidates come from failing tests, the feature map (gaps, orphans, weak links to the goal),
-and the roadmap. Each batch:
+the professional review, and the roadmap. Each batch:
 
 - **One 3-agent panel** ranks all candidates, picks up to 3 items, and labels each pick's
   weight: **small**, **medium** (new screen / endpoint / model, a refactor, or touches more
