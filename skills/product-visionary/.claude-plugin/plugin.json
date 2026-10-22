@@ -1,7 +1,7 @@
 {
   "name": "product-visionary",
   "description": "Your product's visionary manager — infers the goal, where the product stands, and how every feature connects to it; finds real issues via test-report; a 3/6/9-agent panel debates and decides; then acts per a session-start mode: report only, fix on a branch, full auto, or complete auto.",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "author": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"
