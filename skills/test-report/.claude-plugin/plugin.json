@@ -1,7 +1,7 @@
 {
   "name": "test-report",
   "description": "Test features or a branch across web, backend, and mobile — write 2 positive and 1 negative test per feature in the project's own framework, actually run them, and write a Markdown pass/fail report with failure causes and a re-run command.",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "author": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"
