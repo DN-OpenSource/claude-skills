@@ -142,12 +142,30 @@ freshly fetched default, write `PRODUCT.md`, the roadmap, `decisions.md` (every 
 its final status, plus the end report), `test-reports/` and the **product page** (below), and
 open one PR. Modes 3–4 merge it like an item; mode 2 leaves it for the user.
 
-**Product page (every mode):** copy `references/page.html` and replace **only** the JSON in
-its `product-data` block with this session's goal, stats, feature map, roadmap and
-decisions — the page draws everything from that block. Write it to
-`docs/product/index.html`; if the repo publishes a site folder (GitHub Pages `site/`,
-`docs/`, `public/`), write it to `<site>/product/index.html` instead and link it from the
-site's home page. Mode 1 writes it uncommitted like the other state files.
+**Product page — always current (every mode).** The page's data lives in
+`docs/product/product.json` (fields: `references/templates.md`). `scripts/render_page.py` in this
+skill builds the page from it: it validates the data, copies the template shell byte-for-byte, and
+writes `<site>/product/index.html` when the project has a `site/` or `public/` folder, otherwise
+`docs/product/index.html`. Never hand-edit the HTML.
+
+**Update it after every change, not only at the end.** Each time any of these happens — a panel
+decision, a finished batch or item, a goal confirmation, a roadmap edit, a test run — and also in
+any ordinary conversation that changes `PRODUCT.md`, the roadmap or the decision log, update
+`product.json` and run:
+
+```bash
+python3 <this skill's dir>/scripts/render_page.py --if-stale
+```
+
+(On Windows use `python` if `python3` is the Microsoft Store stub.) `--if-stale` writes only when
+the page would change. If it reports problems, fix the data and run it again.
+
+**Safety net:** the plugin's Stop hook checks whether `product.json` is newer than the page and, if
+so, stops Claude from finishing until it re-renders. The hook never writes anything itself, so every
+change to the page happens inside a visible, reported turn and is committed with the rest.
+
+The first time the page goes into a published folder (`site/`, `public/`), say so; in modes 1–3
+ask first, because that folder may deploy publicly. Commit `product.json` and the page together.
 
 **Mode 1 writes, doesn't commit:** tests, `test-reports/`, and state files are left in the
 working tree; tell the user where they are.

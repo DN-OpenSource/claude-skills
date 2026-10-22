@@ -1,0 +1,520 @@
+{
+  "product": {
+    "name": "claude-skills"
+  },
+  "repo": "https://github.com/DN-OpenSource/claude-skills",
+  "back": {
+    "label": "All skills",
+    "href": "../"
+  },
+  "lastUpdated": "22 Oct 2026",
+  "goal": {
+    "text": "Standalone, composable Claude Code skills you install once to make Claude better at recurring work.",
+    "confirmed": true,
+    "note": "Confirmed by the owner, 21 Oct 2026"
+  },
+  "successCriteria": [
+    {
+      "text": "Each skill triggers when relevant: every SKILL.md loads and passes the official validator.",
+      "state": "met"
+    },
+    {
+      "text": "Each skill works on its own on Linux, Windows and macOS, Python 3.9+.",
+      "state": "met"
+    },
+    {
+      "text": "Skills cost little context: descriptions stay inside the 1,400-token budget.",
+      "state": "met"
+    },
+    {
+      "text": "Triggering is measured, not assumed: trigger tests run for every skill.",
+      "state": "not met"
+    }
+  ],
+  "health": {
+    "score": 82,
+    "label": "On track",
+    "note": "Three of four criteria met. Trigger tests are next on the roadmap."
+  },
+  "stats": [
+    {
+      "label": "Skills",
+      "value": 11,
+      "of": 11,
+      "note": "git-conventions is new"
+    },
+    {
+      "label": "Tests passing",
+      "value": 140,
+      "of": 140,
+      "note": "plus official plugin validation in CI"
+    },
+    {
+      "label": "CI",
+      "value": "Green",
+      "note": "5 OS/Python jobs + validate"
+    },
+    {
+      "label": "Context budget",
+      "value": 1305,
+      "of": 1400,
+      "note": "tokens of skill descriptions loaded every session"
+    }
+  ],
+  "sinceLastSession": [
+    {
+      "kind": "fixed",
+      "text": "codebase-guardian and schema-aware-db never loaded: invalid frontmatter. Fixed; CI runs the official validator (D-9)."
+    },
+    {
+      "kind": "added",
+      "text": "New skill git-conventions: your commit, branch and PR rules; hide Claude's name (D-10)."
+    },
+    {
+      "kind": "added",
+      "text": "test-report records video of failing web and mobile tests, kept on your machine (D-8)."
+    },
+    {
+      "kind": "fixed",
+      "text": "lsp docs run on macOS and Linux with python3 (D-6)."
+    },
+    {
+      "kind": "changed",
+      "text": "README explains how to update installed plugins (D-7)."
+    },
+    {
+      "kind": "changed",
+      "text": "This page: the Classical design with tabs, health, attention and vote seats."
+    }
+  ],
+  "tests": {
+    "total": 140,
+    "passing": 140,
+    "summary": "140 of 140 passing. Showing the 12 checks added in the 22 Oct session. All backend, so no videos.",
+    "rows": [
+      {
+        "feature": "interpreter docs",
+        "polarity": "positive",
+        "name": "every documented Python run uses python3",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "interpreter docs",
+        "polarity": "positive",
+        "name": "skills that run Python carry the Windows note",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "interpreter docs",
+        "polarity": "negative",
+        "name": "bare python is caught",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "test video",
+        "polarity": "positive",
+        "name": "SKILL links the rules; report has a Video column",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "test video",
+        "polarity": "positive",
+        "name": "rules cover every platform and safeguard",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "test video",
+        "polarity": "negative",
+        "name": "never tells Claude to commit or upload recordings",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "frontmatter",
+        "polarity": "positive",
+        "name": "every SKILL.md parses with name and description",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "frontmatter",
+        "polarity": "positive",
+        "name": "parsed description matches what the budget counts",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "frontmatter",
+        "polarity": "negative",
+        "name": "an unquoted colon is rejected",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "git-conventions",
+        "polarity": "positive",
+        "name": "file covers what the owner asked for",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "git-conventions",
+        "polarity": "positive",
+        "name": "attribution uses the native setting safely",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "git-conventions",
+        "polarity": "negative",
+        "name": "never sets false or rewrites history",
+        "status": "pass",
+        "video": "—"
+      }
+    ]
+  },
+  "features": [
+    {
+      "name": "product-visionary",
+      "status": "done",
+      "dependsOn": [
+        "test-report"
+      ],
+      "usedBy": [],
+      "servesGoal": "Goal, state and feature map; panel-driven fixes; writes this page.",
+      "flag": null
+    },
+    {
+      "name": "test-report",
+      "status": "done",
+      "dependsOn": [],
+      "usedBy": [
+        "product-visionary"
+      ],
+      "servesGoal": "Real tests, a pass/fail report, video of failures.",
+      "flag": null
+    },
+    {
+      "name": "git-conventions",
+      "status": "done",
+      "dependsOn": [],
+      "usedBy": [],
+      "servesGoal": "Claude's commits, branches and PRs follow your rules.",
+      "flag": null
+    },
+    {
+      "name": "decision-maker",
+      "status": "done",
+      "dependsOn": [],
+      "usedBy": [
+        "teammates"
+      ],
+      "servesGoal": "Cheap typed judgments and guard hooks. 61 tests.",
+      "flag": null
+    },
+    {
+      "name": "memory",
+      "status": "done",
+      "dependsOn": [],
+      "usedBy": [
+        "codebase-guardian",
+        "ponytail"
+      ],
+      "servesGoal": "Context that survives sessions.",
+      "flag": null
+    },
+    {
+      "name": "agents-dox",
+      "status": "done",
+      "dependsOn": [],
+      "usedBy": [
+        "codebase-guardian"
+      ],
+      "servesGoal": "Per-folder work contracts.",
+      "flag": null
+    },
+    {
+      "name": "lsp",
+      "status": "done",
+      "dependsOn": [],
+      "usedBy": [
+        "codebase-guardian",
+        "schema-aware-db"
+      ],
+      "servesGoal": "Precise code navigation and rename. 44 tests.",
+      "flag": null
+    },
+    {
+      "name": "codebase-guardian",
+      "status": "done",
+      "dependsOn": [
+        "memory",
+        "agents-dox",
+        "lsp"
+      ],
+      "usedBy": [
+        "teammates"
+      ],
+      "servesGoal": "Safe edits to existing code. Loads again since D-9.",
+      "flag": null
+    },
+    {
+      "name": "schema-aware-db",
+      "status": "done",
+      "dependsOn": [
+        "lsp"
+      ],
+      "usedBy": [],
+      "servesGoal": "No guessed schemas. Loads again since D-9.",
+      "flag": null
+    },
+    {
+      "name": "teammates",
+      "status": "done",
+      "dependsOn": [
+        "codebase-guardian",
+        "decision-maker"
+      ],
+      "usedBy": [],
+      "servesGoal": "Runs big tasks as peer subagents.",
+      "flag": null
+    },
+    {
+      "name": "ponytail",
+      "status": "done",
+      "dependsOn": [
+        "memory"
+      ],
+      "usedBy": [],
+      "servesGoal": "Clean end-of-session handoff.",
+      "flag": null
+    }
+  ],
+  "roadmap": {
+    "lanes": [
+      {
+        "name": "Fix",
+        "items": []
+      },
+      {
+        "name": "Build",
+        "items": [
+          {
+            "title": "Trigger tests with claude plugin eval",
+            "reason": "The built-in eval runner checks each skill still fires on real prompts.",
+            "weight": 3
+          },
+          {
+            "title": "Shorten the 6 longest descriptions",
+            "reason": "Waits on trigger tests. Saves 50+ tokens every session.",
+            "weight": 2
+          },
+          {
+            "title": "Opt-in commit check for git-conventions",
+            "reason": "A warning-only hook, off by default, if commits drift.",
+            "weight": 1
+          }
+        ]
+      },
+      {
+        "name": "Proposed",
+        "items": [
+          {
+            "title": "One owner for context files",
+            "reason": "Merge memory, agents-dox and codebase-guardian. Vetoed: breaks existing installs.",
+            "weight": 3
+          }
+        ]
+      },
+      {
+        "name": "Cut",
+        "items": []
+      },
+      {
+        "name": "Deferred",
+        "items": [
+          {
+            "title": "Trim the decision-maker README",
+            "reason": "No runtime context cost. 1 of 3 votes.",
+            "weight": 1
+          }
+        ]
+      }
+    ],
+    "openQuestions": []
+  },
+  "session": {
+    "mode": 4,
+    "batches": 5,
+    "stopReason": "Reached the 5-batch session ceiling, with all three owner requests built."
+  },
+  "decisions": [
+    {
+      "id": "D-11",
+      "title": "Product page and website improvements",
+      "status": "accepted",
+      "panel": 6,
+      "rounds": 1,
+      "votes": {
+        "for": 5,
+        "against": 1,
+        "abstain": 0
+      },
+      "winning": "Every addition is a textContent element, so the existing safety tests still hold.",
+      "dissent": "Keep dissent visible; the real website bug was a hand-kept skill list missing git-conventions.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic",
+        "Quality",
+        "Business",
+        "Security"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#20",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/20",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-10",
+      "title": "New skill: git-conventions",
+      "status": "accepted",
+      "panel": 6,
+      "rounds": 2,
+      "votes": {
+        "for": 5,
+        "against": 1,
+        "abstain": 0
+      },
+      "winning": "The native attribution setting is the deterministic part; a commit hook would miss Claude's usual heredoc commits.",
+      "dissent": "Instructions drift when the skill isn't loaded mid-task.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic",
+        "Quality",
+        "Business",
+        "Security"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#19",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/19",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-9",
+      "title": "Two skills never loaded; validate in CI",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 1,
+      "votes": {
+        "for": 3,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "codebase-guardian was installed but missing from the session's skills.",
+      "dissent": "Delete the root plugin.json instead of renaming it.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#18",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/18",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-8",
+      "title": "test-report records video of failing tests",
+      "status": "accepted",
+      "panel": 6,
+      "rounds": 2,
+      "votes": {
+        "for": 6,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "Recordings can capture credentials and personal data, so keep them local and record only failures.",
+      "dissent": "Local-only links are dead for reviewers.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic",
+        "Quality",
+        "Business",
+        "Security"
+      ],
+      "veto": {
+        "by": "Security",
+        "reason": "Committing recordings would put secrets in public history. Logged in complete-auto mode; the chosen option never commits them."
+      },
+      "pr": {
+        "label": "#17",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/17",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-7",
+      "title": "README explains how to update plugins",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 2,
+      "votes": {
+        "for": 3,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "The owner's own install sat on 1.5.0 after 1.6.0 shipped.",
+      "dissent": "Check the command against the real CLI first (done).",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#16",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/16",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-6",
+      "title": "lsp docs work on macOS and Linux",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 2,
+      "votes": {
+        "for": 3,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "Stock macOS and Ubuntu have no python, so the documented command failed.",
+      "dissent": "Ship the owner's video request first.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#15",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/15",
+        "merged": true
+      }
+    }
+  ]
+}
