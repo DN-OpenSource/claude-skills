@@ -1,3 +1,5 @@
 .teammates/
 __pycache__/
 *.pyc
+# plugin eval run output
+skills/*/evals/results/
