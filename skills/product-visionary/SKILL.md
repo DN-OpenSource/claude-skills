@@ -157,5 +157,16 @@ working tree; tell the user where they are.
 Write the end-of-session report (`references/templates.md`) and show it to the user: mode,
 batches run, every item with its PR link, test result and decision entry, pre-existing
 failures, and — in mode 4 — everything that would have been asked but was logged instead.
-This is how the user verifies the session. Give the product page's path (or URL once the
-site deploys). End with what's next on the roadmap.
+This is how the user verifies the session. End with what's next on the roadmap.
+
+**Then always tell the user where their product page is**, as the last lines of the session:
+
+```
+Your product page: <absolute path to the page>
+Open it:  start "<path>"   (Windows)   ·   open "<path>"   (macOS)   ·   xdg-open "<path>"   (Linux)
+```
+
+Give only the open command for the user's OS when you know it. Add the site URL
+(`https://<owner>.github.io/<repo>/product/`) when the repo publishes a Pages site and the state
+PR is merged. In mode 1, say the file is in the working tree, not committed; in mode 2, say it
+lands in the repo when the user merges the state PR.
