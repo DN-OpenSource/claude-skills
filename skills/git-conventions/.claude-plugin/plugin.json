@@ -1,7 +1,7 @@
 {
   "name": "git-conventions",
   "description": "Make Claude's commits, branches and PRs follow your rules — commit message pattern, branch naming, PR template, protected branches — and hide Claude's name via the native attribution setting. Asks before any settings change; never rewrites history.",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "author": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"

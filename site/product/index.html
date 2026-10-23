@@ -24,7 +24,7 @@
     "label": "All skills",
     "href": "../"
   },
-  "lastUpdated": "22 Oct 2026 (session 3)",
+  "lastUpdated": "23 Oct 2026 (session 4)",
   "goal": {
     "text": "Standalone, composable Claude Code skills you install once to make Claude better at recurring work.",
     "confirmed": true,
@@ -49,9 +49,9 @@
     }
   ],
   "health": {
-    "score": 100,
+    "score": 90,
     "label": "On track",
-    "note": "All four criteria met: trigger tests now run for every skill."
+    "note": "All four criteria met in the repo. On the owner's machine, old duplicate copies shadow two skills; the cleanup is the owner's call."
   },
   "stats": [
     {
@@ -62,9 +62,9 @@
     },
     {
       "label": "Tests passing",
-      "value": 155,
-      "of": 155,
-      "note": "plus official plugin validation in CI"
+      "value": 162,
+      "of": 162,
+      "note": "plus validation, trigger and crowded evals"
     },
     {
       "label": "CI",
@@ -80,73 +80,59 @@
   ],
   "sinceLastSession": [
     {
-      "kind": "added",
-      "text": "The product page stays current: rebuilt from product.json after every change, with a Stop hook that never writes (D-12)."
+      "kind": "fixed",
+      "text": "Every skill README shows how to install and update it (D-16)."
     },
     {
       "kind": "added",
-      "text": "Every session runs a professional review: 12 areas, evidence only, at most 5 gaps raised (D-13)."
+      "text": "find_duplicate_skills.py finds skills installed twice and stale plugins, and prints the fix; it never removes anything (D-17)."
     },
     {
       "kind": "added",
-      "text": "Trigger tests for all 11 skills with claude plugin eval (D-14)."
+      "text": "Crowded trigger evals with 45 filler skills: 4/4 fired, so crowding alone isn't the cause (D-18)."
     },
     {
       "kind": "changed",
-      "text": "Four descriptions shortened, 114 fewer tokens every session, triggers proven before and after (D-15)."
+      "text": "Measured in the real environment: old personal copies of memory and schema-aware-db shadow the plugins."
     }
   ],
   "tests": {
-    "total": 155,
-    "passing": 155,
-    "summary": "155 of 155 passing, plus trigger evals: every evaluated skill 3/3. Showing a sample of this session's checks.",
+    "total": 162,
+    "passing": 162,
+    "summary": "162 of 162 passing. Crowded evals 4/4. Showing this session's checks.",
     "rows": [
       {
-        "feature": "render page",
+        "feature": "packaging",
         "polarity": "positive",
-        "name": "writes the template shell with the data",
+        "name": "every skill README shows how to install it",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "render page",
-        "polarity": "negative",
-        "name": "invalid data rejected, nothing written",
-        "status": "pass",
-        "video": "—"
-      },
-      {
-        "feature": "stop hook",
+        "feature": "duplicate check",
         "polarity": "positive",
-        "name": "stale page → block, writes nothing",
+        "name": "shadowing personal copy reported with the fix",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "stop hook",
+        "feature": "duplicate check",
         "polarity": "negative",
-        "name": "stop_hook_active → never blocks",
+        "name": "clean setup reports nothing",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "professional review",
-        "polarity": "negative",
-        "name": "never marks unrun checks fine or fixes secrets",
-        "status": "pass",
-        "video": "—"
-      },
-      {
-        "feature": "agents-dox triggers",
+        "feature": "crowded evals",
         "polarity": "positive",
-        "name": "fires on a DOX pass after the change",
+        "name": "workspace keeps plugins and cases separate",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "ponytail triggers",
+        "feature": "crowded evals",
         "polarity": "negative",
-        "name": "quiet on a translation question",
+        "name": "no skill names, no run",
         "status": "pass",
         "video": "—"
       }
@@ -279,18 +265,18 @@
         "name": "Build",
         "items": [
           {
-            "title": "Health panel on the product page",
-            "reason": "Show the professional review per area, once it has proved useful in a few projects.",
+            "title": "Re-measure real triggering after cleanup",
+            "reason": "The two prompts that fired nothing on the owner's machine; crowding is ruled out.",
             "weight": 2
           },
           {
-            "title": "Duplicate-skill check",
-            "reason": "Several installed copies of memory or schema-aware-db may compete; measure before shortening them.",
+            "title": "Health panel on the product page",
+            "reason": "Once the professional review has run in a few projects.",
             "weight": 2
           },
           {
             "title": "Opt-in commit check for git-conventions",
-            "reason": "Warning-only, off by default, only if commits drift from the file.",
+            "reason": "Warning-only, off by default, only if commits drift.",
             "weight": 1
           }
         ]
@@ -320,14 +306,104 @@
         ]
       }
     ],
-    "openQuestions": []
+    "openQuestions": [
+      {
+        "q": "Remove the shadowing duplicate skills?",
+        "context": "find_duplicate_skills.py prints the commands: old ~/.claude/skills/memory and schema-aware-db, stale teammates-cc."
+      },
+      {
+        "q": "What artwork for the plugin icons?",
+        "context": "Icons may lock in on first submit to the plugin directory."
+      }
+    ]
   },
   "session": {
     "mode": 4,
-    "batches": 4,
-    "stopReason": "Nothing left worth doing: the remaining candidates were picked by 0 of 3 panel members."
+    "batches": 3,
+    "stopReason": "Nothing left worth doing; the remaining candidates were picked by 0 of 3 panel members."
   },
   "decisions": [
+    {
+      "id": "D-18",
+      "title": "Crowded trigger tests with 45 filler skills",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 2,
+      "votes": {
+        "for": 3,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "Separates crowding from shadowing with no credentials or owner files touched.",
+      "dissent": "Small, synthetic sample: record as-is and change no description.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#31",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/31",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-17",
+      "title": "Find duplicate and stale skills",
+      "status": "accepted",
+      "panel": 6,
+      "rounds": 1,
+      "votes": {
+        "for": 5,
+        "against": 1,
+        "abstain": 0
+      },
+      "winning": "Users see the wrong copy fire and can't tell why; the check proves it and prints the fix.",
+      "dissent": "claude.ai org skills can't be removed by claude plugin; named as not checked.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic",
+        "Quality",
+        "Business",
+        "Security"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#30",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/30",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-16",
+      "title": "Install steps in every skill README",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 1,
+      "votes": {
+        "for": 3,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "A user landing on a skill's README got stuck at step one.",
+      "dissent": "Keep it a line, not a project.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": {
+        "by": "Skeptic",
+        "reason": "Plugin icons are brand artwork the owner must choose; not automated."
+      },
+      "pr": {
+        "label": "#29",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/29",
+        "merged": true
+      }
+    },
     {
       "id": "D-15",
       "title": "Shorter descriptions for four skills",

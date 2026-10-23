@@ -226,7 +226,7 @@ footer a { margin-left: auto; }
   </section>
 </main>
 
-<footer><div class="wrap"><span>DN-OpenSource/claude-skills · v1.9.0</span><span>Data updated 2026-10-22</span><a href="https://github.com/DN-OpenSource/claude-skills">GitHub</a></div></footer>
+<footer><div class="wrap"><span>DN-OpenSource/claude-skills · v1.10.0</span><span>Data updated 2026-10-22</span><a href="https://github.com/DN-OpenSource/claude-skills">GitHub</a></div></footer>
 
 <script>
 const SKILLS = [
@@ -286,7 +286,7 @@ const used = SKILLS.reduce((a, s) => a + s.tok, 0);
 const cats = ["All", ...new Set(SKILLS.map(s => s.c))];
 const stats = [
   ["Skills", String(SKILLS.length), "", (cats.length - 1) + " categories"],
-  ["Tests passing", "155/155", "", "All green, plus validation and trigger tests"],
+  ["Tests passing", "162/162", "", "All green, plus validation and trigger tests"],
   ["CI on main", "Passing", "ci", "5 OS/Python jobs + validate"],
   ["Context budget", used.toLocaleString("en-US"), " / " + BUDGET.toLocaleString("en-US"), ""],
 ];

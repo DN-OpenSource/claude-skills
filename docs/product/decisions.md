@@ -194,3 +194,45 @@
 **Left open:** none.
 **Next on the roadmap:** 1. health panel once the review proves itself · 2. duplicate-skill check · 3. opt-in commit check
 
+### D-16 — 2026-10-23 — Which items this batch? (session 4, batch 1)
+- **Status:** done
+- **Panel:** 3 — rounds: 1 (clear: C28 and C27 picked 3/3; C29 0/3)
+- **Pick:** C28 — install steps in every skill README (validator warning 10 → 0)
+- **Winning argument:** User advocate — a user landing on a skill's README gets stuck at step one.
+- **Strongest dissent:** Skeptic — keep it a line, not a project.
+- **Veto:** Skeptic on C29 (icons are brand artwork that may lock in on first submit) — logged, not built.
+- **PR:** #29
+
+### D-17 — 2026-10-23 — How to build C27 (duplicate skills)? (batch 2)
+- **Status:** done
+- **Panel:** 6 — rounds: 1 (clear: B 5/6)
+- **Pick:** B — measure in the real environment, then ship a read-only check
+- **Winning argument:** User advocate — the wrong copy fires and users can't see why.
+- **Strongest dissent:** Skeptic — claude.ai org skills can't be removed by `claude plugin`; answered: named as not checked.
+- **Veto:** four members on C (renaming skills) — not built.
+- **PR:** #30
+
+### D-18 — 2026-10-23 — Crowded-environment triggering (C30) (batch 3)
+- **Status:** done
+- **Panel:** 3 — rounds: 2 — C30 2 / STOP 1, then C30a 3/3
+- **Pick:** crowded evals with a 45-skill filler plugin, built in a throwaway workspace
+- **Votes:** 3/3 in Round 2
+- **Winning argument:** Engineer — separates crowding from shadowing with no credentials or owner files touched.
+- **Strongest dissent:** Skeptic — small, synthetic sample; record as-is and change no description. Adopted.
+- **Veto:** all three — never touch the owner's ~/.claude; cleanup stays printed commands.
+- **PR:** #31
+
+### End-of-session report — 2026-10-23 (session 4)
+**Mode:** 4 · **Batches:** 3 · **Stopped because:** nothing left (C25, C26 and C29 picked by 0/3; C29 is the owner's call)
+
+| # | Item | Kind | PR | Tests | Decision |
+|---|------|------|----|-------|----------|
+| 1 | Install steps in every skill README | fix (review gap) | #29 | ✅ 156/156, validator warning 10 → 0 | D-16 |
+| 2 | Find duplicate and stale skills (measured in the real env) | feature | #30 | ✅ 159/159 | D-17 |
+| 3 | Crowded trigger evals (45 filler skills) | improvement | #31 | ✅ 162/162; crowded eval 4/4 | D-18 |
+
+**Pre-existing failures:** none.
+**Logged instead of asked** (mode 4): Skeptic's veto on icons (C29); every member's veto on touching the owner's ~/.claude (respected: commands printed only); eval and probe spend about $0.70 on the owner's credentials.
+**Left open:** none. **Owner actions:** remove shadowing duplicates (commands from find_duplicate_skills.py); choose plugin icon artwork.
+**Next on the roadmap:** 1. re-measure real triggering after cleanup · 2. health panel · 3. opt-in commit check
+
