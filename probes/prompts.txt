@@ -1,0 +1,6 @@
+memory-bootstrap|Bootstrap MEMORY.md files for this repository.
+memory-remember|Remember for future sessions that I prefer pnpm over npm.
+schema-save-order|Add an endpoint that saves a new order to the orders table.
+schema-fix-join|Fix the SQL query joining users and orders; it returns duplicate rows.
+schema-fix-inline|This query returns duplicate rows, fix it: SELECT u.name, o.total FROM users u JOIN orders o ON o.user_id = u.id JOIN order_items i ON i.order_id = o.id;
+teammates-split|Split this research task across a flat team of subagents working as peers, no orchestrator.
