@@ -133,13 +133,19 @@ Only *new* failures vs the baseline block; pre-existing ones go in the end repor
 5. Open a PR with the decision entry in its description. Mode 2: status
    `awaiting user merge`, stop here. Modes 3–4: merge with `gh pr merge --squash`, status
    `done`; if the branch is protected or needs review, stop at the PR (`awaiting user merge`).
-6. Can't be proven (red, flaky, blocked) → PR stays open and unmerged, status `failed` with
-   the reason.
+6. Can't be proven (red, flaky, blocked) → fix the cause and prove it again, up to 3 tries.
+   Still unproven → PR stays open and unmerged, status `failed` with the reason; go on to
+   the next pick.
+
+**Finish today's picks:** every pick the panels decided this session — including medium and
+direction picks queued for their own batch — is built to its end state (`done`,
+`awaiting user merge`, or `failed` after 3 tries) before the session ends. Don't stop between
+picks to report or ask "continue?"; only the always-ask list (modes 1–3) pauses.
 
 **Loop (modes 3–4):** after a batch, `git fetch`, retake the baseline on the updated default
-branch, re-test, re-run the ranking panel, pick the next 3. Stop when: the panel finds
-nothing worth doing; an item in the batch couldn't be proven; a veto flag fires (mode 3);
-no PR/merge is available; or **5 batches** are done. Mode 2 runs one batch.
+branch, re-test, re-run the ranking panel, pick the next 3. Stop picking new items when: the
+panel finds nothing worth doing; a veto flag fires (mode 3); no PR/merge is available; or
+**5 batches** are done. Then finish today's picks. Mode 2 runs one batch.
 
 **State PR (modes 2–4):** at the end of the session, branch `pv/state-YYYY-MM-DD` from the
 freshly fetched default, write `PRODUCT.md`, the roadmap, `decisions.md` (every entry with

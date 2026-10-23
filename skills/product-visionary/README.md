@@ -55,7 +55,8 @@ Even in complete auto, every change goes through its own branch and PR (so any m
 - Install a test framework without asking, in any mode.
 - Merge something its tests didn't prove — that PR stays open.
 - Merge past branch protection or required review.
-- Run more than 5 batches in one session.
+- Pick new items after 5 batches in one session (it still finishes the ones already picked).
+- End a session with a picked item unfinished: each one ends `done`, awaiting your merge, or `failed` after 3 tries.
 
 ## Details
 
