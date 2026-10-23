@@ -46,6 +46,8 @@ claude plugin eval skills/git-conventions --runs 1 --ablation none --no-publish 
 
 One skill at one run per case costs about $0.20. Drop `--runs 1` (default 3) and `--ablation none` (adds a no-plugin baseline) for a fuller measurement. Run every skill before changing a description, so a shorter description can't stop a skill firing unnoticed. Structure is checked in CI by `scripts/test_trigger_evals.py`.
 
+**Crowded:** `python scripts/run_crowded_evals.py memory schema-aware-db -- --runs 1 --max-cost-usd 2` re-runs a skill's trigger prompts with 45 filler skills loaded (`evals-crowded/`), because a sandboxed eval sees only the plugin under test. First result (2026-10-23): 4/4 fired, so crowding alone isn't why a skill can stay silent in a busy setup; check for shadowing copies with *Duplicate or stale skills* above.
+
 ## How the skills work together
 
 Each skill is **self-contained** — install any one on its own and it works with no dependency on the others. They're also designed to **compose**:
