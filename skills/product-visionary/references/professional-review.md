@@ -41,6 +41,7 @@ What a professional product owner checks even when nobody asks. Run it every ses
 | **CI & tests** | CI exists and runs the tests; critical paths have tests; tests run on the platforms users use | no CI, a critical feature with no test, a supported OS never tested |
 | **Observability** | errors are logged or reported somewhere a maintainer will see | failures that vanish (no log, no report, no exit code) |
 | **Licensing** | a LICENSE file; dependencies' licences compatible with it | no LICENSE, or a copyleft dependency in a permissive project |
+| **Duplicate skills** | run `python3 <product-visionary>/scripts/find_duplicate_skills.py` (read-only) | a skill installed twice (an old personal copy can shadow the plugin), or a plugin its marketplace no longer lists |
 | **Platform support** | the platforms the README promises are the ones actually exercised | a promised OS/runtime/browser nothing checks |
 
 ## Output

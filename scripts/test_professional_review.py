@@ -17,7 +17,7 @@ def test_review_positive_skill_runs_it_every_session():
 def test_review_positive_covers_the_areas_a_professional_checks():
     for area in ("Secrets", "Dependencies", "Privacy", "Errors & data loss", "Accessibility", "Performance",
                  "Docs & onboarding", "Release & versioning", "CI & tests", "Observability", "Licensing",
-                 "Platform support"):
+                 "Duplicate skills", "Platform support"):
         assert f"**{area}" in REVIEW, area
     for rule in ("Evidence or it isn't a finding", "At most 5 gaps", "not checked", "Never quote a secret",
                  "never auto-fixed"):
