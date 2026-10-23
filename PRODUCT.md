@@ -5,9 +5,9 @@
 **Success looks like:** each skill triggers when relevant, works on its own (Linux, Windows, macOS; Python 3.9+), and costs little context — every description loads into every session (budget `scripts/check_token_budget.py`, 1400 tokens).
 
 ## Where we are
-All 11 skills are built, pass the official `claude plugin validate`, and have trigger tests (`evals/`, run with `claude plugin eval`). 155/155 tests pass locally and in CI on ubuntu 3.9 (24.04)/3.12/3.13, windows 3.12 and macos 3.9. Session 3 (2026-10-22): the product page now stays current automatically, every session runs a professional review, and four descriptions were shortened (−114 tokens per session) with before/after trigger tests. Latest report: [`test-reports/2026-10-22-session-3.md`](test-reports/2026-10-22-session-3.md). Product page: [dn-opensource.github.io/claude-skills/product](https://dn-opensource.github.io/claude-skills/product/).
+All 11 skills pass the official validator, have trigger tests, and now show install steps in their own README. 162/162 tests pass locally and in CI on ubuntu 3.9 (24.04)/3.12/3.13, windows 3.12 and macos 3.9. Session 4 (2026-10-23) measured triggering in the owner's real environment: old personal copies of memory and schema-aware-db shadow the 1.9.0 plugins, and teammates-cc 1.1.0 is a stale install; a new read-only check finds both. A crowded eval (45 filler skills) fired 4/4, so crowding alone isn't why a skill can stay silent. Latest report: [`test-reports/2026-10-23-session-4.md`](test-reports/2026-10-23-session-4.md). Product page: [dn-opensource.github.io/claude-skills/product](https://dn-opensource.github.io/claude-skills/product/).
 
-## Professional review — 2026-10-22
+## Professional review — 2026-10-23
 | Area | Status | Evidence / reason |
 |------|--------|-------------------|
 | Secrets | fine | no tracked .env/key files; key-pattern scan of tracked files clean |
@@ -16,11 +16,13 @@ All 11 skills are built, pass the official `claude plugin validate`, and have tr
 | Errors & data loss | fine | hooks and launchers fail open; render_page writes atomically |
 | Accessibility | fine | site and product pages: no images without alt, labelled controls, focus styles |
 | Performance | fine | eager description cost 1191/1400 tokens, enforced in CI |
-| Docs & onboarding | fine | README install, update and trigger-test steps verified against the real CLI |
+| Docs & onboarding | fine | every skill README now has install + update steps (validator warning 10 → 0, D-16) |
 | Release & versioning | fine | all manifests in lockstep (checked by tests); GitHub release notes per version |
 | CI & tests | fine | was the one gap (nothing proved triggering); closed by D-14 trigger evals |
 | Observability | not applicable | no running service |
 | Licensing | fine | Apache-2.0 LICENSE at the root |
+| Duplicate skills | gap (owner's machine) | find_duplicate_skills.py: memory installed twice (old personal copy shadows the plugin), teammates-cc 1.1.0 stale; anthropic-skills:* not visible on disk — removal is the owner's call |
+| Plugin listing | gap | ICON_MISSING for all 11 plugins; icons are brand artwork the owner chooses (vetoed for automation) |
 | Platform support | fine | Linux, Windows and macOS all in the CI matrix |
 
 ## Feature map
