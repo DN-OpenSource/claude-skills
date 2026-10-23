@@ -44,4 +44,7 @@ def test_probe_negative_no_skill_call_is_none_and_no_file_no_run(capsys, tmp_pat
     (tmp_path / "p.txt").write_text("q|hello\n", encoding="utf-8")
     pt.main([str(tmp_path / "p.txt"), "--runs", "1"], runner=lambda *a: stream(INIT))
     assert "q: none 1/1" in capsys.readouterr().out
+    seen = []
+    pt.main([str(tmp_path / "p.txt"), "--runs", "1", "--", "--plugin-dir", str(tmp_path)], runner=lambda *a: seen.append(a[3]) or stream(INIT))
+    assert seen == [["--plugin-dir", str(tmp_path.resolve())]]
     assert pt.main([]) == 2
