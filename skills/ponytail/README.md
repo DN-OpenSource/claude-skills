@@ -2,6 +2,15 @@
 
 Sessions rarely *end*; they *stop*. What's lost is never the finished work — it's the loose strands: the uncommitted change, the stash with no message, the debug print left behind, the "I'll fix that later" that lives only in the conversation. A ponytail gathers loose strands and ties them into one tail; this skill does that for a work session.
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install ponytail@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install ponytail --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update ponytail@claude-skills`.
+
 ## What this does
 
 A deliberate closing move in three parts, ending with one report:

@@ -2,6 +2,15 @@
 
 The **DOX framework** — a high-performance `AGENTS.md` hierarchy where each `AGENTS.md` is a *binding work contract* for the subtree it governs. The skill makes the agent read the applicable chain of contracts before editing and refresh them after, so the project stays understandable from the nearest `AGENTS.md` plus every parent above it.
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install agents-dox@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install agents-dox --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update agents-dox@claude-skills`.
+
 ## What this does
 
 - **Read before editing** — walk from the repo root to each path you'll touch, reading every `AGENTS.md` along the way. The nearest doc is the local contract; parent docs carry repo-wide rules. When docs conflict, the closer one wins on local details, but no child may weaken DOX.

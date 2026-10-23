@@ -2,6 +2,15 @@
 
 A visionary product manager for your codebase. It tells you what the product is for, where it stands, and how every feature connects to that goal. Then, if you let it, it fixes and improves the product.
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install product-visionary@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install product-visionary --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update product-visionary@claude-skills`.
+
 ## What this does
 
 - **Goal:** works out what the product is for and who it serves. On the first run it asks you to confirm.

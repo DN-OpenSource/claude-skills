@@ -2,6 +2,15 @@
 
 Stop guessing database schemas. When Claude writes backend data code, the recurring failure isn't SQL syntax — it's acting on a **guessed** schema and a **local** view of the code: invented columns, broken joins, leaked connections, and a query updated in one file while three others go stale.
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install schema-aware-db@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install schema-aware-db --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update schema-aware-db@claude-skills`.
+
 ## What this does
 
 Enforces a four-phase discipline for any task that touches a database — SQL (PostgreSQL, MySQL, SQLite, …) or NoSQL (MongoDB, DynamoDB, Redis, …):

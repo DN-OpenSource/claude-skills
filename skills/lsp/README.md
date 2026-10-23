@@ -2,6 +2,15 @@
 
 Semantic code navigation for Claude Code via real language servers — because grep finds *text*, but a language server finds *the symbol*.
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install lsp@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install lsp --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update lsp@claude-skills`.
+
 ## What this does
 
 A bundled, stdlib-only Python client (`scripts/lsp.py`) drives a language server over JSON-RPC/stdio, one shot per invocation:

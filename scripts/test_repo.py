@@ -146,3 +146,9 @@ def test_product_page_negative_links_only_http_and_paths_masked():
     _, shell = _split(PAGE)
     assert "function safeUrl" in shell and "safeUrl(x.pr.url)" in shell  # no javascript:/file: PR links
     assert "function clean" in shell and "clean(r.video)" in shell        # no local paths in video cells
+
+
+def test_packaging_positive_every_skill_readme_shows_how_to_install_it():
+    missing = [s for s in SKILLS
+               if f"claude plugin install {s}@claude-skills" not in (ROOT / "skills" / s / "README.md").read_text(encoding="utf-8")]
+    assert missing == []

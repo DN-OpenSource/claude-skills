@@ -2,6 +2,15 @@
 
 Test the features you name (or whatever changed on the current branch) and get a pass/fail report built from real test runs.
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install test-report@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install test-report --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update test-report@claude-skills`.
+
 ## What this does
 
 For every feature, the skill writes **3 tests** in the project's own test framework:

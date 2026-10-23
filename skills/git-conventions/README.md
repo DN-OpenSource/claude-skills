@@ -2,6 +2,15 @@
 
 Make the commits, branches and pull requests Claude creates follow your rules, and hide Claude's name from them if you want.
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install git-conventions@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install git-conventions --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update git-conventions@claude-skills`.
+
 ## What this does
 
 - **One short interview** writes `.claude/git-conventions.md` (for the repo) or `~/.claude/git-conventions.md` (for you everywhere). It proposes what your recent commits already do.

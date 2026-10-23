@@ -2,6 +2,15 @@
 
 Durable, hierarchical memory files so context survives across sessions — for the codebase you're working in and for the user you're working with.
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install memory@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install memory --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update memory@claude-skills`.
+
 ## What this does
 
 The skill manages two kinds of long-lived context through one lifecycle — **bootstrap** (create from scratch), **read** (load before related work), **update** (keep in sync):

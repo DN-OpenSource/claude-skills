@@ -4,6 +4,15 @@ A disciplined workflow for changing code that already exists — without breakin
 
 It runs on one idea: **an edit isn't done when the diff looks right — it's done when the toolchain is green, it fits the codebase, and everything that depended on the old behavior has been updated.**
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install codebase-guardian@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install codebase-guardian --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update codebase-guardian@claude-skills`.
+
 ## What this does
 
 The skill runs a four-phase loop over any non-trivial edit to an existing project:
