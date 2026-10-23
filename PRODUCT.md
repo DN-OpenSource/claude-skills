@@ -5,7 +5,7 @@
 **Success looks like:** each skill triggers when relevant, works on its own (Linux, Windows, macOS; Python 3.9+), and costs little context — every description loads into every session (budget `scripts/check_token_budget.py`, 1400 tokens).
 
 ## Where we are
-All 11 skills pass the official validator, have trigger tests, and now show install steps in their own README. 162/162 tests pass locally and in CI on ubuntu 3.9 (24.04)/3.12/3.13, windows 3.12 and macos 3.9. Session 4 (2026-10-23) measured triggering in the owner's real environment: old personal copies of memory and schema-aware-db shadow the 1.9.0 plugins, and teammates-cc 1.1.0 is a stale install; a new read-only check finds both. A crowded eval (45 filler skills) fired 4/4, so crowding alone isn't why a skill can stay silent. Latest report: [`test-reports/2026-10-23-session-4.md`](test-reports/2026-10-23-session-4.md). Product page: [dn-opensource.github.io/claude-skills/product](https://dn-opensource.github.io/claude-skills/product/).
+All 11 skills pass the official validator and have trigger tests. 174/174 tests pass locally and in CI on ubuntu 3.9 (24.04)/3.12/3.13, windows 3.12 and macos 3.9. Session 5 (2026-10-23), after the owner's cleanup, measured triggering with a new repeatable real-environment probe (`scripts/probe_triggers.py`, seeded repo): memory bootstrap 3/3, teammates 3/3, and, after rewording schema-aware-db's description (D-20), save-order 3/3, fix-join 3/3, pasted-SQL fix 3/3 (was 0/3). "Remember I prefer X" goes to Claude Code's built-in memory by design (D-21). Only 3 of 11 skills have been probed in the real environment so far. Latest report: [`test-reports/2026-10-23-session-5.md`](test-reports/2026-10-23-session-5.md). Product page: [dn-opensource.github.io/claude-skills/product](https://dn-opensource.github.io/claude-skills/product/).
 
 ## Professional review — 2026-10-23
 | Area | Status | Evidence / reason |
@@ -15,13 +15,13 @@ All 11 skills pass the official validator, have trigger tests, and now show inst
 | Privacy & data | not applicable | the skills store no personal data |
 | Errors & data loss | fine | hooks and launchers fail open; render_page writes atomically |
 | Accessibility | fine | site and product pages: no images without alt, labelled controls, focus styles |
-| Performance | fine | eager description cost 1191/1400 tokens, enforced in CI |
+| Performance | fine | eager description cost 1196/1400 tokens, enforced in CI |
 | Docs & onboarding | fine | every skill README now has install + update steps (validator warning 10 → 0, D-16) |
 | Release & versioning | fine | all manifests in lockstep (checked by tests); GitHub release notes per version |
-| CI & tests | fine | was the one gap (nothing proved triggering); closed by D-14 trigger evals |
+| CI & tests | fine | sandbox trigger evals (D-14) plus a real-environment probe (D-19); real-env coverage is 3 of 11 skills |
 | Observability | not applicable | no running service |
 | Licensing | fine | Apache-2.0 LICENSE at the root |
-| Duplicate skills | gap (owner's machine) | find_duplicate_skills.py: memory installed twice (old personal copy shadows the plugin), teammates-cc 1.1.0 stale; anthropic-skills:* not visible on disk — removal is the owner's call |
+| Duplicate skills | gap (owner's claude.ai) | on-disk duplicates removed by the owner (check: none); the probe still lists claude.ai's older anthropic-skills:memory and :schema-aware-db next to the plugins — README › Use on claude.ai has the replace steps (D-22) |
 | Plugin listing | gap | ICON_MISSING for all 11 plugins; icons are brand artwork the owner chooses (vetoed for automation) |
 | Platform support | fine | Linux, Windows and macOS all in the CI matrix |
 

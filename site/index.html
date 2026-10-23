@@ -286,7 +286,7 @@ const used = SKILLS.reduce((a, s) => a + s.tok, 0);
 const cats = ["All", ...new Set(SKILLS.map(s => s.c))];
 const stats = [
   ["Skills", String(SKILLS.length), "", (cats.length - 1) + " categories"],
-  ["Tests passing", "165/165", "", "All green, plus validation and trigger tests"],
+  ["Tests passing", "174/174", "", "All green, plus validation and trigger tests"],
   ["CI on main", "Passing", "ci", "5 OS/Python jobs + validate"],
   ["Context budget", used.toLocaleString("en-US"), " / " + BUDGET.toLocaleString("en-US"), ""],
 ];
