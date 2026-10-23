@@ -50,6 +50,18 @@ One skill at one run per case costs about $0.20. Drop `--runs 1` (default 3) and
 
 **Real environment:** `python scripts/probe_triggers.py probes/prompts.txt --runs 3 --seed probes/seed-db` runs each prompt through `claude -p` with *your* setup (every plugin, personal and claude.ai skill, hook) in a throwaway git repo seeded with a small SQLite shop, then prints which skill fired and which skills are loaded more than once. Spends your credentials (about $3 for the 18 runs); never in CI. First result (2026-10-23): memory bootstrap 3/3, save-order 3/3, fix-join 2/3, inline-SQL fix 0/3, "remember I prefer pnpm" 0/3 (Claude Code's built-in memory takes it). After rewording schema-aware-db's description to name pasted queries and wrong or duplicate rows (D-20), measured with `-- --plugin-dir skills/schema-aware-db`: fix-join 3/3, inline-SQL fix 3/3.
 
+## Use on claude.ai
+
+`memory` and `schema-aware-db` also work as claude.ai skills; the hook- and CLI-based ones (decision-maker, product-visionary, git-conventions, lsp) don't. Skills you upload there also load in Claude Code as `anthropic-skills:<name>`, next to the plugin, so keep only the copies you need and keep them current.
+
+1. **Delete the old copy first** (Settings › Capabilities). Whether an upload with the same name replaces it or adds a second copy isn't documented.
+2. **Zip the folder** so the zip's root is the skill folder, without evals or the plugin manifest. From `skills/`:
+   - Windows (PowerShell or cmd, not Git Bash) and macOS: `tar -a -cf memory.zip --exclude=evals --exclude=.claude-plugin memory`
+   - Linux: `zip -r memory.zip memory -x 'memory/evals/*' 'memory/.claude-plugin/*'`
+3. **Upload** it in Settings › Capabilities and turn it on.
+
+claude.ai's docs cap descriptions at 200 characters; ours are longer (memory 656, schema-aware-db 565), and copies with long descriptions have been accepted before. If an upload is rejected, shorten the description in your uploaded copy only: the full wording is what makes the skill fire in Claude Code. See [Use custom skills](https://support.claude.com/en/articles/12512198-use-custom-skills).
+
 ## How the skills work together
 
 Each skill is **self-contained** — install any one on its own and it works with no dependency on the others. They're also designed to **compose**:
