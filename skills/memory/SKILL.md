@@ -112,6 +112,12 @@ Steps:
 
 Triggered by: the user saying "remember that X," "I prefer Y," "I'm working on Z," "forget about W," or anything else that's clearly a durable fact rather than a passing comment.
 
+**One owner per host.** If the host already keeps its own memory of user facts (Claude Code's
+auto-memory, for example), leave personal preferences to it and write `USER.md` only when the user
+names it; where the host has none (claude.ai skills, other agents), `USER.md` is the store. A
+"forget W" removes the fact from both, if both hold it. A personal fact never triggers
+auto-bootstrap and never goes into a repo `MEMORY.md`, which may be committed.
+
 Steps:
 
 1. Decide which section the fact belongs in (Identity, Preferences, Current Projects, Notes).

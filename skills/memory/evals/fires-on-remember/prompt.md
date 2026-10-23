@@ -1,5 +1,5 @@
 ---
-description: memory should trigger
+description: memory should trigger on a host without built-in memory (in real Claude Code, built-in auto-memory takes this prompt; see the README)
 tags: [trigger, positive]
 runs: 3
 max_turns: 3

@@ -26,6 +26,8 @@ Whenever the user mentions memory, context files, `MEMORY.md`, project context, 
 
 It errs toward triggering — under-triggering (losing context) is the worse failure mode.
 
+**Who keeps personal facts.** Works in Claude Code and as a claude.ai skill. In Claude Code, "remember that I prefer X" goes to Claude Code's own built-in memory, so this skill usually stays quiet for it and `~/.memory/USER.md` is used only when you name it. On hosts without their own memory (claude.ai skills, other agents), the skill keeps those facts in `USER.md`. "Forget X" clears both. Repo `MEMORY.md` files never hold personal facts.
+
 ## Scope and companions
 
 This skill works standalone and owns `MEMORY.md` (codebase facts) and `~/.memory/USER.md` (user facts) only. It composes with the rest of the repo:
