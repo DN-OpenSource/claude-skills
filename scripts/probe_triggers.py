@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Real-environment trigger probe: which skill fires for each prompt, with YOUR setup loaded?
 
-    python scripts/probe_triggers.py probes/prompts.txt [--runs 3] [--seed probes/seed-db] [--max-turns 8]
+    python scripts/probe_triggers.py probes/prompts.txt [--runs 3] [--seed probes/seed-db] [--max-turns 8] [-- claude args]
 
 Sandboxed evals load only the plugin under test. This runs `claude -p` with your real config
 (every installed plugin, personal skill, claude.ai skill and hook) in a throwaway git repo, copied
 from --seed if given, and prints which skill each prompt fired, plus every loaded skill whose name
 appears more than once (e.g. a plugin and an anthropic-skills:* copy). Prompts file: one
-`id|prompt` per line. Calls the model with your credentials (about $0.05-0.20 per run); never in CI.
+`id|prompt` per line. Args after `--` go to `claude` (e.g. `-- --plugin-dir skills/memory` to
+probe an unreleased change; relative paths are resolved here). Calls the model with your credentials (about $0.05-0.20 per run); never in CI.
 Nothing outside the temp repo is touched.
 """
 import json
@@ -56,15 +57,18 @@ def workspace(seed):
     return work
 
 
-def run_one(prompt, work, max_turns):
+def run_one(prompt, work, max_turns, extra=()):
     cmd = ["claude", "-p", prompt, "--output-format", "stream-json", "--verbose",
-           "--max-turns", str(max_turns), "--allowedTools", *TOOLS]
+           "--max-turns", str(max_turns), "--allowedTools", *TOOLS, *extra]
     r = subprocess.run(cmd, cwd=work, stdin=subprocess.DEVNULL, capture_output=True, text=True,
                        encoding="utf-8", errors="replace", shell=sys.platform == "win32")
     return r.stdout
 
 
 def main(argv, runner=run_one):
+    extra = []
+    if "--" in argv:
+        i = argv.index("--"); argv, extra = argv[:i], [str(Path(a).resolve()) if Path(a).exists() else a for a in argv[i + 1:]]
     def opt(flag, default):
         return argv[argv.index(flag) + 1] if flag in argv else default
     files = [a for i, a in enumerate(argv) if not a.startswith("--") and (i == 0 or not argv[i - 1].startswith("--"))]
@@ -77,7 +81,7 @@ def main(argv, runner=run_one):
         for cid, prompt in cases:
             fired = Counter()
             for _ in range(runs):
-                skill, loaded, cost = parse(runner(prompt.strip(), work, turns))
+                skill, loaded, cost = parse(runner(prompt.strip(), work, turns, extra))
                 fired[skill or "none"] += 1
                 total += cost
                 dupes.update(duplicates(loaded))
