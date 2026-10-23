@@ -90,7 +90,7 @@ Shown to the user at the end; also appended to `docs/product/decisions.md` as-is
 
 ```markdown
 ### End-of-session report — YYYY-MM-DD
-**Mode:** <1-4> · **Batches:** <n> · **Stopped because:** <single batch (modes 1-2) | no PR/merge available | nothing left | unproven item | veto | 5 batches>
+**Mode:** <1-4> · **Batches:** <n> · **Stopped because:** <single batch (modes 1-2) | no PR/merge available | nothing left | veto | 5 batches> · **Today's picks:** <done>/<picked> done, <n> awaiting merge, <n> failed
 
 | # | Item | Kind | PR | Tests | Decision |
 |---|------|------|----|-------|----------|
