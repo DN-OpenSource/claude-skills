@@ -2,6 +2,15 @@
 
 A flat peer-agent protocol for Claude Code. When a task can be split into parallel parts, this skill runs a small team of subagents that share a JSON manifest, claim their own work, message each other, and merge outputs — without anyone playing orchestrator.
 
+## Install
+
+```bash
+claude plugin marketplace add DN-OpenSource/claude-skills
+claude plugin install teammates@claude-skills
+```
+
+Or in one step from a Claude Code session (2.1.275+): `/plugin install teammates --marketplace DN-OpenSource/claude-skills`. Restart Claude Code (or run `/reload-plugins`) to load it. To update later: `claude plugin marketplace update claude-skills`, then `claude plugin update teammates@claude-skills`.
+
 ## What this does
 
 Instead of one Claude handling a multi-part task sequentially (or one Claude orchestrating subagents top-down), teammates sets up a flat team where:
