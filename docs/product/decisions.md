@@ -236,3 +236,51 @@
 **Left open:** none. **Owner actions:** remove shadowing duplicates (commands from find_duplicate_skills.py); choose plugin icon artwork.
 **Next on the roadmap:** 1. re-measure real triggering after cleanup · 2. health panel · 3. opt-in commit check
 
+### D-19 — 2026-10-23 — Repeatable real-environment trigger probe (session 5, batch 1)
+- **Status:** done
+- **Panel:** 3 — rounds: 2 — C33 3/3 in both rounds
+- **Pick:** C33 — `scripts/probe_triggers.py` + `probes/prompts.txt` + `probes/seed-db/`
+- **Winning argument:** Engineer/Skeptic — hand-rolled empty-repo probes couldn't separate wording, missing context and duplicates; a seeded probe that lists duplicate loaded skills can.
+- **Strongest dissent:** none against building it; each run spends the owner's credentials, never in CI (mode 4: logged, not asked).
+- **PR:** #35
+
+### D-20 — 2026-10-23 — Query-fix prompts miss schema-aware-db (batch 1)
+- **Status:** done
+- **Panel:** 3 — rounds: 2 — Round 1 C31 2/3 (not clear); Round 2 C31a 3/3
+- **Pick:** C31a — measure in a seeded repo first, reword only if it still misses
+- **Winning argument:** Skeptic — the empty repo and a duplicate copy could each explain the miss; measure first.
+- **Strongest dissent:** User advocate — the pasted-SQL miss isn't explained by an empty repo; fix it this session. Both held: seeded fix-join 2/3, pasted 0/3; reworded (+5 tokens) → 3/3 and 3/3.
+- **Ruling:** the sandbox gates Bash and seeding behind opt-in flags, so the probe covers the Bash-first path; the sandbox gained a pasted-query case.
+- **PR:** #36
+
+### D-21 — 2026-10-23 — memory vs Claude Code's built-in memory (batch 1)
+- **Status:** done
+- **Panel:** 9 — rounds: 2 — Round 1 A 4 / B 4 / C 1; Round 2 B 7 / A 1 / C 1
+- **Pick:** B — keep the trigger; one owner for personal facts per host; README names Claude Code and claude.ai
+- **Winning argument:** Architecture/Engineer — a copy of this skill runs on claude.ai, which has no auto-memory directory; a capability-based rule keeps one description everywhere.
+- **Strongest dissent:** Skeptic (A) — USER.md on claude.ai may not persist between conversations; unverified, now an open question.
+- **PR:** #37
+
+### D-22 — 2026-10-23 — Keep the claude.ai copies current (batch 2)
+- **Status:** done
+- **Panel:** 3 — rounds: 2 — Round 1 C34 2/3, STOP 1; Round 2 C34n 2/3, C34s 1
+- **Pick:** C34n — README "Use on claude.ai" for memory and schema-aware-db; no script
+- **Winning argument:** Engineer/Skeptic — the real risk is claude.ai's documented 200-character description limit, which a zip script can't fix; two uploads need no tool.
+- **Strongest dissent:** User advocate (C34s) — hand commands differ per OS; answered with one tested command per OS.
+- **PR:** #38
+
+### End-of-session report — 2026-10-23 (session 5)
+**Mode:** 4 · **Batches:** 3 · **Stopped because:** nothing left (batch 3: STOP 2/3; C30 1/3, C25/C26 0/3) · **Today's picks:** 4/4 done, 0 awaiting merge, 0 failed
+
+| # | Item | Kind | PR | Tests | Decision |
+|---|------|------|----|-------|----------|
+| 1 | Real-environment trigger probe | feature | #35 | ✅ 168/168; real run 18 probes | D-19 |
+| 2 | schema-aware-db fires on pasted and broken queries | fix | #36 | ✅ eval 4/4; real env 3/3 ×3 | D-20 |
+| 3 | memory: one owner for personal facts per host | improvement | #37 | ✅ 171/171; eval 3/3; real env bootstrap 3/3 | D-21 |
+| 4 | README steps to replace the claude.ai copies | docs | #38 | ✅ 174/174 | D-22 |
+
+**Pre-existing failures:** none.
+**Logged instead of asked** (mode 4): about $9 of eval and probe runs on the owner's credentials; panel members asked that each paid probe run be approved and that disabling claude.ai copies be the owner's call (respected: nothing changed on claude.ai).
+**Left open:** none. **Owner actions:** release 1.12.0; replace the claude.ai copies; verify USER.md persistence on claude.ai.
+**Next on the roadmap:** 1. probe the other 8 skills (C30) · 2. health panel · 3. opt-in commit check
+

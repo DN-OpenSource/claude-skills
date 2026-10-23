@@ -7,7 +7,7 @@
     "label": "All skills",
     "href": "../"
   },
-  "lastUpdated": "23 Oct 2026 (session 4)",
+  "lastUpdated": "23 Oct 2026 (session 5)",
   "goal": {
     "text": "Standalone, composable Claude Code skills you install once to make Claude better at recurring work.",
     "confirmed": true,
@@ -32,9 +32,9 @@
     }
   ],
   "health": {
-    "score": 90,
+    "score": 92,
     "label": "On track",
-    "note": "All four criteria met in the repo. On the owner's machine, old duplicate copies shadow two skills; the cleanup is the owner's call."
+    "note": "All four criteria met in the repo; triggering measured for real on 3 of 11 skills. Older claude.ai copies still load next to two plugins; replacing them is the owner's call."
   },
   "stats": [
     {
@@ -45,9 +45,9 @@
     },
     {
       "label": "Tests passing",
-      "value": 162,
-      "of": 162,
-      "note": "plus validation, trigger and crowded evals"
+      "value": 174,
+      "of": 174,
+      "note": "plus validation, trigger evals and a real-environment probe"
     },
     {
       "label": "CI",
@@ -56,66 +56,66 @@
     },
     {
       "label": "Context budget",
-      "value": 1191,
+      "value": 1196,
       "of": 1400,
-      "note": "tokens of skill descriptions, down 114 this session"
+      "note": "tokens of skill descriptions, +5 this session"
     }
   ],
   "sinceLastSession": [
     {
+      "kind": "added",
+      "text": "A repeatable real-environment trigger probe that also lists skills loaded twice (D-19)."
+    },
+    {
       "kind": "fixed",
-      "text": "Every skill README shows how to install and update it (D-16)."
-    },
-    {
-      "kind": "added",
-      "text": "find_duplicate_skills.py finds skills installed twice and stale plugins, and prints the fix; it never removes anything (D-17)."
-    },
-    {
-      "kind": "added",
-      "text": "Crowded trigger evals with 45 filler skills: 4/4 fired, so crowding alone isn't the cause (D-18)."
+      "text": "schema-aware-db now fires on pasted and broken queries: 0/3 → 3/3 on the owner's machine (D-20)."
     },
     {
       "kind": "changed",
-      "text": "Measured in the real environment: old personal copies of memory and schema-aware-db shadow the plugins."
+      "text": "memory leaves personal facts to the host's own memory where it has one (D-21)."
+    },
+    {
+      "kind": "added",
+      "text": "README steps to replace the older claude.ai copies (D-22)."
     }
   ],
   "tests": {
-    "total": 162,
-    "passing": 162,
-    "summary": "162 of 162 passing. Crowded evals 4/4. Showing this session's checks.",
+    "total": 174,
+    "passing": 174,
+    "summary": "174 of 174 passing. Real-environment probe: schema-aware-db 3/3 on every prompt. Showing this session's checks.",
     "rows": [
       {
-        "feature": "packaging",
+        "feature": "trigger probe",
         "polarity": "positive",
-        "name": "every skill README shows how to install it",
+        "name": "reports the fired skill and duplicate copies",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "duplicate check",
-        "polarity": "positive",
-        "name": "shadowing personal copy reported with the fix",
-        "status": "pass",
-        "video": "—"
-      },
-      {
-        "feature": "duplicate check",
+        "feature": "trigger probe",
         "polarity": "negative",
-        "name": "clean setup reports nothing",
+        "name": "no Skill call counts as none",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "crowded evals",
+        "feature": "schema-aware-db",
         "polarity": "positive",
-        "name": "workspace keeps plugins and cases separate",
+        "name": "fires on a pasted duplicate-row query (real env 3/3)",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "crowded evals",
+        "feature": "memory owner",
         "polarity": "negative",
-        "name": "no skill names, no run",
+        "name": "a personal fact never lands in a repo MEMORY.md",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "claude.ai upload",
+        "polarity": "positive",
+        "name": "delete first, zip with the folder as root",
         "status": "pass",
         "video": "—"
       }
@@ -248,8 +248,8 @@
         "name": "Build",
         "items": [
           {
-            "title": "Re-measure real triggering after cleanup",
-            "reason": "The two prompts that fired nothing on the owner's machine; crowding is ruled out.",
+            "title": "Probe the other 8 skills for real",
+            "reason": "Only memory, schema-aware-db and teammates have been measured in the real environment.",
             "weight": 2
           },
           {
@@ -291,8 +291,16 @@
     ],
     "openQuestions": [
       {
-        "q": "Remove the shadowing duplicate skills?",
-        "context": "find_duplicate_skills.py prints the commands: old ~/.claude/skills/memory and schema-aware-db, stale teammates-cc."
+        "q": "Release 1.12.0?",
+        "context": "Installs don't get D-20 or D-21 until a release."
+      },
+      {
+        "q": "Replace the older claude.ai copies?",
+        "context": "README › Use on claude.ai has the steps for memory and schema-aware-db."
+      },
+      {
+        "q": "Does USER.md persist on claude.ai?",
+        "context": "Unverified; one test upload would settle it."
       },
       {
         "q": "What artwork for the plugin icons?",
@@ -303,9 +311,115 @@
   "session": {
     "mode": 4,
     "batches": 3,
-    "stopReason": "Nothing left worth doing; the remaining candidates were picked by 0 of 3 panel members."
+    "stopReason": "Nothing left worth doing; every pick decided today is merged (4 of 4)."
   },
   "decisions": [
+    {
+      "id": "D-22",
+      "title": "README steps to replace the claude.ai copies",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 2,
+      "votes": {
+        "for": 2,
+        "against": 1,
+        "abstain": 0
+      },
+      "winning": "The real risk is claude.ai's 200-character description limit, which a script can't fix; two uploads need no tool.",
+      "dissent": "Hand commands differ per OS; answered with one tested command per OS.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#38",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/38",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-21",
+      "title": "memory: one owner for personal facts per host",
+      "status": "accepted",
+      "panel": 9,
+      "rounds": 2,
+      "votes": {
+        "for": 7,
+        "against": 2,
+        "abstain": 0
+      },
+      "winning": "A copy runs on claude.ai, which has no auto-memory directory; a capability-based rule keeps one description everywhere.",
+      "dissent": "USER.md on claude.ai may not persist between conversations; unverified.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic",
+        "Quality",
+        "Business",
+        "Security",
+        "Simplicity",
+        "Architecture",
+        "Newcomer"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#37",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/37",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-20",
+      "title": "schema-aware-db fires on pasted and broken queries",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 2,
+      "votes": {
+        "for": 3,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "Measure in a seeded repo first; reword only if it still misses. It did: pasted SQL 0/3 → 3/3.",
+      "dissent": "The pasted-SQL miss isn't explained by an empty repo; fix it this session.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#36",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/36",
+        "merged": true
+      }
+    },
+    {
+      "id": "D-19",
+      "title": "Real-environment trigger probe",
+      "status": "accepted",
+      "panel": 3,
+      "rounds": 2,
+      "votes": {
+        "for": 3,
+        "against": 0,
+        "abstain": 0
+      },
+      "winning": "Hand-rolled empty-repo probes couldn't separate wording, missing context and duplicates.",
+      "dissent": "Each run spends the owner's credentials; never in CI.",
+      "viewpoints": [
+        "User advocate",
+        "Engineer",
+        "Skeptic"
+      ],
+      "veto": null,
+      "pr": {
+        "label": "#35",
+        "url": "https://github.com/DN-OpenSource/claude-skills/pull/35",
+        "merged": true
+      }
+    },
     {
       "id": "D-18",
       "title": "Crowded trigger tests with 45 filler skills",
