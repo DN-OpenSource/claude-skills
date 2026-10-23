@@ -26,6 +26,16 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 | [product-visionary](skills/product-visionary/SKILL.md) | 1.9.0 | Claude Code | Your product's visionary manager — works out the goal, where the product stands, and how each feature connects to and contributes to it; finds real issues with `test-report`; a panel of 3, 6, or 9 agents debates and decides; then acts according to the mode you pick at session start: **report only**, **fix on a branch**, **full auto**, or **complete auto** (no prompts). See the [README](skills/product-visionary/README.md). |
 | [git-conventions](skills/git-conventions/SKILL.md) | 1.9.0 | Claude Code | Make Claude's commits, branches and PRs follow your rules: commit message pattern, branch naming, PR template, protected branches. Hide Claude's name through the native `attribution` setting. One short interview writes `.claude/git-conventions.md`; every settings change is shown and asked first, and history is never rewritten. See the [README](skills/git-conventions/README.md). |
 
+## Duplicate or stale skills
+
+If the same skill is installed twice (say an old personal copy in `~/.claude/skills` and the plugin), Claude may load the old one. Plugins that were renamed (like `teammates-cc`, now `teammates`) stay installed without updates. To find both, run the read-only check that ships with product-visionary:
+
+```bash
+python3 ~/.claude/plugins/cache/claude-skills/product-visionary/<version>/scripts/find_duplicate_skills.py
+```
+
+It lists each collision and prints the command that removes the extra copy; it never removes anything itself. Skills provisioned from claude.ai (`anthropic-skills:*`) aren't on disk, so compare those names by hand.
+
 ## Trigger tests
 
 Every skill ships `evals/` for Claude Code's built-in `claude plugin eval`: two prompts that must make the skill fire and one that must not. They call the model with your own credentials, so they run on your machine, not in CI:
