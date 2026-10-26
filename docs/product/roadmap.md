@@ -4,7 +4,7 @@
 _(none open — all known failures fixed 2026-10-22)_
 
 ## Build
-1. **Probe the other 8 skills in the real environment (C30)** — add one positive and one near-miss prompt per skill to `probes/prompts.txt` and run the D-19 probe; only memory, schema-aware-db and teammates have been measured (proposed by the Skeptic, 1/3 in session 5).
+1. **Run the probe sweep and the step checks (C30)** — built in session 6 (D-25, D-26), not yet run: `probes/prompts.txt` (25 prompts) and `probes/prompts-dox.txt` on the owner's machine, then `claude plugin eval skills/<s> --tag step …` in WSL2; reword any skill that misses, at most twice, rerunning at 5 runs. Originally: **Probe the other 8 skills in the real environment** — add one positive and one near-miss prompt per skill to `probes/prompts.txt` and run the D-19 probe; only memory, schema-aware-db and teammates have been measured (proposed by the Skeptic, 1/3 in session 5).
 2. **Health panel on the product page (C25)** — once the professional review has run in a few projects (0/3 three times).
 3. **git-conventions opt-in commit check (C26)** — only if commits drift (0/3 three times).
 

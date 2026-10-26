@@ -1,7 +1,7 @@
 # Skill Reliability: Triggers, Then Steps
 
 *   **Author:** nikamdhiraj
-*   **Status:** Proposed
+*   **Status:** Approved — Stages 1–4 built 2026-10-26; probe sweep and step checks not yet run
 *   **Date:** 2026-10-26
 
 --------------------------------------------------------------------------------
@@ -532,11 +532,13 @@ four pull requests, one per stage, each squash-merged. Commit subjects follow
 
 #### 15. `probes/prompts-dox.txt` and `probes/seed-dox/` (Create)
 
-*   **Proposed Changes**: a seed copied from `probes/seed-db` plus a root
-    `AGENTS.md` (a short DOX contract), and a prompts file with
-    `dox-edit|agents-dox|Rename the function save_order to create_order in
-    app.py.` Run with `--seed probes/seed-dox`. A second seed is used because
-    the probe uses one workspace per invocation.
+*   **Proposed Changes**: `probes/seed-dox/` holds only a root `AGENTS.md`
+    (a short DOX contract); `--seed` takes a comma list and layers seeds in
+    order, so `--seed probes/seed-db,probes/seed-dox` adds it to the shop
+    without duplicating files. The prompts file has
+    `agents-dox-edit|agents-dox|Make slugify in utils.py also strip leading
+    and trailing dashes.` (an edit away from the database code, so
+    schema-aware-db has no claim on it).
 
 #### 16. `probes/seed-db/` (Modify)
 
@@ -624,7 +626,7 @@ four pull requests, one per stage, each squash-merged. Commit subjects follow
 
 *   **Proposed Changes**: a "Step checks" subsection with the WSL2 command:
     `claude plugin eval skills/<s> --tag step --ablation with-without
-    --allow-tools Bash,Edit,Write --scaffold --runs 3 --max-cost-usd 5
+    --allow-tools Bash Write Edit --scaffold --runs 3 --max-cost-usd 5
     --no-publish`.
 
 ### Stage 4 — Record

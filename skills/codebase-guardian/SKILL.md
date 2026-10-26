@@ -13,7 +13,7 @@ This skill does not replace a language server. It tells you to *run the real one
 
 ## When this applies
 
-Use it for any meaningful edit to an existing project. Skip it for throwaway scripts, brand-new files in an empty repo, or one-line answers where there's nothing to break.
+Use it for any edit to a file an existing project already tracks, however small: a one-line change can still break a caller. Skip it only for throwaway scripts, brand-new files in an empty repo, or answers that change no file. Unsure whether a change is "small enough" to skip? It isn't.
 
 This skill changes the *real* codebase: it edits actual files, runs the project's real migrations/codegen/formatters, and leaves the repository in a working, applied state — not a description of changes to make later. "Done" means the change is on disk and the toolchain is green.
 

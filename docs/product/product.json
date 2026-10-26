@@ -45,8 +45,8 @@
     },
     {
       "label": "Tests passing",
-      "value": 174,
-      "of": 174,
+      "value": 179,
+      "of": 179,
       "note": "plus validation, trigger evals and a real-environment probe"
     },
     {
@@ -56,66 +56,77 @@
     },
     {
       "label": "Context budget",
-      "value": 1196,
+      "value": 1235,
       "of": 1400,
-      "note": "tokens of skill descriptions, +5 this session"
+      "note": "tokens of skill descriptions, +39 this session (edit-ownership clauses)"
     }
   ],
   "sinceLastSession": [
     {
-      "kind": "added",
-      "text": "A repeatable real-environment trigger probe that also lists skills loaded twice (D-19)."
-    },
-    {
-      "kind": "fixed",
-      "text": "schema-aware-db now fires on pasted and broken queries: 0/3 → 3/3 on the owner's machine (D-20)."
+      "kind": "changed",
+      "text": "ponytail is now wrap-up: it follows your git rules, never commits to main, and keeps its hand-off beyond the chat (D-23)."
     },
     {
       "kind": "changed",
-      "text": "memory leaves personal facts to the host's own memory where it has one (D-21)."
+      "text": "One owner per ordinary edit: agents-dox in repos with AGENTS.md, codebase-guardian elsewhere (D-24)."
     },
     {
       "kind": "added",
-      "text": "README steps to replace the older claude.ai copies (D-22)."
+      "text": "The probe gives each prompt PASS or FAIL, stops on a plugin name clash, and covers all 11 skills with a positive and a near-miss prompt (D-25)."
+    },
+    {
+      "kind": "added",
+      "text": "Step checks for every skill: evals that grade what Claude did after loading it, not only that it loaded (D-26)."
+    },
+    {
+      "kind": "fixed",
+      "text": "Five test files that CI never ran now run there."
     }
   ],
   "tests": {
-    "total": 174,
-    "passing": 174,
-    "summary": "174 of 174 passing. Real-environment probe: schema-aware-db 3/3 on every prompt. Showing this session's checks.",
+    "total": 179,
+    "passing": 179,
+    "summary": "179 of 179 passing. The 25-prompt probe sweep and the step checks are built but not yet run. Showing this session's checks.",
     "rows": [
       {
         "feature": "trigger probe",
         "polarity": "positive",
-        "name": "reports the fired skill and duplicate copies",
+        "name": "PASS verdicts and --only filtering",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "trigger probe",
+        "polarity": "positive",
+        "name": "preflight reports ok, missing, disabled and --plugin-dir",
+        "status": "pass",
+        "video": "—"
+      },
+      {
+        "feature": "trigger probe",
+        "polarity": "positive",
+        "name": "every skill has a positive and a near-miss prompt",
         "status": "pass",
         "video": "—"
       },
       {
         "feature": "trigger probe",
         "polarity": "negative",
-        "name": "no Skill call counts as none",
+        "name": "a miss or a name clash exits 1 before or after the runs",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "schema-aware-db",
+        "feature": "eval structure",
         "polarity": "positive",
-        "name": "fires on a pasted duplicate-row query (real env 3/3)",
+        "name": "every skill has a near-miss case",
         "status": "pass",
         "video": "—"
       },
       {
-        "feature": "memory owner",
-        "polarity": "negative",
-        "name": "a personal fact never lands in a repo MEMORY.md",
-        "status": "pass",
-        "video": "—"
-      },
-      {
-        "feature": "claude.ai upload",
+        "feature": "eval structure",
         "polarity": "positive",
-        "name": "delete first, zip with the folder as root",
+        "name": "step cases grade actions and name an existing fixture",
         "status": "pass",
         "video": "—"
       }
@@ -231,10 +242,11 @@
       "name": "wrap-up",
       "status": "done",
       "dependsOn": [
-        "memory"
+        "memory",
+        "git-conventions"
       ],
       "usedBy": [],
-      "servesGoal": "Clean end-of-session handoff.",
+      "servesGoal": "Clean end-of-session handoff that follows your git rules.",
       "flag": null
     }
   ],
