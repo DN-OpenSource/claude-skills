@@ -41,10 +41,18 @@ It lists each collision and prints the command that removes the extra copy; it n
 Every skill ships `evals/` for Claude Code's built-in `claude plugin eval`: two prompts that must make the skill fire, one off-topic prompt that must not, and one near-miss (`quiet-near-*`: a request on the same topic that the skill should still leave alone, such as "explain how git rebase differs from merge" for git-conventions). They call the model with your own credentials, so they run on your machine, not in CI:
 
 ```bash
-claude plugin eval skills/git-conventions --runs 1 --ablation none --no-publish --max-cost-usd 2
+claude plugin eval skills/git-conventions --tag trigger --runs 1 --ablation none --no-publish --max-cost-usd 2
 ```
 
 One skill at one run per case costs about $0.20. Drop `--runs 1` (default 3) and `--ablation none` (adds a no-plugin baseline) for a fuller measurement. Run every skill before changing a description, so a shorter description can't stop a skill firing unnoticed. Structure is checked in CI by `scripts/test_trigger_evals.py`.
+
+**Step checks:** firing isn't the whole job. Each skill also has a `does-*` case that checks the step its output depends on, from the tool calls Claude actually made: schema-aware-db reads `schema.sql` before editing the query, codebase-guardian runs the tests before and after its edit, wrap-up never commits to `main`, and so on. Each case builds a small project with its `fixture.sh`. These cases need Claude to run shell commands, which the eval only allows inside its OS sandbox, and native Windows has none, so run them on Linux, macOS or WSL2:
+
+```bash
+claude plugin eval skills/wrap-up --tag step --allow-tools Bash Write Edit --scaffold --runs 3 --no-publish --max-cost-usd 5
+```
+
+The default `with-without` ablation also runs every case without the plugin; the delta shows whether the skill caused the step or Claude would have done it anyway.
 
 **Crowded:** `python scripts/run_crowded_evals.py memory schema-aware-db -- --runs 1 --max-cost-usd 2` re-runs a skill's trigger prompts with 45 filler skills loaded (`evals-crowded/`), because a sandboxed eval sees only the plugin under test. First result (2026-10-23): 4/4 fired, so crowding alone isn't why a skill can stay silent in a busy setup; check for shadowing copies with *Duplicate or stale skills* above.
 
