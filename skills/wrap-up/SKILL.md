@@ -7,9 +7,11 @@ description: Wrap up a work session so nothing is left dangling. Use when the us
 
 Gather every unfinished strand of a work session, tie each one off, and leave a single tail the next session can pick up.
 
-## Progress (shown to the user when the skill-checklist mod is installed)
+## Progress and panel (shown to the user when the skill-checklist mod is installed)
 
 If a `skill_progress` tool is available, call it as you start: `skill: "wrap-up"`, `steps: ["Sweep", "Sort", "Tie off", "Tail"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
+**Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. After Sweep, before Tie off, send `Loose strands`: a row per strand with your proposed fate as its note and buttons `Tie off`, `Hand off`, `Discard` (send `<fate>: <strand>`), plus a section button `Go with these` (send `Go with your proposed fates`). When the person is there, wait for their answer before acting; then mark each row done as you tie it off.
 
 ## Why this exists
 

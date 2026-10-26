@@ -5,9 +5,11 @@ description: 'Use WHENEVER writing, fixing, or reviewing a database query or the
 
 # Schema-Aware Database Work
 
-## Progress (shown to the user when the skill-checklist mod is installed)
+## Progress and panel (shown to the user when the skill-checklist mod is installed)
 
 If a `skill_progress` tool is available, call it as you start: `skill: "schema-aware-db"`, `steps: ["Discover schema", "Map usage", "Write the change", "Trace the ripple"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
+**Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. Send `Schema` with a row per table you read (note: where from, e.g. `schema.sql`, `\d orders`), `Usage` with a row per site that touches it (mark done once reconciled), and, when a migration is needed, `Migration` with one row (mark todo until written) and a `fill` button `Show SQL` (text: `Show me the migration SQL`).
 
 ## Why this exists
 

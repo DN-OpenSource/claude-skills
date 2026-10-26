@@ -9,9 +9,11 @@ DOX is a high-performance AGENTS.md hierarchy: a tree of `AGENTS.md` files that 
 
 Follow DOX instructions across any edits.
 
-## Progress (shown to the user when the skill-checklist mod is installed)
+## Progress and panel (shown to the user when the skill-checklist mod is installed)
 
 If a `skill_progress` tool is available, call it as you start: `skill: "agents-dox"`, `steps: ["Read contract chain", "Edit", "DOX pass", "Closeout"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
+**Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. Send `Contracts` with a row per AGENTS.md in the chain, root first (mark done once read), and after the edit, `DOX pass` with a row per contract updated or checked (note: what changed).
 
 ## Core Contract
 

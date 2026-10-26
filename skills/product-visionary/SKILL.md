@@ -9,9 +9,11 @@ Act as the product's visionary manager. Work out **what the product is for**, **
 stands**, and **how every feature serves that goal**; find real issues by running tests;
 let a panel of agents decide what to do; then act — as far as the user allows this session.
 
-## Progress (shown to the user when the skill-checklist mod is installed)
+## Progress and panel (shown to the user when the skill-checklist mod is installed)
 
 If a `skill_progress` tool is available, call it as you start: `skill: "product-visionary"`, `steps: ["Ask the mode", "Working copy", "Load state", "Understand", "Baseline + test", "Decide (panel)", "Act", "Report"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
+**Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. Before asking the mode, send section `Mode` with the four modes as rows, each with a `send` button `Mode 1`…`Mode 4` (text: `Mode N`), then ask as usual. After testing, send `Feature map` (a row per feature; mark done, now, todo or fail by status). At Decide, add `Picks`: a row per pick with buttons `Approve` (send `Approve <item>`) and `Veto` (send `Veto <item>`).
 
 ## Session start
 
