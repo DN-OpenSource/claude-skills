@@ -61,6 +61,7 @@ def test_probe_negative_no_skill_call_is_none_and_no_file_no_run(capsys, tmp_pat
     pt.main([str(tmp_path / "p.txt"), "--runs", "1", "--", "--plugin-dir", str(tmp_path)], runner=lambda *a: seen.append(a[3]) or stream(INIT), plugins=NOLIST)
     assert seen == [["--plugin-dir", str(tmp_path.resolve())]]
     assert pt.main([]) == 2
+    assert pt.main([str(tmp_path / "p.txt"), "--runs", "0"], runner=lambda *a: stream(INIT), plugins=NOLIST) == 2
 
 
 def plugin(pid, enabled=True):
@@ -83,6 +84,8 @@ def test_probe_positive_preflight_reports_install_state():
     state = pt.preflight(listed, ["memory", "lsp", "wrap-up", "agents-dox"], [str(ROOT / "skills" / "agents-dox")])
     assert state == {"memory": "ok", "lsp": "disabled", "wrap-up": "missing", "agents-dox": "plugin-dir"}
     assert pt.parse_case("a|b c|d") == ("a", None, "b c|d")
+    both = pt.preflight([plugin("memory@claude-skills")], ["memory"], [str(ROOT / "skills" / "memory")])
+    assert both == {"memory": "clash memory@claude-skills"}
 
 
 def test_probe_negative_misses_and_clashes_exit_1(capsys, tmp_path):

@@ -50,12 +50,17 @@ def list_plugins():
 
 
 def preflight(plugins, skills, extra=()):
-    """{skill: ok | plugin-dir | missing | disabled | clash <id>} for each repo skill."""
+    """{skill: ok | plugin-dir | missing | disabled | clash <id>} for each repo skill.
+
+    An enabled install plus --plugin-dir of the same skill is a clash too: both copies load as
+    name:name, so a PASS couldn't say which description fired."""
     dirs = {Path(a).name for a in extra if Path(a).is_dir()}
     out = {}
     for s in skills:
         mine = [p for p in plugins if p.get("id") == f"{s}@{MARKET}"]
         other = [p["id"] for p in plugins if p.get("id", "").split("@")[0] == s and p["id"] != f"{s}@{MARKET}" and p.get("enabled")]
+        if s in dirs and mine and mine[0].get("enabled"):
+            other.append(mine[0]["id"])
         out[s] = (f"clash {other[0]}" if other else "plugin-dir" if s in dirs else
                   "ok" if mine and mine[0].get("enabled") else "disabled" if mine else "missing")
     return out
@@ -133,6 +138,8 @@ def main(argv, runner=run_one, plugins=list_plugins):
     if not files:
         print(__doc__); return 2
     runs, turns, seed, only = int(opt("--runs", 3)), int(opt("--max-turns", 8)), opt("--seed", None), opt("--only", None)
+    if runs < 1:  # 0 runs would make every positive line "fire in all of them"
+        print("--runs must be at least 1"); return 2
     cases = [parse_case(l) for l in Path(files[0]).read_text(encoding="utf-8").splitlines() if "|" in l]
     if only:
         cases = [c for c in cases if c[1] == only or c[0].startswith(only)]
@@ -145,7 +152,7 @@ def main(argv, runner=run_one, plugins=list_plugins):
         clashes = {s: v for s, v in state.items() if v.startswith("clash")}
         for s, v in state.items():
             if v in ("missing", "disabled"):
-                print(f"Preflight: {s} {v} — probe the working copy with: -- --plugin-dir skills/{s}")
+                print(f"Preflight: {s} {v}; probe the working copy with: -- --plugin-dir skills/{s}")
         if clashes:
             for s, v in clashes.items():
                 print(f"Preflight: {s} clashes with {v.split()[1]} (both load as {s}:{s}). "
