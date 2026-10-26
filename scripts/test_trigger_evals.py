@@ -53,6 +53,6 @@ def test_trigger_evals_positive_step_cases_grade_actions_not_the_skill_call():
             graders = [g.read_text(encoding="utf-8") for g in (p.parent / "graders").glob("*.md")]
             assert any("tool: Skill" not in g for g in graders), f"{p.parent} must grade an action"
             case = p.parent / "case.yaml"
-            if case.exists():
-                script = re.search(r"scaffold_script:\s*(\S+)", case.read_text(encoding="utf-8"))
-                assert script and (p.parent / script.group(1)).is_file(), case
+            assert case.is_file(), f"{p.parent} needs a case.yaml with its scaffold"
+            script = re.search(r"scaffold_script:\s*(\S+)", case.read_text(encoding="utf-8"))
+            assert script and (p.parent / script.group(1)).is_file(), case

@@ -292,7 +292,7 @@
 - **Strongest dissent:** the rename breaks existing installs — answered with a two-command migration line in both READMEs
 
 ### D-24 — 2026-10-26 — One owner for an ordinary edit
-- **Status:** done
+- **Status:** done (built; sweep not yet run)
 - **Panel:** none — owner's decision during the design session (Q2)
 - **Pick:** by context file: agents-dox owns edits in a repo with `AGENTS.md`, codebase-guardian elsewhere; memory keeps bootstrap and remember and no longer claims edits. One clause in each of the three descriptions (+39 tokens, 1235/1400)
 - **Winning argument:** all three claimed "any edit" and said "err on trigger", so which one loaded first was chance; the rule is measurable with one edit prompt on two seeds (`probes/prompts.txt`, `probes/prompts-dox.txt`)

@@ -11,7 +11,7 @@ Jev (TypeSafe's System One model) answers typed questions about some text: **nou
 
 ## Progress and panel (shown to the user when the skill-checklist mod is installed)
 
-If a `skill_progress` tool is available, call it as you start: `skill: "decision-maker"`, `steps: ["Frame the question", "Batch call", "Act on answers"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+If a `skill_progress` tool is available, call it as you start: `skill: "decision-maker"`, `steps: ["Frame the question", "Batch call", "Act on answers"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Report only the steps this run uses. If the tool isn't available, ignore this section.
 
 **Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. Send `Jev` with rows `Mode` (note: auto or manual; buttons `Auto` and `Manual`, send `Switch Jev to <mode> mode`) and `Provider` (note: its name; `fill` button `Change`, text `Switch the Jev provider to `). After a batch, add `Last batch` with a row per hit (mark done for `act`, info for `ask`).
 

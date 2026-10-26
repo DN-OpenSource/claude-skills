@@ -10,11 +10,13 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 import probe_triggers as pt  # noqa: E402
 
-INIT = {"type": "system", "subtype": "init",
-        "skills": ["schema-aware-db:schema-aware-db", "anthropic-skills:schema-aware-db", "memory:memory"]}
+INIT = {"type": "system", "subtype": "init", "skills": ["schema-aware-db:schema-aware-db", "memory:memory"]}
+# A claude.ai copy of a repo skill loaded next to the plugin: a PASS could come from either.
+DUP = {"type": "system", "subtype": "init",
+       "skills": ["schema-aware-db:schema-aware-db", "anthropic-skills:schema-aware-db", "memory:memory"]}
 
 
-NOLIST = lambda: None  # noqa: E731  (tests never call `claude plugin list`)
+NOLIST = lambda: []  # noqa: E731  (tests never call `claude plugin list`; nothing installed)
 
 
 def stream(*events):
@@ -25,15 +27,17 @@ def skill_call(name):
     return {"type": "assistant", "message": {"content": [{"type": "tool_use", "name": "Skill", "input": {"skill": name}}]}}
 
 
-def test_probe_positive_reports_fired_skill_and_duplicate_copies(capsys, tmp_path):
-    out = stream(INIT, skill_call("schema-aware-db:schema-aware-db"), {"type": "result", "total_cost_usd": 0.1})
-    assert pt.parse(out) == ("schema-aware-db:schema-aware-db", INIT["skills"], 0.1)
+def test_probe_positive_reports_fired_skill_and_fails_on_a_shadowed_repo_skill(capsys, tmp_path):
+    out = stream(DUP, skill_call("schema-aware-db:schema-aware-db"), skill_call("memory:memory"),
+                 {"type": "result", "total_cost_usd": 0.1})
+    assert pt.parse(out) == ("schema-aware-db:schema-aware-db", DUP["skills"], 0.1,
+                             ["schema-aware-db:schema-aware-db", "memory:memory"])
     (tmp_path / "p.txt").write_text("fix|Fix the join\n", encoding="utf-8")
-    assert pt.main([str(tmp_path / "p.txt"), "--runs", "2"], runner=lambda *a: out, plugins=NOLIST) == 0
+    assert pt.main([str(tmp_path / "p.txt"), "--runs", "2"], runner=lambda *a: out, plugins=NOLIST) == 1
     text = capsys.readouterr().out
-    assert "fix: schema-aware-db:schema-aware-db 2/2" in text
+    assert "fix: schema-aware-db:schema-aware-db 2/2  (also loaded: memory:memory)" in text
     assert "anthropic-skills:schema-aware-db, schema-aware-db:schema-aware-db" in text
-    assert "memory:memory" not in text.split("Loaded more than once")[1]
+    assert "a repo skill is loaded more than once" in text
 
 
 def test_probe_positive_seeded_workspace_has_the_query_and_git(tmp_path):
@@ -99,3 +103,20 @@ def test_probe_negative_misses_and_clashes_exit_1(capsys, tmp_path):
     clash = lambda: [plugin("wrap-up@someone-else"), plugin("memory@claude-skills")]  # noqa: E731
     assert pt.main([str(tmp_path / "p.txt"), "--runs", "1"], runner=lambda *a: ran.append(1) or stream(INIT), plugins=clash) == 1
     assert "wrap-up clashes with wrap-up@someone-else" in capsys.readouterr().out and ran == []
+
+
+def test_probe_negative_none_fails_when_a_repo_skill_loads_later_in_the_run(capsys, tmp_path):
+    (tmp_path / "p.txt").write_text("q|none|Explain joins\n", encoding="utf-8")
+    later = stream(INIT, skill_call("other-plugin:helper"), skill_call("schema-aware-db:schema-aware-db"))
+    assert pt.main([str(tmp_path / "p.txt"), "--runs", "1"], runner=lambda *a: later, plugins=NOLIST) == 1
+    assert "q: other-plugin:helper 1/1  (also loaded: schema-aware-db:schema-aware-db)  FAIL" in capsys.readouterr().out
+
+
+def test_probe_negative_an_unreadable_plugin_list_stops_unless_no_preflight(capsys, tmp_path):
+    (tmp_path / "p.txt").write_text("q|none|hello\n", encoding="utf-8")
+    ran = []
+    blind = lambda: None  # noqa: E731
+    assert pt.main([str(tmp_path / "p.txt"), "--runs", "1"], runner=lambda *a: ran.append(1) or stream(INIT), plugins=blind) == 2
+    assert "Preflight failed" in capsys.readouterr().out and ran == []
+    assert pt.main([str(tmp_path / "p.txt"), "--runs", "1", "--no-preflight"], runner=lambda *a: stream(INIT), plugins=blind) == 0
+    assert "q: none 1/1  PASS" in capsys.readouterr().out

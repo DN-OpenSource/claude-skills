@@ -9,7 +9,7 @@ A protocol for running a task as a flat team of Claude Code subagents, each embo
 
 ## Progress and panel (shown to the user when the skill-checklist mod is installed)
 
-If a `skill_progress` tool is available, call it as you start: `skill: "teammates"`, `steps: ["Plan work items", "Spawn peers", "Peers working", "Merge outputs"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+If a `skill_progress` tool is available, call it as you start: `skill: "teammates"`, `steps: ["Plan work items", "Spawn peers", "Peers working", "Merge outputs"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Report only the steps this run uses. If the tool isn't available, ignore this section.
 
 **Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. Send `Peers` (a row per peer; note: status), `Work items` (a row per item; mark by status; note: who claimed it) and `Messages` (the last five, `<from> → <to>: <gist>`), refreshed after each peer round.
 

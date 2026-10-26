@@ -13,7 +13,7 @@ This skill does not replace a language server. It tells you to *run the real one
 
 ## Progress and panel (shown to the user when the skill-checklist mod is installed)
 
-If a `skill_progress` tool is available, call it as you start: `skill: "codebase-guardian"`, `steps: ["Orient", "Match or change", "Edit + ripple", "Verify + record"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+If a `skill_progress` tool is available, call it as you start: `skill: "codebase-guardian"`, `steps: ["Orient", "Match or change", "Edit + ripple", "Verify + record"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Report only the steps this run uses. If the tool isn't available, ignore this section.
 
 **Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. Send `Checks` with rows `Baseline` and `After` (note: the pass/fail counts; mark fail if red). In Phase 2, when you would ask, add `Pattern` with the pattern you found as a row and buttons `Follow it` (send `Follow the existing pattern`) and `Change it` (fill `Change the pattern: `). In Phase 3, add `Ripple` with a row per caller, type, test, doc or config to update (mark done as you update each).
 

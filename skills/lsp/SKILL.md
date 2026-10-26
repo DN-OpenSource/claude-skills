@@ -9,7 +9,7 @@ Grep finds *text*; a language server finds *the symbol*. When the task is "who c
 
 ## Progress and panel (shown to the user when the skill-checklist mod is installed)
 
-If a `skill_progress` tool is available, call it as you start: `skill: "lsp"`, `steps: ["Detect server", "Query", "Rename", "Record"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+If a `skill_progress` tool is available, call it as you start: `skill: "lsp"`, `steps: ["Detect server", "Query", "Rename", "Record"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Report only the steps this run uses. If the tool isn't available, ignore this section.
 
 **Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. Send `Server` with one row (the language and server; mark fail if missing, with a `fill` button `Install` whose text is the install hint). For a query, add `References` (up to 12 rows, `file:line`). Before a rename, send `Rename preview` with a row per file and its edit count as note, and buttons `Apply` (send `Apply the rename`) and `Cancel` (send `Cancel the rename`); apply only on the person's answer.
 

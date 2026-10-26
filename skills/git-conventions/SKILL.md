@@ -10,7 +10,7 @@ let the user hide Claude's name, using Claude Code's own settings where they exi
 
 ## Progress and panel (shown to the user when the skill-checklist mod is installed)
 
-If a `skill_progress` tool is available, call it as you start: `skill: "git-conventions"`, `steps: ["Read rules", "Apply"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+If a `skill_progress` tool is available, call it as you start: `skill: "git-conventions"`, `steps: ["Read rules", "Apply"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Report only the steps this run uses. If the tool isn't available, ignore this section.
 
 **Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. GitHub accounts and this repo's git identity live in the mod's own accounts tab: when the person wants to change account or identity, tell them to run `/git-accounts`. During setup, send `Rules` with a row per answered question (mark done) and a `fill` button `Change` (text: `Change my <field> rule to `). Before a commit, send `Commit` with the message as a row and the branch as its note, buttons `Commit` (send `Commit it`) and `Edit` (fill `Use this commit message: <message>`).
 
