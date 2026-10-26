@@ -7,6 +7,10 @@ description: Use when a task benefits from being split across multiple Claude Co
 
 A protocol for running a task as a flat team of Claude Code subagents, each embodying the personality and working style of a famous programmer. There is no orchestrator role. Every agent — including the one that spawned the team — follows the same loop and reads from the same shared state.
 
+## Progress (shown to the user when the skill-checklist mod is installed)
+
+If a `skill_progress` tool is available, call it as you start: `skill: "teammates"`, `steps: ["Plan work items", "Spawn peers", "Peers working", "Merge outputs"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
 ## When to use
 
 - The task has parts that can run in parallel (research multiple topics, review multiple files, generate variants, etc.).

@@ -7,6 +7,10 @@ description: Semantic code navigation via real language servers — go-to-defini
 
 Grep finds *text*; a language server finds *the symbol*. When the task is "who calls this", "where is this defined", or "rename this everywhere", text search returns shadowed names, comments, strings, and same-named symbols from other scopes. The language server resolves the actual symbol the way the compiler does. Use it.
 
+## Progress (shown to the user when the skill-checklist mod is installed)
+
+If a `skill_progress` tool is available, call it as you start: `skill: "lsp"`, `steps: ["Detect server", "Query", "Rename", "Record"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
 ## The helper script
 
 Everything goes through `scripts/lsp.py` (relative to this skill's directory). It is one-shot: each invocation starts the server, runs the queries, and shuts it down. Python 3, stdlib only — nothing to install besides the language server itself. On Windows, use `python` if `python3` prints "Python was not found" (the Microsoft Store stub).

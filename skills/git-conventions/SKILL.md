@@ -8,6 +8,10 @@ description: Use when committing, naming a branch, or opening a PR, or when the 
 Make every commit, branch and pull request Claude creates follow **the user's** rules, and
 let the user hide Claude's name, using Claude Code's own settings where they exist.
 
+## Progress (shown to the user when the skill-checklist mod is installed)
+
+If a `skill_progress` tool is available, call it as you start: `skill: "git-conventions"`, `steps: ["Read rules", "Apply"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
 ## Where the rules live
 
 1. `.claude/git-conventions.md` in the repo (project rules, committed with the repo)

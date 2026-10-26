@@ -11,6 +11,10 @@ It is built on a simple idea: **an edit isn't done when the diff looks right —
 
 This skill does not replace a language server. It tells you to *run the real one* (and the real linter, compiler, and tests) instead of judging code correctness by eye. Eyeballing types is the single biggest source of avoidable errors.
 
+## Progress (shown to the user when the skill-checklist mod is installed)
+
+If a `skill_progress` tool is available, call it as you start: `skill: "codebase-guardian"`, `steps: ["Orient", "Match or change", "Edit + ripple", "Verify + record"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
 ## When this applies
 
 Use it for any edit to a file an existing project already tracks, however small: a one-line change can still break a caller. Skip it only for throwaway scripts, brand-new files in an empty repo, or answers that change no file. Unsure whether a change is "small enough" to skip? It isn't.

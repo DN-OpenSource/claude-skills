@@ -9,6 +9,10 @@ Act as the product's visionary manager. Work out **what the product is for**, **
 stands**, and **how every feature serves that goal**; find real issues by running tests;
 let a panel of agents decide what to do; then act — as far as the user allows this session.
 
+## Progress (shown to the user when the skill-checklist mod is installed)
+
+If a `skill_progress` tool is available, call it as you start: `skill: "product-visionary"`, `steps: ["Ask the mode", "Working copy", "Load state", "Understand", "Baseline + test", "Decide (panel)", "Act", "Report"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
 ## Session start
 
 Ask this first, every session. Never reuse an earlier session's answer.

@@ -7,6 +7,10 @@ description: Wrap up a work session so nothing is left dangling. Use when the us
 
 Gather every unfinished strand of a work session, tie each one off, and leave a single tail the next session can pick up.
 
+## Progress (shown to the user when the skill-checklist mod is installed)
+
+If a `skill_progress` tool is available, call it as you start: `skill: "wrap-up"`, `steps: ["Sweep", "Sort", "Tie off", "Tail"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Skip steps that don't apply. If the tool isn't available, ignore this section.
+
 ## Why this exists
 
 Sessions rarely *end*; they *stop*. The user steps away, the context window fills, the container gets reclaimed. What's lost at that moment is never the finished work — it's the loose strands: the change that was never committed, the stash with no message, the `console.log` left behind, the "I'll fix that after lunch" that lives only in the conversation. The next session (or the next person) then spends its first hour on archaeology, or worse, never learns the strand existed.
