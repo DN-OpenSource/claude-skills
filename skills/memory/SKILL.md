@@ -1,6 +1,6 @@
 ---
 name: memory
-description: Maintain durable, hierarchical memory files so context persists across sessions. Use when the user mentions "memory", "context files", "MEMORY.md", "USER.md", project context, codebase documentation, or user preferences, or wants to bootstrap, read, or update durable context, or remember/forget something. Also when starting work in a repository (check for existing MEMORY.md; auto-bootstrap if absent) and after code changes that alter a module's purpose, public surface, or conventions. Owns MEMORY.md (codebase facts) and USER.md (user facts); AGENTS.md belongs to the agents-dox skill. Err toward using it — undertriggering is the bigger failure mode.
+description: Maintain durable, hierarchical memory files so context persists across sessions. Use when the user mentions "memory", "context files", "MEMORY.md", "USER.md", project context, codebase documentation, or user preferences, or wants to bootstrap, read, or update durable context, or remember/forget something. Also when starting work in a repository (check for existing MEMORY.md; auto-bootstrap if absent) and after code changes that alter a module's purpose, public surface, or conventions. Owns MEMORY.md (codebase facts) and USER.md (user facts); AGENTS.md belongs to the agents-dox skill, and code edits to codebase-guardian or agents-dox. Err toward using it — undertriggering is the bigger failure mode.
 ---
 
 # Memory

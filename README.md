@@ -38,7 +38,7 @@ It lists each collision and prints the command that removes the extra copy; it n
 
 ## Trigger tests
 
-Every skill ships `evals/` for Claude Code's built-in `claude plugin eval`: two prompts that must make the skill fire and one that must not. They call the model with your own credentials, so they run on your machine, not in CI:
+Every skill ships `evals/` for Claude Code's built-in `claude plugin eval`: two prompts that must make the skill fire, one off-topic prompt that must not, and one near-miss (`quiet-near-*`: a request on the same topic that the skill should still leave alone, such as "explain how git rebase differs from merge" for git-conventions). They call the model with your own credentials, so they run on your machine, not in CI:
 
 ```bash
 claude plugin eval skills/git-conventions --runs 1 --ablation none --no-publish --max-cost-usd 2
@@ -50,6 +50,8 @@ One skill at one run per case costs about $0.20. Drop `--runs 1` (default 3) and
 
 **Real environment:** `python scripts/probe_triggers.py probes/prompts.txt --runs 3 --seed probes/seed-db` runs each prompt through `claude -p` with *your* setup (every plugin, personal and claude.ai skill, hook) in a throwaway git repo seeded with a small SQLite shop, then prints which skill fired and which skills are loaded more than once. Spends your credentials (about $3 for the 18 runs); never in CI. First result (2026-10-23): memory bootstrap 3/3, save-order 3/3, fix-join 2/3, inline-SQL fix 0/3, "remember I prefer pnpm" 0/3 (Claude Code's built-in memory takes it). After rewording schema-aware-db's description to name pasted queries and wrong or duplicate rows (D-20), measured with `-- --plugin-dir skills/schema-aware-db`: fix-join 3/3, inline-SQL fix 3/3.
 
+Each line of `probes/prompts.txt` is `id|expect|prompt`, where `expect` is the skill that must fire or `none`; every skill has a positive line and an `<skill>-near` line. The probe prints PASS or FAIL per line (a positive passes only if the skill fired in every run; `none` passes only if no skill from this repo fired) and exits 1 on any FAIL. `--only <skill>` reruns one skill's lines, for example `--only memory --runs 5` after rewording memory. Before running, it reads `claude plugin list --json`: a repo skill that's missing or disabled gets a `-- --plugin-dir skills/<name>` hint, and a skill whose name another marketplace's plugin also uses stops the run, because both load under the same name and the probe couldn't tell them apart. Who owns an ordinary edit depends on the repo (D-24): `codebase-guardian` without `AGENTS.md`, `agents-dox` with it. The second case runs on a layered seed: `python scripts/probe_triggers.py probes/prompts-dox.txt --seed probes/seed-db,probes/seed-dox`.
+
 ## Use on claude.ai
 
 `memory` and `schema-aware-db` also work as claude.ai skills; the hook- and CLI-based ones (decision-maker, product-visionary, git-conventions, lsp) don't. Skills you upload there also load in Claude Code as `anthropic-skills:<name>`, next to the plugin, so keep only the copies you need and keep them current.
@@ -60,7 +62,7 @@ One skill at one run per case costs about $0.20. Drop `--runs 1` (default 3) and
    - Linux: `zip -r memory.zip memory -x 'memory/evals/*' 'memory/.claude-plugin/*'`
 3. **Upload** it in Settings › Capabilities and turn it on.
 
-claude.ai's docs cap descriptions at 200 characters; ours are longer (memory 656, schema-aware-db 565), and copies with long descriptions have been accepted before. If an upload is rejected, shorten the description in your uploaded copy only: the full wording is what makes the skill fire in Claude Code. See [Use custom skills](https://support.claude.com/en/articles/12512198-use-custom-skills).
+claude.ai's docs cap descriptions at 200 characters; ours are longer (memory 707, schema-aware-db 565), and copies with long descriptions have been accepted before. If an upload is rejected, shorten the description in your uploaded copy only: the full wording is what makes the skill fire in Claude Code. See [Use custom skills](https://support.claude.com/en/articles/12512198-use-custom-skills).
 
 ## How the skills work together
 

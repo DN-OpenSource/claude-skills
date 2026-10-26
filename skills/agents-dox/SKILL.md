@@ -1,6 +1,6 @@
 ---
 name: agents-dox
-description: "Use in a repo with the DOX AGENTS.md hierarchy (AGENTS.md files as binding work contracts for their subtrees): read the root-to-nearest AGENTS.md chain before editing; after each meaningful change, run a DOX pass to update the owning AGENTS.md and affected parents or children. Trigger on any edit in a repo with AGENTS.md files, when the user mentions DOX, AGENTS.md, or doc contracts, or asks to set up, index, or maintain the AGENTS.md tree; bootstrap one if missing. Err on trigger."
+description: "Use in a repo with the DOX AGENTS.md hierarchy (AGENTS.md files as binding work contracts for their subtrees): read the root-to-nearest AGENTS.md chain before editing; after each meaningful change, run a DOX pass to update the owning AGENTS.md and affected parents or children. Owns every edit in a repo with AGENTS.md files (codebase-guardian owns edits elsewhere), when the user mentions DOX, AGENTS.md, or doc contracts, or asks to set up, index, or maintain the AGENTS.md tree; bootstrap one if missing. Err on trigger."
 ---
 
 # DOX framework
