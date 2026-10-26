@@ -199,7 +199,7 @@ What it handles by itself:
 | Area | What Jev decides |
 |---|---|
 | Skill routing | Which skills apply to a request (one yes/no per skill, one call) |
-| ponytail | Commit, hand off or discard each leftover; debug-only code; deferred promises; commit message quality |
+| wrap-up | Commit, hand off or discard each leftover; debug-only code; deferred promises; commit message quality |
 | memory | Durable? Can it be worked out from the code? Already recorded? Which `MEMORY.md` it belongs in; stale facts; your preferences |
 | codebase-guardian | Follow the existing pattern or change it; how far a change spreads; which stack; "did my change break this test?"; silencing an error instead of fixing it |
 | schema-aware-db | Real table usage vs. grep noise; read vs. write; migration risk and table-lock time; missing indexes; NoSQL key fit |

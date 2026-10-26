@@ -119,5 +119,5 @@ Self-contained: nothing here is needed for this skill to work. When a companion 
 - **lsp**: use `references` in Phase 1 to size the impact before scoping, and `rename --apply` for symbol renames in Phase 3. Then verify in Phase 4.
 - **schema-aware-db**: when the change touches a query, model, or migration, its four phases are this loop specialized for the data layer. Run them as Phases 1–3 here.
 - **teammates**: each peer runs this loop on its own work item, so parallel edits stay safe.
-- **ponytail**: this loop closes out each *change*. Run ponytail once at the end of the *session*.
+- **wrap-up**: this loop closes out each *change*. Run wrap-up once at the end of the *session*.
 - **decision-maker**: in Phase 2, ask match-vs-change plus a ripple-size score in one call (`decision-maker/references/use-cases.md` §4). Act only on high confidence. Otherwise decide as usual.

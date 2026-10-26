@@ -1,11 +1,11 @@
 ---
-name: ponytail
+name: wrap-up
 description: Wrap up a work session so nothing is left dangling. Use when the user says "wrap up", "tie up loose ends", "end of day", "before I go", "hand this off", or leaves a task mid-flight, and at the natural end of any long coding session, even unprompted. Sweeps loose strands (uncommitted or unpushed work, stashes, debug prints and TODOs, failing checks, half-done renames, untracked promises), ties each off, and ends with one session-tail report.
 ---
 
-# Ponytail
+# Wrap-up
 
-A ponytail gathers loose strands and ties them into one tail. This skill does that for a work session: gather every unfinished strand, tie each one off, and leave a single tail the next session can pick up.
+Gather every unfinished strand of a work session, tie each one off, and leave a single tail the next session can pick up.
 
 ## Why this exists
 
@@ -51,15 +51,18 @@ When a strand is ambiguous and the user is there, ask — one short question, no
 
 ### 3. Tie off — act on each fate
 
-- **Committable work** → coherent commits with messages that describe the change, not the moment ("Add retry to webhook client", never "wip" or "end of day"). Don't bundle unrelated strands into one commit. Push if a remote exists.
-- **Unfinished work** → a WIP commit on the working branch, or `git stash push -m "<what and why>"`. Either way its location goes in the tail — preserved-but-unfindable is still lost.
+**Read the git rules first.** Before any commit or push, read `.claude/git-conventions.md` (or `~/.claude/git-conventions.md`) if one exists, and follow its commit pattern. **Never commit or push to a protected branch**: the ones that file lists, or `main`/`master` when there is no file. On a protected branch, put the work on a new branch `wip/<YYYY-MM-DD>-<slug>` first (`git switch -c`) and name it in the tail.
+
+- **Committable work** → coherent commits with messages that describe the change, not the moment ("Add retry to webhook client", never "wip" or "end of day"). Don't bundle unrelated strands into one commit. Push if a remote exists and the branch isn't protected.
+- **A finished branch to merge or open a PR for** → if the `finishing-a-development-branch` skill is installed, hand this step to it once the sweep is done; don't repeat its merge and PR steps here. Without it, ask the user which they want.
+- **Unfinished work** → a WIP commit on the working branch (never a protected one), or `git stash push -m "<what and why>"`. Put the hand-off text — what it is and what "done" looks like — in the WIP commit body or the stash message, so it travels with the work. Its location also goes in the tail; preserved-but-unfindable is still lost.
 - **Debris you introduced** → remove debug prints and commented-out blocks that came from this session; delete scratch files. Leave pre-existing debris alone (removing it is a change, and changes belong to a task, not a cleanup).
 - **Promises** → into the tail. If the repo keeps durable context (`MEMORY.md`, a TODO tracker), record them there too.
 - **Never** run `git reset --hard`, `git clean -f`, or delete files you didn't create this session without explicit confirmation. The wrap-up must be the safest part of the session, not the most dangerous.
 
 ## The tail
 
-Finish with one report — in chat, as the final message of the wrap-up. Use this shape and drop any section with nothing in it:
+Finish with one report — in chat, as the final message of the wrap-up. Chat ends with the session, so the parts the next session needs must also be on disk: the hand-off text rides in the WIP commit body or stash message (above), and with the **memory** skill installed, follow-ups and watch-outs go into `MEMORY.md` too. Use this shape and drop any section with nothing in it:
 
 ```markdown
 # Session tail — <date>
@@ -84,4 +87,4 @@ The test of a good tail: someone with no memory of this session reads it and kno
 
 ## Companion skills (optional, never required)
 
-If the **memory** skill is installed, fold durable facts from the tail into `MEMORY.md`; if **agents-dox** manages the repo, run its closing pass alongside this one; after a **teammates** run, ponytail is the natural final step once outputs merge. Without any of them, the tail in chat stands on its own. **codebase-guardian** closes out each change; ponytail runs once per session to catch what fell between changes. With **decision-maker** configured, the Sort move sends every strand in one call (a Choice over tie_off / hand_off / discard, `decision-maker/references/use-cases.md` §2). Apply a fate only when `act` is true. Otherwise ask, or preserve. Never discard on low confidence.
+If the **memory** skill is installed, fold durable facts from the tail into `MEMORY.md`; if **agents-dox** manages the repo, run its closing pass alongside this one; after a **teammates** run, wrap-up is the natural final step once outputs merge. **git-conventions** sets the commit pattern and protected branches used in Tie off; **finishing-a-development-branch** (superpowers) takes over merging a finished branch. Without any of them, the tail in chat and in the WIP commit stands on its own. **codebase-guardian** closes out each change; wrap-up runs once per session to catch what fell between changes. With **decision-maker** configured, the Sort move sends every strand in one call (a Choice over tie_off / hand_off / discard, `decision-maker/references/use-cases.md` §2). Apply a fate only when `act` is true. Otherwise ask, or preserve. Never discard on low confidence.

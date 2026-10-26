@@ -284,3 +284,9 @@
 **Left open:** none. **Owner actions:** release 1.12.0; replace the claude.ai copies; verify USER.md persistence on claude.ai.
 **Next on the roadmap:** 1. probe the other 8 skills (C30) · 2. health panel · 3. opt-in commit check
 
+### D-23 — 2026-10-26 — ponytail becomes wrap-up (design: docs/designs/skill-reliability.md)
+- **Status:** done
+- **Panel:** none — owner's decision during the design session
+- **Pick:** rename `ponytail` to `wrap-up` and close three gaps: follow the git-conventions file and never commit or push to a protected branch (WIP goes to `wip/<date>-<slug>`); keep the hand-off text in the WIP commit body or stash message (and MEMORY.md with memory installed), not only in chat; hand merging a finished branch to superpowers' finishing-a-development-branch when installed
+- **Winning argument:** `ponytail@ponytail` (an unrelated "least code" plugin) loads its skill as `ponytail:ponytail` too, so the two can't be told apart; and the old text could commit and push to `main` and lost its report when the session ended — the failure it exists to prevent
+- **Strongest dissent:** the rename breaks existing installs — answered with a two-command migration line in both READMEs

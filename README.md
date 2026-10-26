@@ -20,7 +20,7 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 | [agents-dox](skills/agents-dox/SKILL.md) | 1.11.0 | Claude Code | The DOX framework — a hierarchy of `AGENTS.md` files, each a binding work contract for its subtree. Read the root-to-nearest chain before editing; run a DOX pass to update the owning `AGENTS.md` and affected parents/children after. Bootstraps the tree if a repo has none. |
 | [lsp](skills/lsp/SKILL.md) | 1.11.0 | Claude Code | Semantic code navigation via real language servers — definition, references, hover, symbols, diagnostics, and safe project-wide rename for TypeScript/Node, Python, Dart/Flutter, and Rust. Ships a stdlib-only Python LSP client; falls back to grep when no server is installed. |
 | [schema-aware-db](skills/schema-aware-db/SKILL.md) | 1.11.0 | Claude Code | Stop guessing database schemas. A four-phase discipline for backend data code (SQL and NoSQL) — introspect the real schema, map every usage across the codebase, write the change to industry standard, then trace the ripple so no query, migration, serializer, or test goes stale. |
-| [ponytail](skills/ponytail/SKILL.md) | 1.11.0 | Claude Code | Wrap up a work session so nothing is left dangling — sweep every loose strand (uncommitted or unpushed work, unlabeled stashes, session debris, promises recorded nowhere), tie each one off, and leave a single "session tail" report the next session can pick up without archaeology. |
+| [wrap-up](skills/wrap-up/SKILL.md) | 1.11.0 | Claude Code | Wrap up a work session so nothing is left dangling — sweep every loose strand (uncommitted or unpushed work, unlabeled stashes, session debris, promises recorded nowhere), tie each one off, and leave a single "session tail" report the next session can pick up without archaeology. |
 | [decision-maker](skills/decision-maker/SKILL.md) | 1.11.0 | Claude Code, Codex | Fast, calibrated decisions with TypeSafe's Jev: typed yes/no, choice and score answers with confidence. After installing, you choose **auto** (Jev by default: prefetch pre-scans "which files…" prompts and Claude uses Jev for batch sorting and browser test steps) or **manual** (only when you ask). An opt-in guard checks edits and commands against your rules (including rules from your prompts) and your request, and answers Claude's questions when confident. **Every Jev call is shown to you.** Any provider, with editable base URL and key. See the [full README](skills/decision-maker/README.md). |
 | [test-report](skills/test-report/SKILL.md) | 1.11.0 | Claude Code | Test the features you name (or the current branch) across web, backend, and mobile — 2 positive + 1 negative test per feature in the project's own framework, actually run, then a Markdown pass/fail report with failure causes and a re-run command. See the [README](skills/test-report/README.md). |
 | [product-visionary](skills/product-visionary/SKILL.md) | 1.11.0 | Claude Code | Your product's visionary manager — works out the goal, where the product stands, and how each feature connects to and contributes to it; finds real issues with `test-report`; a panel of 3, 6, or 9 agents debates and decides; then acts according to the mode you pick at session start: **report only**, **fix on a branch**, **full auto**, or **complete auto** (no prompts). See the [README](skills/product-visionary/README.md). |
@@ -75,11 +75,11 @@ Each skill is **self-contained** — install any one on its own and it works wit
 - **schema-aware-db + lsp** — schema-aware-db's Phase 2 (map every usage across the codebase) uses lsp `references` on the ORM model/class to find call sites precisely, instead of grepping for a table name and drowning in false positives.
 - **schema-aware-db + codebase-guardian** — both run an introspect → map → change → trace-the-ripple loop; guardian governs the general edit, schema-aware-db specializes it for the data layer (real schema, migrations, serializers, tests).
 - **schema-aware-db + memory** — confirmed schema facts and access patterns (DynamoDB keys/GSIs, reconciled migration state) accumulate in `MEMORY.md`, so the next session starts from ground truth.
-- **ponytail + memory** — durable facts from the session tail (follow-ups, watch-outs, half-applied state) fold into `MEMORY.md`, so the handoff survives beyond the chat.
-- **ponytail + teammates** — after a peer team's outputs merge, ponytail is the natural final step: one sweep over the combined result, one tail for the whole run.
-- **ponytail + codebase-guardian / agents-dox** — guardian's closeout and the DOX pass are per-*change*; ponytail is per-*session*. Run them for each edit, then ponytail once at the end to catch what fell between changes.
+- **wrap-up + memory** — durable facts from the session tail (follow-ups, watch-outs, half-applied state) fold into `MEMORY.md`, so the handoff survives beyond the chat.
+- **wrap-up + teammates** — after a peer team's outputs merge, wrap-up is the natural final step: one sweep over the combined result, one tail for the whole run.
+- **wrap-up + codebase-guardian / agents-dox** — guardian's closeout and the DOX pass are per-*change*; wrap-up is per-*session*. Run them for each edit, then wrap-up once at the end to catch what fell between changes.
 - **product-visionary + test-report / teammates / codebase-guardian** — product-visionary runs `test-report` to find real issues and to prove every fix, builds on the `teammates` idea of peer agents for its 3/6/9 debate panel, and pairs naturally with guardian for careful edits inside each fix. Without `test-report` it follows the 2-positive + 1-negative rules inline.
-- **decision-maker + everything** — an optional accelerator for the closed-set judgment calls inside the other skills: ponytail's strand sorting, memory's "is this worth saving", guardian's match-vs-change and ripple size, schema-aware-db's real-usage-vs-grep-noise and migration risk, teammates' claim routing and merge contradictions, agents-dox's pass depth, lsp's symbol disambiguation, and skill routing itself. Every recipe batches its items into one call and is confidence-gated: high confidence → act; otherwise the skill decides exactly as it would without it. Recipes and thresholds live in one file, [`skills/decision-maker/references/use-cases.md`](skills/decision-maker/references/use-cases.md).
+- **decision-maker + everything** — an optional accelerator for the closed-set judgment calls inside the other skills: wrap-up's strand sorting, memory's "is this worth saving", guardian's match-vs-change and ripple size, schema-aware-db's real-usage-vs-grep-noise and migration risk, teammates' claim routing and merge contradictions, agents-dox's pass depth, lsp's symbol disambiguation, and skill routing itself. Every recipe batches its items into one call and is confidence-gated: high confidence → act; otherwise the skill decides exactly as it would without it. Recipes and thresholds live in one file, [`skills/decision-maker/references/use-cases.md`](skills/decision-maker/references/use-cases.md).
 
 None of these are required: a skill never errors or stalls because a companion skill is absent.
 
@@ -100,6 +100,8 @@ Restart Claude Code or run `/reload-plugins` to load it.
 claude plugin marketplace update claude-skills
 claude plugin update product-visionary@claude-skills   # repeat for each installed plugin
 ```
+
+**`ponytail` is now `wrap-up`.** The old name clashed with an unrelated plugin, `ponytail@ponytail`. If you installed the old one, run `claude plugin uninstall ponytail@claude-skills`, then `claude plugin install wrap-up@claude-skills`.
 
 `claude plugin list` shows what you have installed. In a session, `/plugin` does the same from a menu. The repo and every skill pass `claude plugin validate`, checked in CI on every PR. See the [official Claude Code docs](https://docs.anthropic.com/en/docs/claude-code) if the install mechanism has changed.
 
@@ -158,7 +160,7 @@ claude-skills/
     │   ├── README.md
     │   ├── SKILL.md
     │   └── references/   ← per-engine introspection, standards, ripple recipe
-    ├── ponytail/
+    ├── wrap-up/
     │   ├── README.md
     │   └── SKILL.md
     └── decision-maker/

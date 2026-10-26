@@ -166,7 +166,7 @@
       "dependsOn": [],
       "usedBy": [
         "codebase-guardian",
-        "ponytail"
+        "wrap-up"
       ],
       "servesGoal": "Context that survives sessions.",
       "flag": null
@@ -228,7 +228,7 @@
       "flag": null
     },
     {
-      "name": "ponytail",
+      "name": "wrap-up",
       "status": "done",
       "dependsOn": [
         "memory"

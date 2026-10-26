@@ -238,7 +238,7 @@ const SKILLS = [
   { n: "schema-aware-db", c: "Engineering", s: "Introspect the real schema and trace every usage before a query or migration changes. SQL and NoSQL.", tok: 137, tests: "", p: ["Claude Code"] },
   { n: "memory", c: "Context", s: "Hierarchical MEMORY.md for codebases and USER.md for you, kept in sync across sessions.", tok: 164, tests: "", p: ["Claude Code"] },
   { n: "agents-dox", c: "Context", s: "A hierarchy of AGENTS.md files, each a binding contract for its folder, read before every edit.", tok: 122, tests: "", p: ["Claude Code"] },
-  { n: "ponytail", c: "Context", s: "Sweep loose ends at the end of a session and leave one handoff for the next.", tok: 111, tests: "", p: ["Claude Code"] },
+  { n: "wrap-up", c: "Context", s: "Sweep loose ends at the end of a session and leave one handoff for the next.", tok: 111, tests: "", p: ["Claude Code"] },
   { n: "teammates", c: "Agents", s: "Run a task as a flat team of subagents that share a manifest, claim work and merge outputs.", tok: 76, tests: "", p: ["Claude Code"] },
   { n: "decision-maker", c: "Agents", s: "Fast yes/no, pick-one and score answers with confidence from TypeSafe's Jev, plus optional guard hooks.", tok: 140, tests: "61/61", p: ["Claude Code", "Codex"] },
 ];
@@ -254,7 +254,7 @@ const PAIRS = [
   [["lsp", "codebase-guardian"], "Find every reference before deciding how big a change is."],
   [["schema-aware-db", "lsp"], "Map real ORM call sites instead of grepping a table name."],
   [["teammates", "codebase-guardian"], "Each peer agent follows the safe-edit loop for its own work item."],
-  [["ponytail", "memory"], "The end-of-session handoff folds durable follow-ups into MEMORY.md."],
+  [["wrap-up", "memory"], "The end-of-session handoff folds durable follow-ups into MEMORY.md."],
   [["agents-dox", "codebase-guardian", "teammates"], "AGENTS.md contracts govern how the other skills edit each folder."],
 ];
 const MARKET = "claude-skills", REPO = "DN-OpenSource/claude-skills", BUDGET = 1400;

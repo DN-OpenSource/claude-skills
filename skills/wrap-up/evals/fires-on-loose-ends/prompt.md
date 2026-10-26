@@ -1,5 +1,5 @@
 ---
-description: ponytail should trigger
+description: wrap-up should trigger
 tags: [trigger, positive]
 runs: 3
 max_turns: 3

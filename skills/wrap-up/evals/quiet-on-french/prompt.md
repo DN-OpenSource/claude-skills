@@ -1,5 +1,5 @@
 ---
-description: ponytail should not trigger
+description: wrap-up should not trigger
 tags: [trigger, negative]
 runs: 3
 max_turns: 3

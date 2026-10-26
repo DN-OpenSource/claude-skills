@@ -35,7 +35,7 @@ All 11 skills pass the official validator and have trigger tests. 174/174 tests 
 | agents-dox | built | — | codebase-guardian, teammates | per-folder work contracts |
 | lsp | built, tested 44 | language servers | codebase-guardian, schema-aware-db | precise code navigation and rename |
 | schema-aware-db | built (loads again since D-9) | lsp (optional) | — | no guessed schemas in DB code |
-| ponytail | built | memory (optional) | — | clean end-of-session handoff |
+| wrap-up | built | memory (optional) | — | clean end-of-session handoff |
 | decision-maker | built, tested 61 | Jev provider key | every skill (optional recipes) | cheap typed judgments; guard hooks |
 | test-report | built | project test framework | product-visionary | real tests + pass/fail report; video of failures, kept local |
 | git-conventions | built (new) | native `attribution` setting | — | Claude's commits, branches and PRs follow the user's rules |
