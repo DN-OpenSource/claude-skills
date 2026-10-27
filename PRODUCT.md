@@ -5,7 +5,7 @@
 **Success looks like:** each skill triggers when relevant, works on its own (Linux, Windows, macOS; Python 3.9+), and costs little context — every description loads into every session (budget `scripts/check_token_budget.py`, 1400 tokens).
 
 ## Where we are
-All 11 skills pass the official validator and have trigger tests. 174/174 tests pass locally and in CI on ubuntu 3.9 (24.04)/3.12/3.13, windows 3.12 and macos 3.9. Session 5 (2026-10-23), after the owner's cleanup, measured triggering with a new repeatable real-environment probe (`scripts/probe_triggers.py`, seeded repo): memory bootstrap 3/3, teammates 3/3, and, after rewording schema-aware-db's description (D-20), save-order 3/3, fix-join 3/3, pasted-SQL fix 3/3 (was 0/3). "Remember I prefer X" goes to Claude Code's built-in memory by design (D-21). Only 3 of 11 skills have been probed in the real environment so far. Latest report: [`test-reports/2026-10-23-session-5.md`](test-reports/2026-10-23-session-5.md). Product page: [dn-opensource.github.io/claude-skills/product](https://dn-opensource.github.io/claude-skills/product/).
+All 11 skills pass the official validator and have trigger tests. 179/179 tests pass locally and in CI on ubuntu 3.9 (24.04)/3.12/3.13, windows 3.12 and macos 3.9 (until 2026-10-26, five test files never ran in CI; they do now). Session 5 (2026-10-23), after the owner's cleanup, measured triggering with a new repeatable real-environment probe (`scripts/probe_triggers.py`, seeded repo): memory bootstrap 3/3, teammates 3/3, and, after rewording schema-aware-db's description (D-20), save-order 3/3, fix-join 3/3, pasted-SQL fix 3/3 (was 0/3). "Remember I prefer X" goes to Claude Code's built-in memory by design (D-21). Only 3 of 11 skills have been probed in the real environment so far. Session 6 (2026-10-26, design [`docs/designs/skill-reliability.md`](docs/designs/skill-reliability.md)) built the rest of the measurement but has not run it yet: the probe now gives PASS/FAIL and stops on plugin name clashes, `probes/prompts.txt` has a positive and a near-miss prompt for all 11 skills, and every skill has a near-miss eval and a step check (`does-*`, which needs WSL2 on Windows). ponytail is now wrap-up (D-23), and edits have one owner per repo (D-24). Latest report: [`test-reports/2026-10-23-session-5.md`](test-reports/2026-10-23-session-5.md). Product page: [dn-opensource.github.io/claude-skills/product](https://dn-opensource.github.io/claude-skills/product/).
 
 ## Professional review — 2026-10-23
 | Area | Status | Evidence / reason |
@@ -15,7 +15,7 @@ All 11 skills pass the official validator and have trigger tests. 174/174 tests 
 | Privacy & data | not applicable | the skills store no personal data |
 | Errors & data loss | fine | hooks and launchers fail open; render_page writes atomically |
 | Accessibility | fine | site and product pages: no images without alt, labelled controls, focus styles |
-| Performance | fine | eager description cost 1196/1400 tokens, enforced in CI |
+| Performance | fine | eager description cost 1235/1400 tokens, enforced in CI |
 | Docs & onboarding | fine | every skill README now has install + update steps (validator warning 10 → 0, D-16) |
 | Release & versioning | fine | all manifests in lockstep (checked by tests); GitHub release notes per version |
 | CI & tests | fine | sandbox trigger evals (D-14) plus a real-environment probe (D-19); real-env coverage is 3 of 11 skills |
@@ -35,7 +35,7 @@ All 11 skills pass the official validator and have trigger tests. 174/174 tests 
 | agents-dox | built | — | codebase-guardian, teammates | per-folder work contracts |
 | lsp | built, tested 44 | language servers | codebase-guardian, schema-aware-db | precise code navigation and rename |
 | schema-aware-db | built (loads again since D-9) | lsp (optional) | — | no guessed schemas in DB code |
-| ponytail | built | memory (optional) | — | clean end-of-session handoff |
+| wrap-up | built (renamed from ponytail, D-23) | memory, git-conventions (optional) | — | clean end-of-session handoff that follows your git rules |
 | decision-maker | built, tested 61 | Jev provider key | every skill (optional recipes) | cheap typed judgments; guard hooks |
 | test-report | built | project test framework | product-visionary | real tests + pass/fail report; video of failures, kept local |
 | git-conventions | built (new) | native `attribution` setting | — | Claude's commits, branches and PRs follow the user's rules |

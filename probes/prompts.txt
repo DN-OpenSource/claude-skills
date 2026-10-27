@@ -1,6 +1,25 @@
-memory-bootstrap|Bootstrap MEMORY.md files for this repository.
-memory-remember|Remember for future sessions that I prefer pnpm over npm.
-schema-save-order|Add an endpoint that saves a new order to the orders table.
-schema-fix-join|Fix the SQL query joining users and orders; it returns duplicate rows.
-schema-fix-inline|This query returns duplicate rows, fix it: SELECT u.name, o.total FROM users u JOIN orders o ON o.user_id = u.id JOIN order_items i ON i.order_id = o.id;
-teammates-split|Split this research task across a flat team of subagents working as peers, no orchestrator.
+memory-bootstrap|memory|Bootstrap MEMORY.md files for this repository.
+memory-remember|none|Remember for future sessions that I prefer pnpm over npm.
+memory-near|none|How much memory does a Python dict with a million int keys use?
+schema-save-order|schema-aware-db|Add an endpoint that saves a new order to the orders table.
+schema-fix-join|schema-aware-db|Fix the SQL query joining users and orders; it returns duplicate rows.
+schema-fix-inline|schema-aware-db|This query returns duplicate rows, fix it: SELECT u.name, o.total FROM users u JOIN orders o ON o.user_id = u.id JOIN order_items i ON i.order_id = o.id;
+schema-aware-db-near|none|Explain the difference between a LEFT JOIN and an INNER JOIN.
+teammates-split|teammates|Split this research task across a flat team of subagents working as peers, no orchestrator.
+teammates-near|none|Spawn one subagent to list the TODO comments in this repo.
+agents-dox-setup|agents-dox|Set up the AGENTS.md hierarchy for this repo.
+agents-dox-near|none|Write a CONTRIBUTING.md for this project.
+codebase-guardian-edit|codebase-guardian|Make slugify in utils.py also strip leading and trailing dashes.
+codebase-guardian-near|none|Explain what this regex matches: ^\d{3}-\d{4}$
+decision-maker-sort|decision-maker|Use Jev to decide which of these files touch the database: app.py, utils.py, README.md.
+decision-maker-near|none|Should I learn Rust or Go next year?
+git-conventions-branch|git-conventions|What branch name and commit message should I use for this fix, following our conventions?
+git-conventions-near|none|Explain how git rebase differs from git merge.
+lsp-usages|lsp|Find all usages of user_totals across the project.
+lsp-near|none|What does Python's functools.lru_cache do?
+product-visionary-status|product-visionary|What's the goal of this product and where does it stand? Give me a status report with a feature map.
+product-visionary-near|none|Write a product description for a coffee grinder.
+test-report-slugify|test-report|Test the slugify feature and give me a pass/fail report.
+test-report-near|none|What is the difference between unit and integration tests?
+wrap-up-session|wrap-up|Wrap up this session and make sure nothing is left dangling.
+wrap-up-near|none|Wrap this paragraph at 72 columns: The shop backend stores users, orders and order items in SQLite and exposes a helper that totals each user's orders.

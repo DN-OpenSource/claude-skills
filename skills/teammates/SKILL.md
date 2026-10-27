@@ -214,5 +214,5 @@ Self-contained: nothing here is needed for this skill to work. When a companion 
 - **agents-dox**: each peer reads the DOX chain for its paths before claiming and runs a DOX pass on its own changes.
 - **codebase-guardian** / **schema-aware-db**: a peer editing real code (or data code) follows that loop for its own work item.
 - **lsp**: before claiming, run `references` on the symbols an item touches to spot items that would collide.
-- **ponytail**: run it as the final step once outputs are merged, as one sweep and one tail for the whole team.
+- **wrap-up**: run it as the final step once outputs are merged, as one sweep and one tail for the whole team.
 - **decision-maker**: route a work item to the best-suited peer slug, and check two outputs for contradictions before merging (`decision-maker/references/use-cases.md` §6). The protocol (claim, re-read, messages) is unchanged.

@@ -1,6 +1,6 @@
 ---
 name: codebase-guardian
-description: "Safe-editing loop for existing codebases (TypeScript/Node, Python/Django, Flutter/Dart, Rust/Tauri): validate with the real toolchain (type-check, lint, build, tests), match or deliberately change existing patterns, trace the ripple to callers/types/tests/docs/configs, record learnings to MEMORY.md. Trigger on any non-trivial edit — follow the existing pattern, don't break anything, fix without errors, match the codebase, change architecture or state management, refactor the structure, or rename across the project. Err on trigger."
+description: "Safe-editing loop for existing codebases (TypeScript/Node, Python/Django, Flutter/Dart, Rust/Tauri): validate with the real toolchain (type-check, lint, build, tests), match or deliberately change existing patterns, trace the ripple to callers/types/tests/docs/configs, record learnings to MEMORY.md. Trigger on any non-trivial edit in a repo without AGENTS.md (with one, agents-dox owns the edit) — follow the existing pattern, don't break anything, fix without errors, match the codebase, change architecture or state management, refactor the structure, or rename across the project. Err on trigger."
 ---
 
 # Codebase Guardian
@@ -13,7 +13,7 @@ This skill does not replace a language server. It tells you to *run the real one
 
 ## When this applies
 
-Use it for any meaningful edit to an existing project. Skip it for throwaway scripts, brand-new files in an empty repo, or one-line answers where there's nothing to break.
+Use it for any edit to a file an existing project already tracks, however small: a one-line change can still break a caller. Skip it only for throwaway scripts, brand-new files in an empty repo, or answers that change no file. Unsure whether a change is "small enough" to skip? It isn't.
 
 This skill changes the *real* codebase: it edits actual files, runs the project's real migrations/codegen/formatters, and leaves the repository in a working, applied state — not a description of changes to make later. "Done" means the change is on disk and the toolchain is green.
 
@@ -119,5 +119,5 @@ Self-contained: nothing here is needed for this skill to work. When a companion 
 - **lsp**: use `references` in Phase 1 to size the impact before scoping, and `rename --apply` for symbol renames in Phase 3. Then verify in Phase 4.
 - **schema-aware-db**: when the change touches a query, model, or migration, its four phases are this loop specialized for the data layer. Run them as Phases 1–3 here.
 - **teammates**: each peer runs this loop on its own work item, so parallel edits stay safe.
-- **ponytail**: this loop closes out each *change*. Run ponytail once at the end of the *session*.
+- **wrap-up**: this loop closes out each *change*. Run wrap-up once at the end of the *session*.
 - **decision-maker**: in Phase 2, ask match-vs-change plus a ripple-size score in one call (`decision-maker/references/use-cases.md` §4). Act only on high confidence. Otherwise decide as usual.

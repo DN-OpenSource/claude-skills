@@ -284,3 +284,30 @@
 **Left open:** none. **Owner actions:** release 1.12.0; replace the claude.ai copies; verify USER.md persistence on claude.ai.
 **Next on the roadmap:** 1. probe the other 8 skills (C30) · 2. health panel · 3. opt-in commit check
 
+### D-23 — 2026-10-26 — ponytail becomes wrap-up (design: docs/designs/skill-reliability.md)
+- **Status:** done
+- **Panel:** none — owner's decision during the design session
+- **Pick:** rename `ponytail` to `wrap-up` and close three gaps: follow the git-conventions file and never commit or push to a protected branch (WIP goes to `wip/<date>-<slug>`); keep the hand-off text in the WIP commit body or stash message (and MEMORY.md with memory installed), not only in chat; hand merging a finished branch to superpowers' finishing-a-development-branch when installed
+- **Winning argument:** `ponytail@ponytail` (an unrelated "least code" plugin) loads its skill as `ponytail:ponytail` too, so the two can't be told apart; and the old text could commit and push to `main` and lost its report when the session ended — the failure it exists to prevent
+- **Strongest dissent:** the rename breaks existing installs — answered with a two-command migration line in both READMEs
+
+### D-24 — 2026-10-26 — One owner for an ordinary edit
+- **Status:** done (built; sweep not yet run)
+- **Panel:** none — owner's decision during the design session (Q2)
+- **Pick:** by context file: agents-dox owns edits in a repo with `AGENTS.md`, codebase-guardian elsewhere; memory keeps bootstrap and remember and no longer claims edits. One clause in each of the three descriptions (+39 tokens, 1235/1400)
+- **Winning argument:** all three claimed "any edit" and said "err on trigger", so which one loaded first was chance; the rule is measurable with one edit prompt on two seeds (`probes/prompts.txt`, `probes/prompts-dox.txt`)
+- **Strongest dissent:** "codebase-guardian always" is simpler and needs one seed; rejected by the owner for precision
+
+### D-25 — 2026-10-26 — Probe verdicts, near-miss prompts and a plugin preflight
+- **Status:** done (built; sweep not yet run)
+- **Panel:** none — design `docs/designs/skill-reliability.md`, phase 1
+- **Pick:** `id|expect|prompt` lines with PASS/FAIL and exit 1; `--only <skill>`; layered seeds; a preflight on `claude plugin list --json` that stops on a name clash; a positive and a near-miss line for every skill; a `quiet-near-*` eval per skill. Pass bar: 3/3 for the sweep, 5/5 after any rewording. The five test files CI skipped now run there
+- **Winning argument:** the old quiet cases were off-topic (a haiku, a poem), so they couldn't catch a description that fires on its own topic when it shouldn't; and a clash like ponytail's is invisible after launch, because both plugins load under the same name
+- **Strongest dissent:** 3 runs can't tell an 80% skill from a 100% one; answered with 5/5 reruns for reworded skills
+
+### D-26 — 2026-10-26 — Step checks for every skill
+- **Status:** done (built; not yet run)
+- **Panel:** none — design phase 2
+- **Pick:** one `does-*` eval per skill (two for wrap-up), graded on tool calls (`tool_order`, `tool_used`, `file_exists`, `regex`), not the Skill call, run with `--allow-tools Bash Write Edit --scaffold` in WSL2 and the default with/without ablation. codebase-guardian's "meaningful edit" now means any edit to a tracked file
+- **Winning argument:** a trigger test stops at "the skill loaded"; the skills' value is in a step (read the schema, run the tests, stay off `main`) that nothing checked
+- **Strongest dissent:** native Windows has no eval sandbox, so the owner can't run these without WSL2 (Q6: the Windows copy of claude inside WSL may not get one either; check first with one case)

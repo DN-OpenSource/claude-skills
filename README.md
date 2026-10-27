@@ -20,7 +20,7 @@ Skills are Markdown files that teach Claude how to handle specific tasks — a m
 | [agents-dox](skills/agents-dox/SKILL.md) | 1.11.0 | Claude Code | The DOX framework — a hierarchy of `AGENTS.md` files, each a binding work contract for its subtree. Read the root-to-nearest chain before editing; run a DOX pass to update the owning `AGENTS.md` and affected parents/children after. Bootstraps the tree if a repo has none. |
 | [lsp](skills/lsp/SKILL.md) | 1.11.0 | Claude Code | Semantic code navigation via real language servers — definition, references, hover, symbols, diagnostics, and safe project-wide rename for TypeScript/Node, Python, Dart/Flutter, and Rust. Ships a stdlib-only Python LSP client; falls back to grep when no server is installed. |
 | [schema-aware-db](skills/schema-aware-db/SKILL.md) | 1.11.0 | Claude Code | Stop guessing database schemas. A four-phase discipline for backend data code (SQL and NoSQL) — introspect the real schema, map every usage across the codebase, write the change to industry standard, then trace the ripple so no query, migration, serializer, or test goes stale. |
-| [ponytail](skills/ponytail/SKILL.md) | 1.11.0 | Claude Code | Wrap up a work session so nothing is left dangling — sweep every loose strand (uncommitted or unpushed work, unlabeled stashes, session debris, promises recorded nowhere), tie each one off, and leave a single "session tail" report the next session can pick up without archaeology. |
+| [wrap-up](skills/wrap-up/SKILL.md) | 1.11.0 | Claude Code | Wrap up a work session so nothing is left dangling — sweep every loose strand (uncommitted or unpushed work, unlabeled stashes, session debris, promises recorded nowhere), tie each one off, and leave a single "session tail" report the next session can pick up without archaeology. |
 | [decision-maker](skills/decision-maker/SKILL.md) | 1.11.0 | Claude Code, Codex | Fast, calibrated decisions with TypeSafe's Jev: typed yes/no, choice and score answers with confidence. After installing, you choose **auto** (Jev by default: prefetch pre-scans "which files…" prompts and Claude uses Jev for batch sorting and browser test steps) or **manual** (only when you ask). An opt-in guard checks edits and commands against your rules (including rules from your prompts) and your request, and answers Claude's questions when confident. **Every Jev call is shown to you.** Any provider, with editable base URL and key. See the [full README](skills/decision-maker/README.md). |
 | [test-report](skills/test-report/SKILL.md) | 1.11.0 | Claude Code | Test the features you name (or the current branch) across web, backend, and mobile — 2 positive + 1 negative test per feature in the project's own framework, actually run, then a Markdown pass/fail report with failure causes and a re-run command. See the [README](skills/test-report/README.md). |
 | [product-visionary](skills/product-visionary/SKILL.md) | 1.11.0 | Claude Code | Your product's visionary manager — works out the goal, where the product stands, and how each feature connects to and contributes to it; finds real issues with `test-report`; a panel of 3, 6, or 9 agents debates and decides; then acts according to the mode you pick at session start: **report only**, **fix on a branch**, **full auto**, or **complete auto** (no prompts). See the [README](skills/product-visionary/README.md). |
@@ -38,17 +38,27 @@ It lists each collision and prints the command that removes the extra copy; it n
 
 ## Trigger tests
 
-Every skill ships `evals/` for Claude Code's built-in `claude plugin eval`: two prompts that must make the skill fire and one that must not. They call the model with your own credentials, so they run on your machine, not in CI:
+Every skill ships `evals/` for Claude Code's built-in `claude plugin eval`: two prompts that must make the skill fire, one off-topic prompt that must not, and one near-miss (`quiet-near-*`: a request on the same topic that the skill should still leave alone, such as "explain how git rebase differs from merge" for git-conventions). They call the model with your own credentials, so they run on your machine, not in CI:
 
 ```bash
-claude plugin eval skills/git-conventions --runs 1 --ablation none --no-publish --max-cost-usd 2
+claude plugin eval skills/git-conventions --tag trigger --runs 1 --ablation none --no-publish --max-cost-usd 2
 ```
 
 One skill at one run per case costs about $0.20. Drop `--runs 1` (default 3) and `--ablation none` (adds a no-plugin baseline) for a fuller measurement. Run every skill before changing a description, so a shorter description can't stop a skill firing unnoticed. Structure is checked in CI by `scripts/test_trigger_evals.py`.
 
+**Step checks:** firing isn't the whole job. Each skill also has a `does-*` case that checks the step its output depends on, from the tool calls Claude actually made: schema-aware-db reads `schema.sql` before editing the query, codebase-guardian runs the tests before and after its edit, wrap-up never commits to `main`, and so on. Each case builds a small project with its `fixture.sh`. These cases need Claude to run shell commands, which the eval only allows inside its OS sandbox, and native Windows has none, so run them on Linux, macOS or WSL2:
+
+```bash
+claude plugin eval skills/wrap-up --tag step --allow-tools Bash Write Edit --scaffold --runs 3 --no-publish --max-cost-usd 5
+```
+
+The default `with-without` ablation also runs every case without the plugin; the delta shows whether the skill caused the step or Claude would have done it anyway.
+
 **Crowded:** `python scripts/run_crowded_evals.py memory schema-aware-db -- --runs 1 --max-cost-usd 2` re-runs a skill's trigger prompts with 45 filler skills loaded (`evals-crowded/`), because a sandboxed eval sees only the plugin under test. First result (2026-10-23): 4/4 fired, so crowding alone isn't why a skill can stay silent in a busy setup; check for shadowing copies with *Duplicate or stale skills* above.
 
 **Real environment:** `python scripts/probe_triggers.py probes/prompts.txt --runs 3 --seed probes/seed-db` runs each prompt through `claude -p` with *your* setup (every plugin, personal and claude.ai skill, hook) in a throwaway git repo seeded with a small SQLite shop, then prints which skill fired and which skills are loaded more than once. Spends your credentials (about $3 for the 18 runs); never in CI. First result (2026-10-23): memory bootstrap 3/3, save-order 3/3, fix-join 2/3, inline-SQL fix 0/3, "remember I prefer pnpm" 0/3 (Claude Code's built-in memory takes it). After rewording schema-aware-db's description to name pasted queries and wrong or duplicate rows (D-20), measured with `-- --plugin-dir skills/schema-aware-db`: fix-join 3/3, inline-SQL fix 3/3.
+
+Each line of `probes/prompts.txt` is `id|expect|prompt`, where `expect` is the skill that must fire or `none`; every skill has a positive line and an `<skill>-near` line. The probe prints PASS or FAIL per line (a positive passes only if the skill fired in every run; `none` passes only if no skill from this repo fired) and exits 1 on any FAIL. `--only <skill>` reruns one skill's lines, for example `--only memory --runs 5` after rewording memory. Before running, it reads `claude plugin list --json`: a repo skill that's missing or disabled gets a `-- --plugin-dir skills/<name>` hint, and a skill whose name another marketplace's plugin also uses stops the run, because both load under the same name and the probe couldn't tell them apart. So does an installed copy plus `--plugin-dir` of the same skill, and a repo skill loaded twice in a run (a personal or claude.ai copy next to the plugin): remove the extra copy first. If `claude plugin list` can't run, the probe stops; `--no-preflight` runs it anyway. A `none` line fails if any of this repo's skills loads at any point in the run, not just first. Who owns an ordinary edit depends on the repo (D-24): `codebase-guardian` without `AGENTS.md`, `agents-dox` with it. The second case runs on a layered seed: `python scripts/probe_triggers.py probes/prompts-dox.txt --seed probes/seed-db,probes/seed-dox`.
 
 ## Use on claude.ai
 
@@ -60,7 +70,7 @@ One skill at one run per case costs about $0.20. Drop `--runs 1` (default 3) and
    - Linux: `zip -r memory.zip memory -x 'memory/evals/*' 'memory/.claude-plugin/*'`
 3. **Upload** it in Settings › Capabilities and turn it on.
 
-claude.ai's docs cap descriptions at 200 characters; ours are longer (memory 656, schema-aware-db 565), and copies with long descriptions have been accepted before. If an upload is rejected, shorten the description in your uploaded copy only: the full wording is what makes the skill fire in Claude Code. See [Use custom skills](https://support.claude.com/en/articles/12512198-use-custom-skills).
+claude.ai's docs cap descriptions at 200 characters; ours are longer (memory 707, schema-aware-db 565), and copies with long descriptions have been accepted before. If an upload is rejected, shorten the description in your uploaded copy only: the full wording is what makes the skill fire in Claude Code. See [Use custom skills](https://support.claude.com/en/articles/12512198-use-custom-skills).
 
 ## How the skills work together
 
@@ -75,11 +85,11 @@ Each skill is **self-contained** — install any one on its own and it works wit
 - **schema-aware-db + lsp** — schema-aware-db's Phase 2 (map every usage across the codebase) uses lsp `references` on the ORM model/class to find call sites precisely, instead of grepping for a table name and drowning in false positives.
 - **schema-aware-db + codebase-guardian** — both run an introspect → map → change → trace-the-ripple loop; guardian governs the general edit, schema-aware-db specializes it for the data layer (real schema, migrations, serializers, tests).
 - **schema-aware-db + memory** — confirmed schema facts and access patterns (DynamoDB keys/GSIs, reconciled migration state) accumulate in `MEMORY.md`, so the next session starts from ground truth.
-- **ponytail + memory** — durable facts from the session tail (follow-ups, watch-outs, half-applied state) fold into `MEMORY.md`, so the handoff survives beyond the chat.
-- **ponytail + teammates** — after a peer team's outputs merge, ponytail is the natural final step: one sweep over the combined result, one tail for the whole run.
-- **ponytail + codebase-guardian / agents-dox** — guardian's closeout and the DOX pass are per-*change*; ponytail is per-*session*. Run them for each edit, then ponytail once at the end to catch what fell between changes.
+- **wrap-up + memory** — durable facts from the session tail (follow-ups, watch-outs, half-applied state) fold into `MEMORY.md`, so the handoff survives beyond the chat.
+- **wrap-up + teammates** — after a peer team's outputs merge, wrap-up is the natural final step: one sweep over the combined result, one tail for the whole run.
+- **wrap-up + codebase-guardian / agents-dox** — guardian's closeout and the DOX pass are per-*change*; wrap-up is per-*session*. Run them for each edit, then wrap-up once at the end to catch what fell between changes.
 - **product-visionary + test-report / teammates / codebase-guardian** — product-visionary runs `test-report` to find real issues and to prove every fix, builds on the `teammates` idea of peer agents for its 3/6/9 debate panel, and pairs naturally with guardian for careful edits inside each fix. Without `test-report` it follows the 2-positive + 1-negative rules inline.
-- **decision-maker + everything** — an optional accelerator for the closed-set judgment calls inside the other skills: ponytail's strand sorting, memory's "is this worth saving", guardian's match-vs-change and ripple size, schema-aware-db's real-usage-vs-grep-noise and migration risk, teammates' claim routing and merge contradictions, agents-dox's pass depth, lsp's symbol disambiguation, and skill routing itself. Every recipe batches its items into one call and is confidence-gated: high confidence → act; otherwise the skill decides exactly as it would without it. Recipes and thresholds live in one file, [`skills/decision-maker/references/use-cases.md`](skills/decision-maker/references/use-cases.md).
+- **decision-maker + everything** — an optional accelerator for the closed-set judgment calls inside the other skills: wrap-up's strand sorting, memory's "is this worth saving", guardian's match-vs-change and ripple size, schema-aware-db's real-usage-vs-grep-noise and migration risk, teammates' claim routing and merge contradictions, agents-dox's pass depth, lsp's symbol disambiguation, and skill routing itself. Every recipe batches its items into one call and is confidence-gated: high confidence → act; otherwise the skill decides exactly as it would without it. Recipes and thresholds live in one file, [`skills/decision-maker/references/use-cases.md`](skills/decision-maker/references/use-cases.md).
 
 None of these are required: a skill never errors or stalls because a companion skill is absent.
 
@@ -100,6 +110,8 @@ Restart Claude Code or run `/reload-plugins` to load it.
 claude plugin marketplace update claude-skills
 claude plugin update product-visionary@claude-skills   # repeat for each installed plugin
 ```
+
+**`ponytail` is now `wrap-up`.** The old name clashed with an unrelated plugin, `ponytail@ponytail`. If you installed the old one, run `claude plugin uninstall ponytail@claude-skills`, then `claude plugin install wrap-up@claude-skills`.
 
 `claude plugin list` shows what you have installed. In a session, `/plugin` does the same from a menu. The repo and every skill pass `claude plugin validate`, checked in CI on every PR. See the [official Claude Code docs](https://docs.anthropic.com/en/docs/claude-code) if the install mechanism has changed.
 
@@ -158,7 +170,7 @@ claude-skills/
     │   ├── README.md
     │   ├── SKILL.md
     │   └── references/   ← per-engine introspection, standards, ripple recipe
-    ├── ponytail/
+    ├── wrap-up/
     │   ├── README.md
     │   └── SKILL.md
     └── decision-maker/

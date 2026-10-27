@@ -1,6 +1,6 @@
 ---
 name: agents-dox
-description: "Use in a repo with the DOX AGENTS.md hierarchy (AGENTS.md files as binding work contracts for their subtrees): read the root-to-nearest AGENTS.md chain before editing; after each meaningful change, run a DOX pass to update the owning AGENTS.md and affected parents or children. Trigger on any edit in a repo with AGENTS.md files, when the user mentions DOX, AGENTS.md, or doc contracts, or asks to set up, index, or maintain the AGENTS.md tree; bootstrap one if missing. Err on trigger."
+description: "Use in a repo with the DOX AGENTS.md hierarchy (AGENTS.md files as binding work contracts for their subtrees): read the root-to-nearest AGENTS.md chain before editing; after each meaningful change, run a DOX pass to update the owning AGENTS.md and affected parents or children. Owns every edit in a repo with AGENTS.md files (codebase-guardian owns edits elsewhere), when the user mentions DOX, AGENTS.md, or doc contracts, or asks to set up, index, or maintain the AGENTS.md tree; bootstrap one if missing. Err on trigger."
 ---
 
 # DOX framework
@@ -25,6 +25,10 @@ Follow DOX instructions across any edits.
 7. If docs conflict, the closer doc controls local work details — but no child doc may weaken DOX.
 
 Do not rely on memory. Re-read the applicable DOX chain in the current session before editing.
+
+## Verify the change (this skill owns the edit here)
+
+In a repo with `AGENTS.md`, this skill owns ordinary edits, so it also owns proving them: before editing, run the project's checks (the `## Verification` section of the nearest `AGENTS.md`, else the type-check, lint and tests the manifests define) for a baseline; after editing, run them again and report both results. New failures are yours. If `codebase-guardian` is installed, follow its Orient and Verify phases for this; without it, do the two runs yourself. Don't call the task done on a red run.
 
 ## Update After Editing
 
@@ -130,5 +134,5 @@ This skill is self-contained — it never depends on another skill being install
 - **DOX vs `memory`** — `AGENTS.md` (DOX) holds *binding instructions and contracts* for a subtree; `MEMORY.md` (the `memory` skill) holds *durable factual context* about the codebase. They are complementary: use DOX for "what the rules are here," memory for "what this code is and how it works." A repo can run both; keep contracts in `AGENTS.md` and facts in `MEMORY.md` rather than duplicating.
 - **DOX + `codebase-guardian`** — in a DOX repo, guardian's loop runs *inside* the DOX contract: read the applicable `AGENTS.md` chain during Orient, honor the nearest contract while editing, and include the DOX pass (update owning `AGENTS.md` + indexes) in guardian's Phase 4 closeout.
 - **DOX + `teammates`** — every peer reads the same DOX chain before claiming work and runs a DOX pass on its own changes, so parallel edits don't drift from the contracts.
-- **DOX + `ponytail`** — the DOX pass is per *change*; ponytail is per *session*, catching anything that fell between changes.
+- **DOX + `wrap-up`** — the DOX pass is per *change*; wrap-up is per *session*, catching anything that fell between changes.
 - **DOX + `decision-maker`** — one noul ("does this diff change the contract?") picks a full rewrite vs. a verify-only pass (`decision-maker/references/use-cases.md` §7). The pass itself always runs.

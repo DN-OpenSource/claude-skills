@@ -16,12 +16,12 @@ D ask --state "<the user's request, plus git status --short output if relevant>"
   --noul memory     "Does it ask to remember/forget something or bootstrap project context?" \
   --noul dox        "Does it mention AGENTS.md, DOX, or doc contracts?" \
   --noul teammates  "Is it large enough to split across several parallel agents?" \
-  --noul ponytail   "Is the user wrapping up, leaving, or handing work off?"
+  --noul wrap-up   "Is the user wrapping up, leaving, or handing work off?"
 ```
 
 Load skills with `noul ≥ 0.7`. For values between 0.3 and 0.7, use your own judgment. Ignore values below 0.3.
 
-## 2. ponytail: Sort, giving each strand a fate
+## 2. wrap-up: Sort, giving each strand a fate
 
 Put every strand from the Sweep into **one** request. Use the strand list as JSON state and one Choice per strand:
 
@@ -105,9 +105,9 @@ Each row is one question (N = noul, C = choice, S = score). Several rows that sh
 
 | Skill | Use case | Q | State | Question / options | Act when `act` · otherwise |
 |---|---|---|---|---|---|
-| ponytail | Debris vs. intentional, per diff hunk | N | `{"hunks": [...]}` | Was `hunks[i]` added only for debugging (print, log, commented-out code)? | remove it · leave it and list it in the tail |
-| ponytail | Promises hiding in the conversation | N | `{"sentences": [...]}` | Does `sentences[i]` defer work ("later", "for now", "follow-up")? | add to Follow-ups · skip |
-| ponytail | Commit message quality | S | `{"message", "diff_stat"}` | How well does `message` describe `diff_stat`? `vague\|partial\|accurate` | keep it · rewrite it |
+| wrap-up | Debris vs. intentional, per diff hunk | N | `{"hunks": [...]}` | Was `hunks[i]` added only for debugging (print, log, commented-out code)? | remove it · leave it and list it in the tail |
+| wrap-up | Promises hiding in the conversation | N | `{"sentences": [...]}` | Does `sentences[i]` defer work ("later", "for now", "follow-up")? | add to Follow-ups · skip |
+| wrap-up | Commit message quality | S | `{"message", "diff_stat"}` | How well does `message` describe `diff_stat`? `vague\|partial\|accurate` | keep it · rewrite it |
 | memory | Which `MEMORY.md` owns a fact | C | `{"fact", "folders": {...}}` | Which folder's memory should hold `fact`? options = folder paths + `root` | write there · ask the user |
 | memory | Stale fact check | N | `{"fact", "code_excerpt"}` | Does `code_excerpt` contradict `fact`? | flag it or update it · keep it |
 | memory | User preference vs. passing remark | N | user message | Does this state a durable preference about how the user wants work done? | update `USER.md` · ignore it |

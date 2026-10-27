@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-skills",
-  "description": "A collection of custom skills for Claude Code — flat peer-agent coordination (teammates), disciplined codebase editing (codebase-guardian), durable hierarchical memory (memory), the DOX AGENTS.md contract hierarchy (agents-dox), semantic code navigation via language servers (lsp), schema-aware database work (schema-aware-db), end-of-session loose-end wrap-up (ponytail), fast calibrated decisions via TypeSafe Jev with user-managed providers (decision-maker), run-and-report feature testing for web, backend, and mobile (test-report), your own commit/branch/PR rules with hidden attribution (git-conventions), and a panel-driven product manager that maps goal, state, and features and acts on its own (product-visionary). The skills work standalone and compose with each other.",
+  "description": "A collection of custom skills for Claude Code — flat peer-agent coordination (teammates), disciplined codebase editing (codebase-guardian), durable hierarchical memory (memory), the DOX AGENTS.md contract hierarchy (agents-dox), semantic code navigation via language servers (lsp), schema-aware database work (schema-aware-db), end-of-session loose-end wrap-up (wrap-up), fast calibrated decisions via TypeSafe Jev with user-managed providers (decision-maker), run-and-report feature testing for web, backend, and mobile (test-report), your own commit/branch/PR rules with hidden attribution (git-conventions), and a panel-driven product manager that maps goal, state, and features and acts on its own (product-visionary). The skills work standalone and compose with each other.",
   "owner": {
     "name": "dhirajnikam",
     "email": "dhirajnikam78@gmail.com"
@@ -104,20 +104,20 @@
       "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/schema-aware-db"
     },
     {
-      "name": "ponytail",
+      "name": "wrap-up",
       "description": "Wrap up a work session so nothing is left dangling — sweep every loose strand (uncommitted or unpushed work, unlabeled stashes, session debris, promises recorded nowhere), tie each one off, and leave a single 'session tail' report the next session can pick up without archaeology.",
       "version": "1.11.0",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/DN-OpenSource/claude-skills.git",
-        "path": "skills/ponytail"
+        "path": "skills/wrap-up"
       },
       "author": {
         "name": "dhirajnikam",
         "email": "dhirajnikam78@gmail.com"
       },
       "category": "workflow",
-      "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/ponytail"
+      "homepage": "https://github.com/DN-OpenSource/claude-skills/tree/main/skills/wrap-up"
     },
     {
       "name": "decision-maker",
