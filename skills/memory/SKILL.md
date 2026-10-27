@@ -15,12 +15,6 @@ This skill works standalone. It owns `MEMORY.md` and `~/.memory/USER.md` only. I
 
 ---
 
-## Progress and panel (shown to the user when the skill-checklist mod is installed)
-
-If a `skill_progress` tool is available, call it as you start with `skill: "memory"` and the steps of the workflow you run, for example bootstrap: `["Scan repo", "Root MEMORY.md", "Folder files"]`; update: `["Read affected files", "Edit memory"]`. Then call it with `step` as each one begins, adding a short `note` when you have a result (a test count, a file written), and with `finished: true` at the end. Report only the steps this run uses. If the tool isn't available, ignore this section.
-
-**Panel:** if a `skill_panel` tool is available, send this skill's panel and send it again whenever it changes (it replaces the last one). Buttons the person presses arrive as their next message; treat it as their answer. Send `Memory files` with a row per MEMORY.md written or read (note: its line count) and, after an update or remember, `Saved` with a row per fact saved and a button `Forget` (send `Forget: <fact>`).
-
 ## When to use this skill
 
 Use it on any of these cues. The list is non-exhaustive — when in doubt, use it.

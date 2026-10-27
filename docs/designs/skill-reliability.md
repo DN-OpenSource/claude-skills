@@ -313,20 +313,6 @@ nothing landed on main however the commands were combined); and `tool_used`
 `Bash` matching `git push[^"]*\bmain\b` with `min: 0`, `max: 0`. The fixture
 has no remote, so the last one catches attempted pushes only.
 
-### Added during the build: skill-checklist hooks
-
-On 2026-10-26 the owner asked to see which skill is working and what it is
-doing. Every `SKILL.md` gained a "Progress and panel" section for the
-skill-checklist mod (published to the owner's organization library, not part of
-this repo): it names the skill's steps for `skill_progress` and what to show
-through `skill_panel`. It is optional (the tools exist only with the mod), adds
-body text only (descriptions and the token budget are unchanged), and says
-"report only the steps this run uses", which is about reporting, not about
-skipping work. The eval sandbox doesn't load the mod, so the `does-*` cases
-are unaffected; wrap-up's panel waits for an answer only "when the person is
-there". This is scope added by the owner, recorded here rather than in the
-Non-Goals.
-
 ### What does not change
 
 The probe's output format for two-field lines and the existing `fires-*` and
@@ -457,9 +443,6 @@ Use `llm` graders ("did Claude read the schema before editing?") instead of
     without the skill proves nothing about the skill.
 *   **Shadowed skills.** A personal or claude.ai copy can fire instead of the
     plugin. Mitigation: the probe fails on any repo skill loaded twice (G4).
-*   **Scope drift.** The skill-checklist hooks were added mid-project.
-    Mitigation: recorded above; they change no description and no `does-*`
-    case.
 *   **Unsandboxed probe.** See Safety.
 
 --------------------------------------------------------------------------------
